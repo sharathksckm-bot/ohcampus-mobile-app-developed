@@ -68,6 +68,7 @@ const formatCurrency = (amount) => {
 };
 
 export default function Admissions() {
+  const { user } = useAuth();
   const [admissions, setAdmissions] = useState([]);
   const [colleges, setColleges] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -77,6 +78,10 @@ export default function Admissions() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAdmission, setEditingAdmission] = useState(null);
   const [saving, setSaving] = useState(false);
+  
+  // Check if user can edit any admission (Admin, Team Lead, Admission Manager)
+  const canEditAll = user?.role === 'admin' || 
+    ['Team Lead', 'Admission Manager'].includes(user?.designation);
   
   // Form state
   const [formData, setFormData] = useState({
