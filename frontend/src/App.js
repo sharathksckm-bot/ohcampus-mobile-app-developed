@@ -1,52 +1,116 @@
-import { useEffect } from "react";
+import React from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { Toaster } from "./components/ui/sonner";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// Pages
+import LandingPage from "./pages/LandingPage";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import CollegeDetail from "./pages/CollegeDetail";
+import AdminDashboard from "./pages/AdminDashboard";
+import FeeManagement from "./pages/FeeManagement";
+import FAQManagement from "./pages/FAQManagement";
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+// Components
+import ProtectedRoute from "./components/ProtectedRoute";
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
+// Auth redirect component
+const AuthRedirect = ({ children }) => {
+  const { isAuthenticated, user, loading } = useAuth();
+  
+  if (loading) return null;
+  
+  if (isAuthenticated) {
+    return <Navigate to={user?.role === 'admin' ? '/admin' : '/dashboard'} replace />;
+  }
+  
+  return children;
 };
+
+function AppRoutes() {
+  return (
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<LandingPage />} />
+      <Route 
+        path="/login" 
+        element={
+          <AuthRedirect>
+            <Login />
+          </AuthRedirect>
+        } 
+      />
+      <Route 
+        path="/register" 
+        element={
+          <AuthRedirect>
+            <Register />
+          </AuthRedirect>
+        } 
+      />
+
+      {/* Counselor Routes */}
+      <Route 
+        path="/dashboard" 
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/college/:collegeId" 
+        element={
+          <ProtectedRoute>
+            <CollegeDetail />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Admin Routes */}
+      <Route 
+        path="/admin" 
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/fees" 
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <FeeManagement />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/faqs" 
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <FAQManagement />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Catch all - redirect to home */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+          <Toaster position="top-right" richColors />
+        </BrowserRouter>
+      </AuthProvider>
     </div>
   );
 }
