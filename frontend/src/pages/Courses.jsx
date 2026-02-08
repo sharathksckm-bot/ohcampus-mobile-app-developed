@@ -241,14 +241,56 @@ export default function Courses() {
                 </SelectContent>
               </Select>
 
+              {/* Level Filter */}
+              <Select value={selectedLevel} onValueChange={setSelectedLevel}>
+                <SelectTrigger className="w-full lg:w-36 h-12" data-testid="level-filter">
+                  <BookOpen className="h-4 w-4 mr-2 text-[#94A3B8]" />
+                  <SelectValue placeholder="Level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Levels</SelectItem>
+                  {levels.map(level => (
+                    <SelectItem key={level} value={level}>{level}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* State Filter */}
+              <Select value={selectedState} onValueChange={(value) => {
+                setSelectedState(value);
+                setSelectedCity('all'); // Reset city when state changes
+              }}>
+                <SelectTrigger className="w-full lg:w-40 h-12" data-testid="state-filter">
+                  <MapPin className="h-4 w-4 mr-2 text-[#94A3B8]" />
+                  <SelectValue placeholder="State" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All States</SelectItem>
+                  {states.map(state => (
+                    <SelectItem key={state} value={state}>{state}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* City Filter */}
+              <Select value={selectedCity} onValueChange={setSelectedCity}>
+                <SelectTrigger className="w-full lg:w-40 h-12" data-testid="city-filter">
+                  <Building2 className="h-4 w-4 mr-2 text-[#94A3B8]" />
+                  <SelectValue placeholder="City" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Cities</SelectItem>
+                  {filteredCities.map(city => (
+                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
               {/* Clear */}
-              {(searchQuery || selectedCategory !== 'all') && (
+              {hasActiveFilters && (
                 <Button
                   variant="outline"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedCategory('all');
-                  }}
+                  onClick={clearFilters}
                   className="h-12"
                 >
                   <X className="h-4 w-4 mr-1" />
