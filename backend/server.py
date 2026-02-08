@@ -400,6 +400,99 @@ async def delete_fee(fee_id: str, current_user: dict = Depends(require_admin)):
         raise HTTPException(status_code=404, detail="Fee not found")
     return {"message": "Fee deleted successfully"}
 
+# ===================== BULK CSV IMPORT ENDPOINT =====================
+
+@api_router.post("/fees/import-csv")
+async def import_fees_csv(file: UploadFile = File(...), current_user: dict = Depends(require_admin)):
+    """
+    Import fees from CSV file.
+    Expected CSV columns: college_id, course_id, fee_type, year_or_semester, amount, hostel_fee, description
+    """
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="File must be a CSV")
+    
+    try:
+        content = await file.read()
+        decoded = content.decode('utf-8')
+        reader = csv.DictReader(io.StringIO(decoded))
+        
+        imported = 0
+        errors = []
+        
+        for row_num, row in enumerate(reader, start=2):
+            try:
+                # Validate required fields
+                if not row.get('college_id') or not row.get('course_id') or not row.get('amount'):
+                    errors.append(f"Row {row_num}: Missing required fields (college_id, course_id, amount)")
+                    continue
+                
+                # Check if college exists
+                college = await db.colleges.find_one({"id": row['college_id']})
+                if not college:
+                    errors.append(f"Row {row_num}: College '{row['college_id']}' not found")
+                    continue
+                
+                # Check if course exists
+                course = await db.courses.find_one({"id": row['course_id']})
+                if not course:
+                    errors.append(f"Row {row_num}: Course '{row['course_id']}' not found")
+                    continue
+                
+                fee_data = {
+                    "id": str(uuid.uuid4()),
+                    "college_id": row['college_id'],
+                    "course_id": row['course_id'],
+                    "fee_type": row.get('fee_type', 'annual'),
+                    "year_or_semester": int(row.get('year_or_semester', 1)),
+                    "amount": float(row['amount']),
+                    "hostel_fee": float(row['hostel_fee']) if row.get('hostel_fee') else None,
+                    "admission_fee": float(row['admission_fee']) if row.get('admission_fee') else None,
+                    "description": row.get('description', ''),
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+                
+                await db.fees.insert_one(fee_data)
+                imported += 1
+                
+            except ValueError as e:
+                errors.append(f"Row {row_num}: Invalid number format - {str(e)}")
+            except Exception as e:
+                errors.append(f"Row {row_num}: {str(e)}")
+        
+        return {
+            "message": f"Import completed. {imported} fees imported successfully.",
+            "imported_count": imported,
+            "errors": errors[:10] if errors else [],  # Return first 10 errors
+            "total_errors": len(errors)
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to process CSV: {str(e)}")
+
+@api_router.get("/fees/csv-template")
+async def get_csv_template():
+    """Get CSV template for fee import"""
+    return {
+        "columns": ["college_id", "course_id", "fee_type", "year_or_semester", "amount", "hostel_fee", "admission_fee", "description"],
+        "example_row": {
+            "college_id": "col-1",
+            "course_id": "course-1",
+            "fee_type": "annual",
+            "year_or_semester": "1",
+            "amount": "450000",
+            "hostel_fee": "120000",
+            "admission_fee": "25000",
+            "description": "First Year Annual Fee"
+        },
+        "notes": [
+            "fee_type can be 'annual' or 'semester'",
+            "year_or_semester should be 1, 2, 3, etc.",
+            "hostel_fee and admission_fee are optional",
+            "Use college and course IDs from the database"
+        ]
+    }
+
 # ===================== ADMISSION CHARGES ENDPOINTS =====================
 
 @api_router.get("/admission-charges")
