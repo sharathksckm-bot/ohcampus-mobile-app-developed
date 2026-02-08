@@ -767,42 +767,42 @@ async def seed_database():
     # Sample courses data
     courses_data = [
         # AIMS Courses
-        {"id": "course-1", "name": "MBA - Master of Business Administration", "college_id": "col-1", "duration": "2 Years", "level": "PG"},
-        {"id": "course-2", "name": "BBA - Bachelor of Business Administration", "college_id": "col-1", "duration": "3 Years", "level": "UG"},
-        {"id": "course-3", "name": "PGDM - Post Graduate Diploma in Management", "college_id": "col-1", "duration": "2 Years", "level": "PG"},
+        {"id": "course-1", "name": "MBA - Master of Business Administration", "college_id": "col-1", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4},
+        {"id": "course-2", "name": "BBA - Bachelor of Business Administration", "college_id": "col-1", "duration": "3 Years", "level": "UG", "duration_years": 3, "duration_semesters": 6},
+        {"id": "course-3", "name": "PGDM - Post Graduate Diploma in Management", "college_id": "col-1", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4},
         
         # PESU Courses
-        {"id": "course-4", "name": "B.Tech - Computer Science Engineering", "college_id": "col-2", "duration": "4 Years", "level": "UG"},
-        {"id": "course-5", "name": "B.Tech - Electronics & Communication", "college_id": "col-2", "duration": "4 Years", "level": "UG"},
-        {"id": "course-6", "name": "M.Tech - Computer Science", "college_id": "col-2", "duration": "2 Years", "level": "PG"},
-        {"id": "course-7", "name": "MCA - Master of Computer Applications", "college_id": "col-2", "duration": "2 Years", "level": "PG"},
+        {"id": "course-4", "name": "B.Tech - Computer Science Engineering", "college_id": "col-2", "duration": "4 Years", "level": "UG", "duration_years": 4, "duration_semesters": 8},
+        {"id": "course-5", "name": "B.Tech - Electronics & Communication", "college_id": "col-2", "duration": "4 Years", "level": "UG", "duration_years": 4, "duration_semesters": 8},
+        {"id": "course-6", "name": "M.Tech - Computer Science", "college_id": "col-2", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4},
+        {"id": "course-7", "name": "MCA - Master of Computer Applications", "college_id": "col-2", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4},
         
         # Alliance University Courses
-        {"id": "course-8", "name": "MBA - Global Business", "college_id": "col-3", "duration": "2 Years", "level": "PG"},
-        {"id": "course-9", "name": "BBA - Finance & Marketing", "college_id": "col-3", "duration": "3 Years", "level": "UG"},
-        {"id": "course-10", "name": "MBA - Healthcare Management", "college_id": "col-3", "duration": "2 Years", "level": "PG"},
+        {"id": "course-8", "name": "MBA - Global Business", "college_id": "col-3", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4},
+        {"id": "course-9", "name": "BBA - Finance & Marketing", "college_id": "col-3", "duration": "3 Years", "level": "UG", "duration_years": 3, "duration_semesters": 6},
+        {"id": "course-10", "name": "MBA - Healthcare Management", "college_id": "col-3", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4},
         
         # SRM Courses
-        {"id": "course-11", "name": "B.Tech - Artificial Intelligence", "college_id": "col-4", "duration": "4 Years", "level": "UG"},
-        {"id": "course-12", "name": "B.Tech - Mechanical Engineering", "college_id": "col-4", "duration": "4 Years", "level": "UG"},
-        {"id": "course-13", "name": "M.Tech - Data Science", "college_id": "col-4", "duration": "2 Years", "level": "PG"},
+        {"id": "course-11", "name": "B.Tech - Artificial Intelligence", "college_id": "col-4", "duration": "4 Years", "level": "UG", "duration_years": 4, "duration_semesters": 8},
+        {"id": "course-12", "name": "B.Tech - Mechanical Engineering", "college_id": "col-4", "duration": "4 Years", "level": "UG", "duration_years": 4, "duration_semesters": 8},
+        {"id": "course-13", "name": "M.Tech - Data Science", "college_id": "col-4", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4},
         
         # Manipal Courses
-        {"id": "course-14", "name": "MBBS - Bachelor of Medicine", "college_id": "col-5", "duration": "5.5 Years", "level": "UG"},
-        {"id": "course-15", "name": "BDS - Bachelor of Dental Surgery", "college_id": "col-5", "duration": "5 Years", "level": "UG"},
-        {"id": "course-16", "name": "MD - General Medicine", "college_id": "col-5", "duration": "3 Years", "level": "PG"},
+        {"id": "course-14", "name": "MBBS - Bachelor of Medicine", "college_id": "col-5", "duration": "5.5 Years", "level": "UG", "duration_years": 5, "duration_semesters": 10},
+        {"id": "course-15", "name": "BDS - Bachelor of Dental Surgery", "college_id": "col-5", "duration": "5 Years", "level": "UG", "duration_years": 5, "duration_semesters": 10},
+        {"id": "course-16", "name": "MD - General Medicine", "college_id": "col-5", "duration": "3 Years", "level": "PG", "duration_years": 3, "duration_semesters": 6},
         
         # REVA Courses
-        {"id": "course-17", "name": "B.Tech - Information Technology", "college_id": "col-6", "duration": "4 Years", "level": "UG"},
-        {"id": "course-18", "name": "BCA - Bachelor of Computer Applications", "college_id": "col-6", "duration": "3 Years", "level": "UG"},
+        {"id": "course-17", "name": "B.Tech - Information Technology", "college_id": "col-6", "duration": "4 Years", "level": "UG", "duration_years": 4, "duration_semesters": 8},
+        {"id": "course-18", "name": "BCA - Bachelor of Computer Applications", "college_id": "col-6", "duration": "3 Years", "level": "UG", "duration_years": 3, "duration_semesters": 6},
         
         # Christ University Courses
-        {"id": "course-19", "name": "MBA - Marketing", "college_id": "col-7", "duration": "2 Years", "level": "PG"},
-        {"id": "course-20", "name": "B.Com - Honours", "college_id": "col-7", "duration": "3 Years", "level": "UG"},
+        {"id": "course-19", "name": "MBA - Marketing", "college_id": "col-7", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4},
+        {"id": "course-20", "name": "B.Com - Honours", "college_id": "col-7", "duration": "3 Years", "level": "UG", "duration_years": 3, "duration_semesters": 6},
         
         # VIT Courses
-        {"id": "course-21", "name": "B.Tech - Biotechnology", "college_id": "col-8", "duration": "4 Years", "level": "UG"},
-        {"id": "course-22", "name": "M.Tech - VLSI Design", "college_id": "col-8", "duration": "2 Years", "level": "PG"},
+        {"id": "course-21", "name": "B.Tech - Biotechnology", "college_id": "col-8", "duration": "4 Years", "level": "UG", "duration_years": 4, "duration_semesters": 8},
+        {"id": "course-22", "name": "M.Tech - VLSI Design", "college_id": "col-8", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4},
     ]
     
     # Sample fees data
