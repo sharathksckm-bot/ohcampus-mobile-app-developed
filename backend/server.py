@@ -64,6 +64,7 @@ class CollegeBase(BaseModel):
     state: str
     city: str
     category: str
+    address: Optional[str] = None
     image_url: Optional[str] = None
     highlights: List[str] = []
     whats_new: List[str] = []
@@ -81,6 +82,8 @@ class CourseBase(BaseModel):
     college_id: str
     duration: str
     level: str  # UG, PG, Doctoral
+    duration_years: Optional[int] = None  # For calculating fee periods
+    duration_semesters: Optional[int] = None  # For calculating fee periods
 
 class Course(CourseBase):
     model_config = ConfigDict(extra="ignore")
@@ -93,9 +96,28 @@ class FeeBase(BaseModel):
     year_or_semester: int  # 1, 2, 3, etc.
     amount: float
     hostel_fee: Optional[float] = None
+    admission_fee: Optional[float] = None  # One-time admission charges
     description: Optional[str] = None
 
 class Fee(FeeBase):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class AdmissionChargesBase(BaseModel):
+    college_id: str
+    course_id: str
+    registration_fee: Optional[float] = None
+    admission_fee: Optional[float] = None
+    caution_deposit: Optional[float] = None
+    uniform_fee: Optional[float] = None
+    library_fee: Optional[float] = None
+    lab_fee: Optional[float] = None
+    other_charges: Optional[float] = None
+    other_charges_description: Optional[str] = None
+
+class AdmissionCharges(AdmissionChargesBase):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
