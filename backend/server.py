@@ -88,6 +88,23 @@ class Admission(AdmissionBase):
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
+# Admission Target Model
+class TargetBase(BaseModel):
+    counselor_id: str
+    target_type: str  # monthly, quarterly
+    period: str  # e.g., "2026-02" for monthly, "2026-Q1" for quarterly
+    target_count: int  # Number of admissions target
+    target_fees: Optional[float] = None  # Fees collection target
+
+class Target(TargetBase):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    counselor_name: Optional[str] = None
+    assigned_by: str  # User ID who assigned
+    assigned_by_name: Optional[str] = None
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
 class LoginRequest(BaseModel):
     email: str
     password: str
