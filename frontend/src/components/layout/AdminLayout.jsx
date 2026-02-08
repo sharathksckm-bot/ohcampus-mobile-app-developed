@@ -16,6 +16,7 @@ import {
   Building2,
   Users,
   BarChart3,
+  Activity,
 } from 'lucide-react';
 
 const sidebarItems = [
@@ -48,6 +49,11 @@ const sidebarItems = [
     name: 'FAQ Management',
     icon: HelpCircle,
     path: '/admin/faqs',
+  },
+  {
+    name: 'Activity Log',
+    icon: Activity,
+    path: '/admin/activity-log',
   },
 ];
 

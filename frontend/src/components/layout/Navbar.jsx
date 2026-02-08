@@ -160,6 +160,15 @@ export const Navbar = () => {
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
+                    className="cursor-pointer"
+                    onClick={() => navigate('/profile')}
+                    data-testid="profile-link"
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    My Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
                     className="cursor-pointer text-red-600 focus:text-red-600"
                     onClick={handleLogout}
                     data-testid="logout-btn"
