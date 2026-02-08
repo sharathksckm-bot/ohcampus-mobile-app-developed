@@ -237,6 +237,25 @@ Create a web-based counseling platform for OhCampus counselors with:
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Latest Updates (Feb 2026)
+### Iteration 11 - UI Redesign, Scholarship Report & Target Alerts (Feb 8, 2026)
+1. **Dashboard College Cards Redesign**: Removed images, made cards attractive with:
+   - Gradient blue icon with GraduationCap instead of images
+   - Featured badge and alert indicators inline
+   - Category and Established year in clean grid
+   - Accreditation highlighted in blue card
+   - Courses count and View Details link
+2. **Scholarship Summary Report** (Admin/Manager only):
+   - Stats cards: Recipients, Total Awarded, Average, % With Scholarship
+   - Monthly or College-wise breakdown table
+   - Recent Scholarship Recipients list
+   - API: `/api/admin/scholarship-summary?view_by=month|college`
+3. **Target Alerts** (Admin/Manager only):
+   - Shows counselors falling behind on targets
+   - Critical (red) and Warning (orange) severity levels
+   - Progress bars for admission and fees targets
+   - Days remaining indicator
+   - API: `/api/admin/target-alerts`
+
 ### Iteration 10 - Scholarship Feature (Feb 8, 2026)
 1. **Scholarship Amount Field**: Added one-time scholarship field to admissions
    - Shows in Admitted Candidates table with purple badge and Gift icon
