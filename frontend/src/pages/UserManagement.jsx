@@ -43,6 +43,7 @@ import {
   Check,
   X,
   Loader2,
+  Key,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -75,6 +76,12 @@ export default function UserManagement() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [saving, setSaving] = useState(false);
+  
+  // Password reset state
+  const [resetPasswordOpen, setResetPasswordOpen] = useState(false);
+  const [resetPasswordUser, setResetPasswordUser] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [resettingPassword, setResettingPassword] = useState(false);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -192,6 +199,30 @@ export default function UserManagement() {
       fetchData();
     } catch (error) {
       toast.error('Failed to update user status');
+    }
+  };
+
+  const handleOpenResetPassword = (user) => {
+    setResetPasswordUser(user);
+    setNewPassword('');
+    setResetPasswordOpen(true);
+  };
+
+  const handleResetPassword = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    
+    setResettingPassword(true);
+    try {
+      await usersAPI.resetPassword(resetPasswordUser.id, newPassword);
+      toast.success(`Password reset for ${resetPasswordUser.name}`);
+      setResetPasswordOpen(false);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to reset password');
+    } finally {
+      setResettingPassword(false);
     }
   };
 
@@ -392,8 +423,18 @@ export default function UserManagement() {
                               size="icon"
                               onClick={() => handleOpenDialog(user)}
                               data-testid={`edit-user-${user.id}`}
+                              title="Edit user"
                             >
                               <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleOpenResetPassword(user)}
+                              data-testid={`reset-password-${user.id}`}
+                              title="Reset password"
+                            >
+                              <Key className="h-4 w-4 text-purple-500" />
                             </Button>
                             <Button
                               variant="ghost"
@@ -401,6 +442,7 @@ export default function UserManagement() {
                               onClick={() => handleToggleActive(user)}
                               className={user.is_active !== false ? 'text-red-500' : 'text-green-500'}
                               data-testid={`toggle-user-${user.id}`}
+                              title={user.is_active !== false ? 'Deactivate' : 'Activate'}
                             >
                               {user.is_active !== false ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
                             </Button>
