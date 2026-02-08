@@ -149,6 +149,8 @@ export const admissionsAPI = {
 export const statsAPI = {
   getPerformance: () => api.get('/admin/stats/performance'),
   getAdmissionsList: (params) => api.get('/admin/stats/admissions-list', { params }),
+  getScholarshipSummary: (viewBy) => api.get('/admin/scholarship-summary', { params: { view_by: viewBy } }),
+  getTargetAlerts: () => api.get('/admin/target-alerts'),
 };
 
 // Role-based Performance API (Team Lead, Admission Manager, Admin)
