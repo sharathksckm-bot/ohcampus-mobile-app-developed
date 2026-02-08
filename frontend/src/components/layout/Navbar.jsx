@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/button';
 import {
@@ -10,15 +10,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { User, LogOut, Settings, LayoutDashboard } from 'lucide-react';
+import { User, LogOut, Settings, LayoutDashboard, Building2, BookOpen } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const isActiveLink = (path) => {
+    return location.pathname === path;
   };
 
   return (
@@ -36,6 +41,32 @@ export const Navbar = () => {
               Counselor Portal
             </span>
           </Link>
+
+          {/* Center Navigation - Only for logged-in non-admin users */}
+          {user && !isAdmin() && (
+            <div className="hidden md:flex items-center gap-1">
+              <Link to="/dashboard">
+                <Button 
+                  variant="ghost" 
+                  className={`font-body ${isActiveLink('/dashboard') ? 'bg-blue-50 text-[#0066CC]' : 'text-[#475569] hover:text-[#0066CC]'}`}
+                  data-testid="nav-colleges"
+                >
+                  <Building2 className="h-4 w-4 mr-2" />
+                  Colleges
+                </Button>
+              </Link>
+              <Link to="/courses">
+                <Button 
+                  variant="ghost" 
+                  className={`font-body ${isActiveLink('/courses') ? 'bg-blue-50 text-[#0066CC]' : 'text-[#475569] hover:text-[#0066CC]'}`}
+                  data-testid="nav-courses"
+                >
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Courses
+                </Button>
+              </Link>
+            </div>
+          )}
 
           {/* Right side */}
           <div className="flex items-center gap-4">
@@ -75,6 +106,17 @@ export const Navbar = () => {
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     Dashboard
                   </DropdownMenuItem>
+                  {!isAdmin() && (
+                    <>
+                      <DropdownMenuItem 
+                        className="cursor-pointer md:hidden"
+                        onClick={() => navigate('/courses')}
+                      >
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        Courses
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
                     className="cursor-pointer text-red-600 focus:text-red-600"
