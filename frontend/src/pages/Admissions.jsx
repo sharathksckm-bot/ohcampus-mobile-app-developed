@@ -625,6 +625,25 @@ export default function Admissions() {
                   />
                 </div>
               </div>
+
+              {/* Scholarship */}
+              <div>
+                <Label className="font-body flex items-center gap-2">
+                  <Gift className="h-4 w-4 text-purple-500" />
+                  Scholarship Amount (if offered)
+                </Label>
+                <Input
+                  type="number"
+                  value={formData.scholarship_amount}
+                  onChange={(e) => setFormData(prev => ({ ...prev, scholarship_amount: e.target.value }))}
+                  placeholder="Enter scholarship amount (optional)"
+                  className="mt-1"
+                  data-testid="scholarship-amount-input"
+                />
+                <p className="text-xs text-[#94A3B8] mt-1">
+                  One-time scholarship offered to the student
+                </p>
+              </div>
             </div>
 
             {/* Fee Instalments */}
