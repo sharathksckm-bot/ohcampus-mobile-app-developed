@@ -70,10 +70,39 @@ Create a web-based counseling platform for OhCampus counselors with:
 - [x] Performance Dashboard with stats (by counselor, college, course, trends)
 - [x] College search bar in Fee Management page
 - [x] Level and Location filters on Courses page
+- [x] Admission target tracking (monthly/quarterly targets with progress)
+- [x] Remarks displayed in admitted candidates list (both Admin and Counselor panels)
+- [x] Admin/Team Lead/Admission Manager can edit fee payments of admitted candidates
+- [x] Performance tab for Team Leads (see team members stats only)
+- [x] Performance tab for Admission Managers (see complete team stats)
+- [x] Filters: By Counselor, By Month, By College in Performance tab
 
 ## What's Been Implemented
 
 ### Latest Updates (Feb 2026)
+- **Performance Tab for Team Leads & Admission Managers**:
+  - Team Leads: "My Team Performance" page showing only their team members' stats
+  - Admission Managers: "Team Performance" page showing all counselors' stats
+  - Filters: By Counselor, By Month (YYYY-MM), By College
+  - Target assignment capability for team members
+  - Progress tracking with visual progress bars
+
+- **Admission Target Tracking**:
+  - Admin, Team Lead, Admission Manager can assign monthly/quarterly targets
+  - Target includes admission count and optional fees target
+  - Progress bars show actual vs target (admissions and fees collected)
+  - Edit and delete targets
+
+- **Remarks in Admitted Candidates List**:
+  - Remarks column visible in Counselor's Admissions page
+  - Remarks column visible in Admin Performance Dashboard
+  - Tooltip shows full remark on hover
+
+- **Fee Payment Editing**:
+  - Admin, Team Lead, Admission Manager can edit fee instalments
+  - Edit dialog allows adding/removing instalments with paid dates
+  - Remark can be updated
+
 - **Admin College Management Page**: New `/admin/colleges` page with:
   - Search bar to find colleges by name, city, or state
   - Filters: State, City, Category, Course dropdowns
