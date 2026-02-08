@@ -203,6 +203,75 @@ export default function CollegeDetail() {
         </div>
       </div>
 
+      {/* Admission Alerts Section - Only show if alerts exist */}
+      {college.admission_alerts && college.admission_alerts.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="space-y-3">
+            {college.admission_alerts.filter(alert => alert.is_active).map((alert, index) => {
+              const alertStyles = {
+                info: { 
+                  bg: 'bg-blue-50 border-blue-200', 
+                  icon: Info, 
+                  iconColor: 'text-blue-600',
+                  titleColor: 'text-blue-800',
+                  textColor: 'text-blue-700'
+                },
+                warning: { 
+                  bg: 'bg-yellow-50 border-yellow-200', 
+                  icon: AlertTriangle, 
+                  iconColor: 'text-yellow-600',
+                  titleColor: 'text-yellow-800',
+                  textColor: 'text-yellow-700'
+                },
+                important: { 
+                  bg: 'bg-red-50 border-red-200', 
+                  icon: Megaphone, 
+                  iconColor: 'text-red-600',
+                  titleColor: 'text-red-800',
+                  textColor: 'text-red-700'
+                },
+                deadline: { 
+                  bg: 'bg-orange-50 border-orange-200', 
+                  icon: Clock, 
+                  iconColor: 'text-orange-600',
+                  titleColor: 'text-orange-800',
+                  textColor: 'text-orange-700'
+                },
+              };
+              
+              const style = alertStyles[alert.alert_type] || alertStyles.info;
+              const AlertIcon = style.icon;
+              
+              return (
+                <Alert 
+                  key={index} 
+                  className={`${style.bg} border animate-fade-in`}
+                  style={{ animationDelay: `${index * 100}ms` }}
+                  data-testid={`admission-alert-${index}`}
+                >
+                  <AlertIcon className={`h-5 w-5 ${style.iconColor}`} />
+                  <AlertTitle className={`font-heading font-semibold ${style.titleColor}`}>
+                    {alert.title}
+                    {alert.alert_type === 'deadline' && alert.end_date && (
+                      <Badge className="ml-2 bg-orange-600 text-white text-xs">
+                        Deadline: {new Date(alert.end_date).toLocaleDateString('en-IN', { 
+                          day: 'numeric', 
+                          month: 'short', 
+                          year: 'numeric' 
+                        })}
+                      </Badge>
+                    )}
+                  </AlertTitle>
+                  <AlertDescription className={`font-body ${style.textColor} mt-1`}>
+                    {alert.message}
+                  </AlertDescription>
+                </Alert>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Content Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
