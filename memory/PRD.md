@@ -10,6 +10,9 @@ Create a web-based counseling platform for OhCampus counselors with:
 6. CSV Import: Bulk import fees from CSV
 7. Admission Alerts: Display important admission-related alerts on college pages
 8. Admin College Management: Search, filter, and manage colleges with seat status
+9. User/Counselor Management: Admin creates counselors with designations and team lead assignment
+10. Admissions Module: Counselors can add/edit admitted candidates with fee instalments
+11. Performance Dashboard: Admin and Admission Manager see stats, trends, and admitted students list
 
 ## User Choices
 - JWT-based authentication
@@ -17,6 +20,9 @@ Create a web-based counseling platform for OhCampus counselors with:
 - OhCampus branding (logo and colors)
 - Multi-select filters with search functionality
 - Seat Status: Available, Closing, Under Waiting, Closed (default: Available)
+- Designations: Admission Counselor, Senior Admission Counselor, Team Lead, Admission Manager
+- Team Lead sees only their team's admissions
+- Admission Manager sees all admissions
 
 ## Architecture
 - **Frontend**: React 19 with Tailwind CSS, Shadcn/UI components
@@ -26,8 +32,10 @@ Create a web-based counseling platform for OhCampus counselors with:
 - **PDF Generation**: jspdf + jspdf-autotable
 
 ## User Personas
-1. **Counselors**: Education counselors who guide students to colleges
-2. **Admins**: Platform administrators who manage fee structures, FAQs, admission alerts, and seat availability
+1. **Counselors**: Education counselors who guide students to colleges and record admissions
+2. **Team Leads**: Senior counselors who manage a team and see their team's admissions
+3. **Admission Managers**: See all admissions and performance stats
+4. **Admins**: Platform administrators who manage fee structures, FAQs, users, and view performance
 
 ## Core Requirements
 - [x] Counselor can filter colleges by State/City/Category/Course
@@ -51,9 +59,17 @@ Create a web-based counseling platform for OhCampus counselors with:
 - [x] Secure JWT authentication
 - [x] Admin College Management with search bar
 - [x] Admin College Management filters (State, City, Category, Course)
-- [x] Admin College Management tabs (All, By Location, By Category, By Course)
+- [x] Admin College Management tabs (All, By City, By State, By Category, By Course)
 - [x] Seat Availability status for courses (Available, Closing, Under Waiting, Closed)
 - [x] Seat status displayed on counselor college detail page
+- [x] Admin can create/edit/deactivate counselor users
+- [x] Counselor designations: Admission Counselor, Senior Admission Counselor, Team Lead, Admission Manager
+- [x] Assign team lead to counselors
+- [x] Counselors can add/edit admissions (candidate details, college/course, fees, instalments)
+- [x] Dynamic fee instalments with paid dates
+- [x] Performance Dashboard with stats (by counselor, college, course, trends)
+- [x] College search bar in Fee Management page
+- [x] Level and Location filters on Courses page
 
 ## What's Been Implemented
 
