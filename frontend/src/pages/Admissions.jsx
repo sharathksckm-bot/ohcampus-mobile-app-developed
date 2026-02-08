@@ -384,6 +384,7 @@ export default function Admissions() {
               </div>
             ) : (
               <div className="overflow-x-auto">
+                <TooltipProvider>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -393,11 +394,14 @@ export default function Admissions() {
                       <TableHead className="font-heading text-right">Total Fees</TableHead>
                       <TableHead className="font-heading text-right">Paid</TableHead>
                       <TableHead className="font-heading text-right">Balance</TableHead>
+                      <TableHead className="font-heading">Remarks</TableHead>
                       <TableHead className="font-heading text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredAdmissions.map(admission => (
+                    {filteredAdmissions.map(admission => {
+                      const canEdit = canEditAll || admission.counselor_id === user?.id;
+                      return (
                       <TableRow key={admission.id} data-testid={`admission-row-${admission.id}`}>
                         <TableCell>
                           <div>
@@ -436,31 +440,53 @@ export default function Admissions() {
                             {formatCurrency(admission.balance)}
                           </Badge>
                         </TableCell>
+                        <TableCell className="max-w-[150px]">
+                          {admission.remark ? (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex items-center gap-1 text-[#475569] cursor-help">
+                                  <MessageSquare className="h-3 w-3 flex-shrink-0" />
+                                  <span className="text-xs truncate">{admission.remark}</span>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-[300px]">
+                                <p className="text-sm">{admission.remark}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            <span className="text-xs text-[#94A3B8]">—</span>
+                          )}
+                        </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleOpenDialog(admission)}
-                              data-testid={`edit-admission-${admission.id}`}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-red-500"
-                              onClick={() => handleDelete(admission.id)}
-                              data-testid={`delete-admission-${admission.id}`}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            {canEdit && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleOpenDialog(admission)}
+                                data-testid={`edit-admission-${admission.id}`}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {(user?.role === 'admin' || admission.counselor_id === user?.id) && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-red-500"
+                                onClick={() => handleDelete(admission.id)}
+                                data-testid={`delete-admission-${admission.id}`}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )})}
                   </TableBody>
                 </Table>
+                </TooltipProvider>
               </div>
             )}
           </CardContent>
