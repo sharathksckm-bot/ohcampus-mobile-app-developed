@@ -60,10 +60,19 @@ export const collegesAPI = {
 // Courses API
 export const coursesAPI = {
   getByCollege: (collegeId) => api.get(`/colleges/${collegeId}/courses`),
-  getAll: () => api.get('/courses'),
+  getAll: (params) => api.get('/courses', { params }),
+  getAllWithCollege: (params) => api.get('/courses/with-college', { params }),
+  getById: (courseId) => api.get(`/courses/${courseId}`),
+  getCategories: () => api.get('/courses/categories/list'),
   create: (data) => api.post('/courses', data),
   update: (id, data) => api.put(`/courses/${id}`, data),
   updateSeatStatus: (id, seatStatus) => api.put(`/courses/${id}/seat-status`, { seat_status: seatStatus }),
+};
+
+// Placements API
+export const placementsAPI = {
+  getByCollege: (collegeId) => api.get(`/colleges/${collegeId}/placements`),
+  update: (collegeId, data) => api.put(`/colleges/${collegeId}/placements`, data),
 };
 
 // Fees API
