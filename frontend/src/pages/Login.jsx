@@ -118,14 +118,8 @@ export default function Login() {
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-[#475569] font-body">
-                Don't have an account?{' '}
-                <Link 
-                  to="/register" 
-                  className="text-[#0066CC] hover:text-[#0052A3] font-semibold transition-colors"
-                >
-                  Sign up
-                </Link>
+              <p className="text-sm text-[#94A3B8] font-body">
+                Contact your administrator for account access
               </p>
             </div>
 
