@@ -269,9 +269,15 @@ export default function CounselorPerformance() {
   const handleOpenEditAdmission = (admission) => {
     setEditingAdmission(admission);
     setAdmissionForm({
+      candidate_name: admission.candidate_name || '',
+      place: admission.place || '',
+      college_id: admission.college_id || '',
+      course_id: admission.course_id || '',
+      admission_date: admission.admission_date || '',
+      total_fees: admission.total_fees?.toString() || '',
       instalments: admission.instalments || [],
       remark: admission.remark || '',
-      total_fees: admission.total_fees
+      scholarship_amount: admission.scholarship_amount?.toString() || ''
     });
     setEditAdmissionOpen(true);
   };
@@ -300,15 +306,27 @@ export default function CounselorPerformance() {
   };
 
   const handleSaveAdmission = async () => {
+    if (!admissionForm.candidate_name || !admissionForm.college_id || !admissionForm.course_id) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
     setSavingAdmission(true);
     try {
       await admissionsAPI.update(editingAdmission.id, {
+        candidate_name: admissionForm.candidate_name,
+        place: admissionForm.place,
+        college_id: admissionForm.college_id,
+        course_id: admissionForm.course_id,
+        admission_date: admissionForm.admission_date,
+        total_fees: parseFloat(admissionForm.total_fees) || editingAdmission.total_fees,
         instalments: admissionForm.instalments.map(inst => ({
           amount: parseFloat(inst.amount) || 0,
           paid_date: inst.paid_date,
           description: inst.description
         })).filter(inst => inst.amount > 0),
-        remark: admissionForm.remark
+        remark: admissionForm.remark,
+        scholarship_amount: admissionForm.scholarship_amount ? parseFloat(admissionForm.scholarship_amount) : null
       });
       toast.success('Admission updated');
       setEditAdmissionOpen(false);
