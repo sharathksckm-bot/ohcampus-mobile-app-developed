@@ -68,6 +68,7 @@ export const feesAPI = {
   getAll: (params) => api.get('/fees', { params }),
   getByCollege: (collegeId) => api.get(`/colleges/${collegeId}/fees`),
   create: (data) => api.post('/fees', data),
+  createBulk: (data) => api.post('/fees/bulk', data),
   update: (id, data) => api.put(`/fees/${id}`, data),
   delete: (id) => api.delete(`/fees/${id}`),
   importCSV: (file) => {

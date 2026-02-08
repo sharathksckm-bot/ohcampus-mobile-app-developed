@@ -380,6 +380,64 @@ async def create_fee(fee_data: FeeBase, current_user: dict = Depends(require_adm
     await db.fees.insert_one(fee.model_dump())
     return fee
 
+# Bulk fee creation model
+class BulkFeeItem(BaseModel):
+    year_or_semester: int
+    amount: float
+    hostel_fee: Optional[float] = None
+    description: Optional[str] = None
+
+class BulkFeeCreate(BaseModel):
+    college_id: str
+    course_id: str
+    fee_type: str  # annual or semester
+    fees: List[BulkFeeItem]
+
+@api_router.post("/fees/bulk", status_code=status.HTTP_201_CREATED)
+async def create_bulk_fees(bulk_data: BulkFeeCreate, current_user: dict = Depends(require_admin)):
+    """Create multiple fees at once for a course (all years or all semesters)"""
+    # Validate college exists
+    college = await db.colleges.find_one({"id": bulk_data.college_id})
+    if not college:
+        raise HTTPException(status_code=404, detail="College not found")
+    
+    # Validate course exists
+    course = await db.courses.find_one({"id": bulk_data.course_id})
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    # Delete existing fees for this college-course-fee_type combination
+    await db.fees.delete_many({
+        "college_id": bulk_data.college_id,
+        "course_id": bulk_data.course_id,
+        "fee_type": bulk_data.fee_type
+    })
+    
+    # Create new fee records
+    created_fees = []
+    for fee_item in bulk_data.fees:
+        fee_data = {
+            "id": str(uuid.uuid4()),
+            "college_id": bulk_data.college_id,
+            "course_id": bulk_data.course_id,
+            "fee_type": bulk_data.fee_type,
+            "year_or_semester": fee_item.year_or_semester,
+            "amount": fee_item.amount,
+            "hostel_fee": fee_item.hostel_fee,
+            "admission_fee": None,
+            "description": fee_item.description,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.fees.insert_one(fee_data)
+        created_fees.append(fee_data)
+    
+    return {
+        "message": f"Successfully created {len(created_fees)} fee records",
+        "fees_count": len(created_fees),
+        "fees": [{k: v for k, v in f.items() if k != '_id'} for f in created_fees]
+    }
+
 @api_router.put("/fees/{fee_id}", response_model=Fee)
 async def update_fee(fee_id: str, fee_data: FeeBase, current_user: dict = Depends(require_admin)):
     existing = await db.fees.find_one({"id": fee_id})
