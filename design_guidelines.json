@@ -1,0 +1,151 @@
+{
+  "identity": {
+    "name": "OhCampus Counselor Platform",
+    "persona": "The Performance Pro",
+    "principles": [
+      "Fusion over Imitation: Mix educational trust with tech efficiency.",
+      "Emotion First: Confidence and Clarity.",
+      "Content is King: Data (Fees/Courses) must be legible and scannable.",
+      "Zoom in: Focus on key details (Fees, Highlights).",
+      "Negative Space: Generous padding to prevent data fatigue."
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Manrope, sans-serif",
+      "body": "Public Sans, sans-serif"
+    },
+    "scale": {
+      "h1": "text-4xl font-bold tracking-tight lg:text-5xl",
+      "h2": "text-3xl font-semibold tracking-tight",
+      "h3": "text-2xl font-semibold tracking-tight",
+      "h4": "text-xl font-semibold tracking-tight",
+      "p": "leading-7 [&:not(:first-child)]:mt-6",
+      "small": "text-sm font-medium leading-none"
+    },
+    "imports": [
+      "@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Public+Sans:wght@400;500;600&display=swap');"
+    ]
+  },
+  "colors": {
+    "primary": {
+      "DEFAULT": "#0066CC",
+      "foreground": "#FFFFFF",
+      "hover": "#0052A3",
+      "active": "#003D7A"
+    },
+    "accent": {
+      "DEFAULT": "#FF6B35",
+      "foreground": "#FFFFFF",
+      "hover": "#E55A2B"
+    },
+    "background": {
+      "DEFAULT": "#F8FAFC",
+      "paper": "#FFFFFF",
+      "subtle": "#F1F5F9"
+    },
+    "text": {
+      "primary": "#0F172A",
+      "secondary": "#475569",
+      "muted": "#94A3B8"
+    },
+    "status": {
+      "success": "#10B981",
+      "warning": "#F59E0B",
+      "error": "#EF4444",
+      "info": "#3B82F6"
+    },
+    "border": "#E2E8F0"
+  },
+  "layout": {
+    "spacing": {
+      "container_padding": "p-6 md:p-12",
+      "section_gap": "gap-8 md:gap-12",
+      "element_gap": "gap-4"
+    },
+    "grids": {
+      "featured_colleges": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8",
+      "admin_dashboard": "grid grid-cols-1 md:grid-cols-4 gap-6",
+      "fee_table": "w-full border-collapse"
+    },
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#0066CC] text-white hover:bg-[#0052A3] rounded-full px-8 py-3 font-semibold transition-all shadow-md hover:shadow-lg",
+      "secondary": "bg-white text-[#0066CC] border-2 border-[#0066CC] hover:bg-[#F0F9FF] rounded-full px-8 py-3 font-semibold transition-all",
+      "ghost": "text-[#475569] hover:text-[#0F172A] hover:bg-[#F1F5F9] rounded-md px-4 py-2 transition-colors"
+    },
+    "cards": {
+      "college": "bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden group",
+      "admin_stat": "bg-white p-6 rounded-xl border border-slate-100 shadow-sm"
+    },
+    "inputs": {
+      "default": "flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+    },
+    "badges": {
+      "featured": "bg-[#FF6B35] text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm"
+    }
+  },
+  "visual_enhancers": {
+    "shadows": {
+      "soft": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
+      "hover": "0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025)"
+    },
+    "radius": {
+      "default": "0.75rem",
+      "button": "9999px"
+    },
+    "glassmorphism": "bg-white/80 backdrop-blur-md border border-white/20 shadow-lg"
+  },
+  "image_urls": {
+    "college_placeholders": [
+      "https://images.unsplash.com/photo-1664273891579-22f28332f3c4?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1760131556605-7f2e63d00385?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1670284768187-5cc68eada1b3?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1759299615947-bc798076b479?crop=entropy&cs=srgb&fm=jpg&q=85"
+    ],
+    "student_placeholders": [
+      "https://images.unsplash.com/photo-1758270704025-0e1a1793e1ca?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1758270705172-07b53627dfcb?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "https://images.unsplash.com/photo-1758270705317-3ef6142d306f?crop=entropy&cs=srgb&fm=jpg&q=85"
+    ],
+    "logo": "https://ohcampus.com/assets/images/logo/logo.png"
+  },
+  "instructions_to_main_agent": {
+    "general": [
+      "Use 'Manrope' for all headings and 'Public Sans' for body text.",
+      "Implement a 'Light Mode' first approach. The dashboard should feel airy and clean.",
+      "Use the 'Tetris' grid layout for the Featured Colleges list in the Counselor View.",
+      "For the Admin Fee Management, use a 'Tabs' component to switch between Annual, Semester, and Hostel fees.",
+      "Ensure all interactive elements have 'data-testid' attributes.",
+      "Use 'sonner' for all toast notifications.",
+      "Do NOT use gradients for backgrounds; use solid colors or subtle noise textures if needed.",
+      "Ensure the 'Featured' badge is prominent on college cards using the Accent color (#FF6B35)."
+    ],
+    "admin_panel": [
+      "The Admin Panel should have a sidebar navigation.",
+      "Use 'Table' components from Shadcn for displaying fee structures.",
+      "Forms for adding fees should use 'Dialog' or 'Sheet' components to keep context.",
+      "Course-wise fees should be grouped using 'Accordion' or clear section headers."
+    ],
+    "counselor_view": [
+      "The Home page should feature a prominent Search/Filter bar (State, City, Category).",
+      "College Detail pages should use a 'Sticky' side navigation or 'Tabs' for Highlights/News/Fees.",
+      "Fee tables in the Counselor view must be read-only and easy to compare."
+    ]
+  },
+  "universal_guidelines": [
+    "Avoid 'AI slop' aesthetics (generic centered layouts, uniform styling).",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur) for sticky headers.",
+    "Do NOT apply universal transitions (e.g., 'transition: all').",
+    "Do NOT center align the app container.",
+    "Always use modern button styles (pill-shaped or sharp).",
+    "Every interaction needs micro-animations (hover, focus, active).",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Prioritize using pre-existing components from 'src/components/ui'.",
+    "Components MUST use named exports.",
+    "Pages MUST use default exports."
+  ]
+}
