@@ -55,6 +55,7 @@ import {
   Receipt,
   X,
   MessageSquare,
+  Gift,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
