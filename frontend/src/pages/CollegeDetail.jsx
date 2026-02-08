@@ -42,9 +42,31 @@ import {
   AlertTriangle,
   Info,
   Clock,
-  Megaphone
+  Megaphone,
+  Check,
+  XCircle,
+  Users
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Seat status configuration
+const SEAT_STATUS_CONFIG = {
+  'Available': { color: 'bg-green-100 text-green-700 border-green-200', icon: Check },
+  'Closing': { color: 'bg-yellow-100 text-yellow-700 border-yellow-200', icon: AlertTriangle },
+  'Under Waiting': { color: 'bg-blue-100 text-blue-700 border-blue-200', icon: Clock },
+  'Closed': { color: 'bg-red-100 text-red-700 border-red-200', icon: XCircle },
+};
+
+const getSeatStatusBadge = (status) => {
+  const config = SEAT_STATUS_CONFIG[status] || SEAT_STATUS_CONFIG['Available'];
+  const Icon = config.icon;
+  return (
+    <Badge className={`${config.color} border font-body`} data-testid="seat-status-badge">
+      <Icon className="h-3 w-3 mr-1" />
+      {status}
+    </Badge>
+  );
+};
 
 export default function CollegeDetail() {
   const { collegeId } = useParams();
