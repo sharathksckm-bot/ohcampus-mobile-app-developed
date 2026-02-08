@@ -95,6 +95,7 @@ class CourseBase(BaseModel):
     level: str  # UG, PG, Doctoral
     duration_years: Optional[int] = None  # For calculating fee periods
     duration_semesters: Optional[int] = None  # For calculating fee periods
+    seat_status: str = "Available"  # Available, Closing, Under Waiting, Closed
 
 class Course(CourseBase):
     model_config = ConfigDict(extra="ignore")
