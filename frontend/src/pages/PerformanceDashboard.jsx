@@ -201,6 +201,13 @@ export default function PerformanceDashboard() {
     }
   }, [scholarshipViewBy]);
 
+  // Re-fetch scholarship data when view changes
+  useEffect(() => {
+    if (scholarshipData) {
+      fetchScholarshipSummary();
+    }
+  }, [scholarshipViewBy]);
+
   // Fetch target alerts
   const fetchTargetAlerts = useCallback(async () => {
     setLoadingAlerts(true);
