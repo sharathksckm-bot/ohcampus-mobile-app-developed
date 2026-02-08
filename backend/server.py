@@ -292,6 +292,22 @@ async def require_target_assigner(current_user: dict = Depends(get_current_user)
         return current_user
     raise HTTPException(status_code=403, detail="Admin, Team Lead, or Admission Manager access required")
 
+# Helper function to log activities
+async def log_activity(user_id: str, user_name: str, user_email: str, action: str, entity_type: str, entity_id: str = None, details: str = None):
+    """Log user activity"""
+    log_entry = {
+        "id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "user_name": user_name,
+        "user_email": user_email,
+        "action": action,
+        "entity_type": entity_type,
+        "entity_id": entity_id,
+        "details": details,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.activity_logs.insert_one(log_entry)
+
 # ===================== AUTH ENDPOINTS =====================
 
 @api_router.post("/auth/register", response_model=TokenResponse)
