@@ -188,6 +188,32 @@ export default function PerformanceDashboard() {
     }
   }, [filterCollege, filterCounselor]);
 
+  // Fetch scholarship summary
+  const fetchScholarshipSummary = useCallback(async () => {
+    setLoadingScholarship(true);
+    try {
+      const res = await statsAPI.getScholarshipSummary(scholarshipViewBy);
+      setScholarshipData(res.data);
+    } catch (error) {
+      toast.error('Failed to load scholarship data');
+    } finally {
+      setLoadingScholarship(false);
+    }
+  }, [scholarshipViewBy]);
+
+  // Fetch target alerts
+  const fetchTargetAlerts = useCallback(async () => {
+    setLoadingAlerts(true);
+    try {
+      const res = await statsAPI.getTargetAlerts();
+      setAlertsData(res.data);
+    } catch (error) {
+      toast.error('Failed to load target alerts');
+    } finally {
+      setLoadingAlerts(false);
+    }
+  }, []);
+
   // Target handlers
   const handleOpenTargetDialog = (target = null) => {
     if (target) {
