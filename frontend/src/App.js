@@ -105,6 +105,14 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/admin/colleges" 
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <CollegeManagement />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Catch all - redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
