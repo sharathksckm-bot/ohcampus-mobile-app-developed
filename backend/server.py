@@ -140,6 +140,7 @@ class FiltersResponse(BaseModel):
     states: List[str]
     cities: List[str]
     categories: List[str]
+    courses: List[str] = []
 
 # ===================== HELPERS =====================
 
