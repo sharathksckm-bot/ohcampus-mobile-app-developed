@@ -105,6 +105,20 @@ class Target(TargetBase):
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
+# Activity Log Model
+class ActivityLog(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    user_name: str
+    user_email: str
+    action: str  # login, create_admission, update_admission, delete_admission, update_fee, create_user, update_user, reset_password
+    entity_type: str  # user, admission, fee, target
+    entity_id: Optional[str] = None
+    details: Optional[str] = None
+    ip_address: Optional[str] = None
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
 class LoginRequest(BaseModel):
     email: str
     password: str
