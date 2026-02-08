@@ -1,20 +1,26 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/layout/Navbar';
 import { filtersAPI, collegesAPI, seedAPI } from '../lib/api';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../components/ui/select';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
 import { Skeleton } from '../components/ui/skeleton';
 import { Checkbox } from '../components/ui/checkbox';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '../components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '../components/ui/popover';
 import { 
   Search, 
   MapPin, 
@@ -27,13 +33,133 @@ import {
   Sparkles,
   GitCompare,
   BookOpen,
-  X
+  X,
+  ChevronDown,
+  Check
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+// Multi-select filter component with search
+function MultiSelectFilter({ 
+  options, 
+  selected, 
+  onSelectionChange, 
+  placeholder, 
+  icon: Icon,
+  testId
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const filteredOptions = useMemo(() => {
+    if (!search) return options;
+    return options.filter(opt => 
+      opt.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [options, search]);
+
+  const toggleOption = (option) => {
+    if (selected.includes(option)) {
+      onSelectionChange(selected.filter(s => s !== option));
+    } else {
+      onSelectionChange([...selected, option]);
+    }
+  };
+
+  const clearSelection = (e) => {
+    e.stopPropagation();
+    onSelectionChange([]);
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full lg:w-52 h-12 justify-between font-body border-slate-300 hover:bg-slate-50"
+          data-testid={testId}
+        >
+          <div className="flex items-center gap-2 truncate">
+            {Icon && <Icon className="h-4 w-4 text-[#94A3B8] flex-shrink-0" />}
+            {selected.length === 0 ? (
+              <span className="text-[#94A3B8]">{placeholder}</span>
+            ) : selected.length === 1 ? (
+              <span className="truncate">{selected[0]}</span>
+            ) : (
+              <span className="truncate">{selected.length} selected</span>
+            )}
+          </div>
+          <div className="flex items-center gap-1">
+            {selected.length > 0 && (
+              <button 
+                onClick={clearSelection} 
+                className="p-1 hover:bg-slate-200 rounded"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            )}
+            <ChevronDown className="h-4 w-4 opacity-50" />
+          </div>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-64 p-0" align="start">
+        <Command>
+          <CommandInput 
+            placeholder={`Search ${placeholder.toLowerCase()}...`}
+            value={search}
+            onValueChange={setSearch}
+          />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup className="max-h-64 overflow-y-auto">
+              {filteredOptions.map((option) => (
+                <CommandItem
+                  key={option}
+                  onSelect={() => toggleOption(option)}
+                  className="cursor-pointer"
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <Checkbox 
+                      checked={selected.includes(option)}
+                      className="pointer-events-none"
+                    />
+                    <span className="truncate">{option}</span>
+                  </div>
+                  {selected.includes(option) && (
+                    <Check className="h-4 w-4 text-[#0066CC] ml-auto" />
+                  )}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+        {selected.length > 0 && (
+          <div className="p-2 border-t border-slate-200">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => onSelectionChange([])}
+              className="w-full text-xs"
+            >
+              Clear all ({selected.length})
+            </Button>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 export default function Dashboard() {
   const [filters, setFilters] = useState({ states: [], cities: [], categories: [], courses: [] });
-  const [selectedFilters, setSelectedFilters] = useState({ state: '', city: '', category: '', course: '' });
+  const [selectedFilters, setSelectedFilters] = useState({ 
+    states: [], 
+    cities: [], 
+    categories: [], 
+    courses: [] 
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [colleges, setColleges] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,19 +182,51 @@ export default function Dashboard() {
     }
   }, []);
 
-  // Fetch colleges
+  // Fetch colleges with multi-select filters
   const fetchColleges = useCallback(async () => {
     try {
       setLoading(true);
       const params = {};
-      if (selectedFilters.state) params.state = selectedFilters.state;
-      if (selectedFilters.city) params.city = selectedFilters.city;
-      if (selectedFilters.category) params.category = selectedFilters.category;
-      if (selectedFilters.course) params.course = selectedFilters.course;
-      if (searchQuery) params.search = searchQuery;
+      
+      // For multi-select, we'll filter on the frontend for now
+      // Backend can be extended to support comma-separated values
+      if (selectedFilters.states.length === 1) {
+        params.state = selectedFilters.states[0];
+      }
+      if (selectedFilters.cities.length === 1) {
+        params.city = selectedFilters.cities[0];
+      }
+      if (selectedFilters.categories.length === 1) {
+        params.category = selectedFilters.categories[0];
+      }
+      if (selectedFilters.courses.length === 1) {
+        params.course = selectedFilters.courses[0];
+      }
+      if (searchQuery) {
+        params.search = searchQuery;
+      }
       
       const response = await collegesAPI.getAll(params);
-      setColleges(response.data);
+      let filteredColleges = response.data;
+      
+      // Client-side filtering for multi-select
+      if (selectedFilters.states.length > 1) {
+        filteredColleges = filteredColleges.filter(c => 
+          selectedFilters.states.includes(c.state)
+        );
+      }
+      if (selectedFilters.cities.length > 1) {
+        filteredColleges = filteredColleges.filter(c => 
+          selectedFilters.cities.includes(c.city)
+        );
+      }
+      if (selectedFilters.categories.length > 1) {
+        filteredColleges = filteredColleges.filter(c => 
+          selectedFilters.categories.includes(c.category)
+        );
+      }
+      
+      setColleges(filteredColleges);
     } catch (error) {
       console.error('Failed to fetch colleges:', error);
       toast.error('Failed to load colleges');
@@ -101,25 +259,32 @@ export default function Dashboard() {
   }, [fetchColleges]);
 
   // Update cities when state changes
-  const handleStateChange = async (state) => {
-    setSelectedFilters(prev => ({ ...prev, state, city: '' }));
-    if (state) {
+  const handleStateChange = async (states) => {
+    setSelectedFilters(prev => ({ ...prev, states, cities: [] }));
+    if (states.length === 1) {
       try {
-        const response = await filtersAPI.getCitiesByState(state);
+        const response = await filtersAPI.getCitiesByState(states[0]);
         setFilters(prev => ({ ...prev, cities: response.data.cities }));
       } catch (error) {
         console.error('Failed to fetch cities:', error);
       }
-    } else {
+    } else if (states.length === 0) {
       const response = await filtersAPI.getAll();
       setFilters(prev => ({ ...prev, cities: response.data.cities }));
     }
   };
 
   const clearFilters = () => {
-    setSelectedFilters({ state: '', city: '', category: '', course: '' });
+    setSelectedFilters({ states: [], cities: [], categories: [], courses: [] });
     setSearchQuery('');
   };
+
+  const hasActiveFilters = 
+    selectedFilters.states.length > 0 || 
+    selectedFilters.cities.length > 0 || 
+    selectedFilters.categories.length > 0 || 
+    selectedFilters.courses.length > 0 ||
+    searchQuery;
 
   const toggleCompareSelection = (college) => {
     if (selectedForCompare.find(c => c.id === college.id)) {
@@ -165,17 +330,17 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Compare Mode Banner */}
+      {/* Compare Mode Banner - Fixed z-index and positioning */}
       {compareMode && (
-        <div className="bg-[#FF6B35] text-white py-3 px-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <GitCompare className="h-5 w-5" />
+        <div className="bg-[#FF6B35] text-white py-3 px-4 relative z-20">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <GitCompare className="h-5 w-5 flex-shrink-0" />
               <span className="font-body font-medium">
                 Comparison Mode: {selectedForCompare.length}/4 colleges selected
               </span>
               {selectedForCompare.length > 0 && (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {selectedForCompare.map(c => (
                     <Badge key={c.id} variant="secondary" className="bg-white/20 text-white">
                       {c.name.split(' ')[0]}
@@ -190,7 +355,7 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <Button
                 onClick={handleCompare}
                 disabled={selectedForCompare.length < 2}
@@ -214,8 +379,8 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Filters Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
+      {/* Filters Section - Fixed z-index */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
         <Card className="shadow-lg border-0">
           <CardContent className="p-6">
             <div className="flex flex-col gap-4">
@@ -244,99 +409,113 @@ export default function Dashboard() {
                 )}
               </div>
 
-              {/* Second Row - Filters */}
-              <div className="flex flex-col lg:flex-row gap-4">
-                {/* State Filter */}
-                <Select 
-                  value={selectedFilters.state} 
-                  onValueChange={handleStateChange}
-                >
-                  <SelectTrigger 
-                    className="w-full lg:w-44 h-12 font-body border-slate-300"
-                    data-testid="state-filter"
-                  >
-                    <MapPin className="h-4 w-4 mr-2 text-[#94A3B8]" />
-                    <SelectValue placeholder="Select State" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All States</SelectItem>
-                    {filters.states.map((state) => (
-                      <SelectItem key={state} value={state}>{state}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              {/* Second Row - Multi-Select Filters */}
+              <div className="flex flex-col lg:flex-row gap-4 flex-wrap">
+                {/* State Filter - Multi-select with search */}
+                <MultiSelectFilter
+                  options={filters.states}
+                  selected={selectedFilters.states}
+                  onSelectionChange={handleStateChange}
+                  placeholder="Select States"
+                  icon={MapPin}
+                  testId="state-filter"
+                />
 
-                {/* City Filter */}
-                <Select 
-                  value={selectedFilters.city} 
-                  onValueChange={(value) => setSelectedFilters(prev => ({ ...prev, city: value === 'all' ? '' : value }))}
-                >
-                  <SelectTrigger 
-                    className="w-full lg:w-44 h-12 font-body border-slate-300"
-                    data-testid="city-filter"
-                  >
-                    <Building2 className="h-4 w-4 mr-2 text-[#94A3B8]" />
-                    <SelectValue placeholder="Select City" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Cities</SelectItem>
-                    {filters.cities.map((city) => (
-                      <SelectItem key={city} value={city}>{city}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {/* City Filter - Multi-select with search */}
+                <MultiSelectFilter
+                  options={filters.cities}
+                  selected={selectedFilters.cities}
+                  onSelectionChange={(cities) => setSelectedFilters(prev => ({ ...prev, cities }))}
+                  placeholder="Select Cities"
+                  icon={Building2}
+                  testId="city-filter"
+                />
 
-                {/* Category Filter */}
-                <Select 
-                  value={selectedFilters.category} 
-                  onValueChange={(value) => setSelectedFilters(prev => ({ ...prev, category: value === 'all' ? '' : value }))}
-                >
-                  <SelectTrigger 
-                    className="w-full lg:w-44 h-12 font-body border-slate-300"
-                    data-testid="category-filter"
-                  >
-                    <GraduationCap className="h-4 w-4 mr-2 text-[#94A3B8]" />
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {filters.categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {/* Category Filter - Multi-select with search */}
+                <MultiSelectFilter
+                  options={filters.categories}
+                  selected={selectedFilters.categories}
+                  onSelectionChange={(categories) => setSelectedFilters(prev => ({ ...prev, categories }))}
+                  placeholder="Select Categories"
+                  icon={GraduationCap}
+                  testId="category-filter"
+                />
 
-                {/* Course Filter */}
-                <Select 
-                  value={selectedFilters.course} 
-                  onValueChange={(value) => setSelectedFilters(prev => ({ ...prev, course: value === 'all' ? '' : value }))}
-                >
-                  <SelectTrigger 
-                    className="w-full lg:w-52 h-12 font-body border-slate-300"
-                    data-testid="course-filter"
-                  >
-                    <BookOpen className="h-4 w-4 mr-2 text-[#94A3B8]" />
-                    <SelectValue placeholder="Select Course" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Courses</SelectItem>
-                    {filters.courses.map((course) => (
-                      <SelectItem key={course} value={course}>{course}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {/* Course Filter - Multi-select with search */}
+                <MultiSelectFilter
+                  options={filters.courses}
+                  selected={selectedFilters.courses}
+                  onSelectionChange={(courses) => setSelectedFilters(prev => ({ ...prev, courses }))}
+                  placeholder="Select Courses"
+                  icon={BookOpen}
+                  testId="course-filter"
+                />
 
                 {/* Clear Filters */}
-                <Button
-                  variant="outline"
-                  onClick={clearFilters}
-                  className="h-12 px-4 font-body border-slate-300 hover:bg-slate-50"
-                  data-testid="clear-filters-btn"
-                >
-                  <Filter className="h-4 w-4 mr-2" />
-                  Clear
-                </Button>
+                {hasActiveFilters && (
+                  <Button
+                    variant="outline"
+                    onClick={clearFilters}
+                    className="h-12 px-4 font-body border-red-300 text-red-600 hover:bg-red-50"
+                    data-testid="clear-filters-btn"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Clear All
+                  </Button>
+                )}
               </div>
+
+              {/* Active Filters Display */}
+              {hasActiveFilters && (
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
+                  <span className="text-sm text-[#475569] font-body">Active filters:</span>
+                  {selectedFilters.states.map(s => (
+                    <Badge key={s} variant="secondary" className="bg-blue-100 text-blue-700">
+                      <MapPin className="h-3 w-3 mr-1" />
+                      {s}
+                      <button onClick={() => handleStateChange(selectedFilters.states.filter(x => x !== s))} className="ml-1">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                  {selectedFilters.cities.map(c => (
+                    <Badge key={c} variant="secondary" className="bg-green-100 text-green-700">
+                      <Building2 className="h-3 w-3 mr-1" />
+                      {c}
+                      <button onClick={() => setSelectedFilters(prev => ({ ...prev, cities: prev.cities.filter(x => x !== c) }))} className="ml-1">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                  {selectedFilters.categories.map(cat => (
+                    <Badge key={cat} variant="secondary" className="bg-purple-100 text-purple-700">
+                      <GraduationCap className="h-3 w-3 mr-1" />
+                      {cat}
+                      <button onClick={() => setSelectedFilters(prev => ({ ...prev, categories: prev.categories.filter(x => x !== cat) }))} className="ml-1">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                  {selectedFilters.courses.map(course => (
+                    <Badge key={course} variant="secondary" className="bg-orange-100 text-orange-700">
+                      <BookOpen className="h-3 w-3 mr-1" />
+                      {course.length > 20 ? course.substring(0, 20) + '...' : course}
+                      <button onClick={() => setSelectedFilters(prev => ({ ...prev, courses: prev.courses.filter(x => x !== course) }))} className="ml-1">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                  {searchQuery && (
+                    <Badge variant="secondary" className="bg-slate-100 text-slate-700">
+                      <Search className="h-3 w-3 mr-1" />
+                      "{searchQuery}"
+                      <button onClick={() => setSearchQuery('')} className="ml-1">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  )}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -444,6 +623,14 @@ export default function Dashboard() {
                           </svg>
                         )}
                       </div>
+                    </div>
+                  )}
+                  {/* Admission Alerts Indicator */}
+                  {college.admission_alerts && college.admission_alerts.length > 0 && (
+                    <div className="absolute bottom-4 left-4">
+                      <Badge className="bg-red-500 hover:bg-red-500 text-white font-body animate-pulse">
+                        {college.admission_alerts.length} Alert{college.admission_alerts.length > 1 ? 's' : ''}
+                      </Badge>
                     </div>
                   )}
                 </div>
