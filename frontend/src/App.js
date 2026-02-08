@@ -50,14 +50,6 @@ function AppRoutes() {
           </AuthRedirect>
         } 
       />
-      <Route 
-        path="/register" 
-        element={
-          <AuthRedirect>
-            <Register />
-          </AuthRedirect>
-        } 
-      />
 
       {/* Counselor Routes */}
       <Route 
