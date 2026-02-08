@@ -1497,16 +1497,73 @@ async def seed_database():
             "job_profiles": ["VLSI Design Engineer", "Physical Design Engineer", "Verification Engineer", "ASIC Designer", "RTL Designer", "Layout Engineer"]
         },
     ]
-        {"id": "course-17", "name": "B.Tech - Information Technology", "college_id": "col-6", "duration": "4 Years", "level": "UG", "duration_years": 4, "duration_semesters": 8, "seat_status": "Available"},
-        {"id": "course-18", "name": "BCA - Bachelor of Computer Applications", "college_id": "col-6", "duration": "3 Years", "level": "UG", "duration_years": 3, "duration_semesters": 6, "seat_status": "Available"},
-        
-        # Christ University Courses
-        {"id": "course-19", "name": "MBA - Marketing", "college_id": "col-7", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4, "seat_status": "Closing"},
-        {"id": "course-20", "name": "B.Com - Honours", "college_id": "col-7", "duration": "3 Years", "level": "UG", "duration_years": 3, "duration_semesters": 6, "seat_status": "Available"},
-        
-        # VIT Courses
-        {"id": "course-21", "name": "B.Tech - Biotechnology", "college_id": "col-8", "duration": "4 Years", "level": "UG", "duration_years": 4, "duration_semesters": 8, "seat_status": "Available"},
-        {"id": "course-22", "name": "M.Tech - VLSI Design", "college_id": "col-8", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4, "seat_status": "Available"},
+    
+    # Sample placements data
+    placements_data = [
+        {
+            "college_id": "col-1",
+            "description": "AIMS has a dedicated placement cell with strong industry connections. Average placement rate has been consistently above 90%.",
+            "stats": [
+                {"year": "2024", "highest_package": 2500000, "average_package": 850000, "median_package": 750000, "placement_rate": 92, "total_offers": 280, "top_recruiters": ["Deloitte", "KPMG", "EY", "Amazon", "Infosys"]},
+                {"year": "2023", "highest_package": 2200000, "average_package": 800000, "median_package": 700000, "placement_rate": 90, "total_offers": 265, "top_recruiters": ["PwC", "Accenture", "TCS", "Wipro", "HDFC Bank"]},
+            ]
+        },
+        {
+            "college_id": "col-2",
+            "description": "PES University has exceptional placement records with top tech companies recruiting from campus. Strong alumni network in Silicon Valley.",
+            "stats": [
+                {"year": "2024", "highest_package": 6500000, "average_package": 1800000, "median_package": 1500000, "placement_rate": 98, "total_offers": 950, "top_recruiters": ["Google", "Microsoft", "Amazon", "Goldman Sachs", "Uber"]},
+                {"year": "2023", "highest_package": 5800000, "average_package": 1650000, "median_package": 1400000, "placement_rate": 96, "total_offers": 920, "top_recruiters": ["Meta", "Apple", "Adobe", "Flipkart", "Oracle"]},
+            ]
+        },
+        {
+            "college_id": "col-3",
+            "description": "Alliance University focuses on global placements with students placed in multinational companies across India and abroad.",
+            "stats": [
+                {"year": "2024", "highest_package": 3200000, "average_package": 1100000, "median_package": 950000, "placement_rate": 88, "total_offers": 310, "top_recruiters": ["McKinsey", "BCG", "Bain", "HSBC", "Standard Chartered"]},
+                {"year": "2023", "highest_package": 2800000, "average_package": 1000000, "median_package": 900000, "placement_rate": 86, "total_offers": 290, "top_recruiters": ["JP Morgan", "Citi", "American Express", "Aditya Birla Group", "Mahindra"]},
+            ]
+        },
+        {
+            "college_id": "col-4",
+            "description": "SRM Institute has tie-ups with 600+ companies. Focus on industry-ready graduates with pre-placement training.",
+            "stats": [
+                {"year": "2024", "highest_package": 4200000, "average_package": 1200000, "median_package": 1000000, "placement_rate": 94, "total_offers": 1800, "top_recruiters": ["TCS", "Cognizant", "Infosys", "Wipro", "Tech Mahindra"]},
+                {"year": "2023", "highest_package": 3800000, "average_package": 1100000, "median_package": 950000, "placement_rate": 92, "total_offers": 1650, "top_recruiters": ["HCL", "L&T", "Siemens", "Bosch", "Samsung"]},
+            ]
+        },
+        {
+            "college_id": "col-5",
+            "description": "Manipal's medical graduates are highly sought after. Hospital placements include Manipal Hospitals, Apollo, and international healthcare institutions.",
+            "stats": [
+                {"year": "2024", "highest_package": 2000000, "average_package": 900000, "median_package": 800000, "placement_rate": 100, "total_offers": 450, "top_recruiters": ["Manipal Hospitals", "Apollo", "Fortis", "Max Healthcare", "Narayana Health"]},
+                {"year": "2023", "highest_package": 1800000, "average_package": 850000, "median_package": 750000, "placement_rate": 100, "total_offers": 440, "top_recruiters": ["AIIMS", "NIMHANS", "CMC Vellore", "Tata Memorial", "Medanta"]},
+            ]
+        },
+        {
+            "college_id": "col-6",
+            "description": "REVA has developed strong placement partnerships with IT companies in Bangalore. Campus recruitment drives held throughout the year.",
+            "stats": [
+                {"year": "2024", "highest_package": 1800000, "average_package": 650000, "median_package": 550000, "placement_rate": 82, "total_offers": 380, "top_recruiters": ["Infosys", "Wipro", "TCS", "Mindtree", "Mphasis"]},
+                {"year": "2023", "highest_package": 1500000, "average_package": 600000, "median_package": 500000, "placement_rate": 80, "total_offers": 350, "top_recruiters": ["Capgemini", "CGI", "Virtusa", "IBM", "Accenture"]},
+            ]
+        },
+        {
+            "college_id": "col-7",
+            "description": "Christ University known for excellent placements in Banking, FMCG, and Marketing sectors. Strong emphasis on soft skills training.",
+            "stats": [
+                {"year": "2024", "highest_package": 2800000, "average_package": 950000, "median_package": 800000, "placement_rate": 90, "total_offers": 520, "top_recruiters": ["Goldman Sachs", "KPMG", "EY", "P&G", "Unilever"]},
+                {"year": "2023", "highest_package": 2500000, "average_package": 900000, "median_package": 750000, "placement_rate": 88, "total_offers": 480, "top_recruiters": ["Deloitte", "Nestle", "ITC", "Asian Paints", "ICICI Bank"]},
+            ]
+        },
+        {
+            "college_id": "col-8",
+            "description": "VIT has one of the largest placement programs in India with 500+ companies visiting campus annually.",
+            "stats": [
+                {"year": "2024", "highest_package": 5500000, "average_package": 1400000, "median_package": 1200000, "placement_rate": 95, "total_offers": 2100, "top_recruiters": ["Microsoft", "Google", "Amazon", "Samsung", "Intel"]},
+                {"year": "2023", "highest_package": 5000000, "average_package": 1300000, "median_package": 1100000, "placement_rate": 94, "total_offers": 2000, "top_recruiters": ["Cisco", "VMware", "PayPal", "Qualcomm", "Texas Instruments"]},
+            ]
+        }
     ]
     
     # Sample fees data - comprehensive year/semester wise
