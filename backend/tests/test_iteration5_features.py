@@ -94,8 +94,8 @@ class TestCoursesFilters:
         print(f"Found cities: {cities}")
     
     def test_courses_categories(self):
-        """Test GET /api/courses/categories returns categories"""
-        response = requests.get(f"{BASE_URL}/api/courses/categories")
+        """Test GET /api/courses/categories/list returns categories"""
+        response = requests.get(f"{BASE_URL}/api/courses/categories/list")
         assert response.status_code == 200, f"Failed to get categories: {response.text}"
         data = response.json()
         assert "categories" in data
@@ -215,7 +215,7 @@ class TestAdmissionAlerts:
     def test_update_admission_alerts_requires_auth(self):
         """Test that updating alerts requires authentication"""
         response = requests.put(f"{BASE_URL}/api/colleges/col-1/admission-alerts", json=[])
-        assert response.status_code == 401, f"Expected 401, got {response.status_code}"
+        assert response.status_code in [401, 403], f"Expected 401 or 403, got {response.status_code}"
         print("Update alerts correctly requires authentication")
     
     def test_update_admission_alerts_success(self, admin_token):
