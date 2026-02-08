@@ -269,6 +269,15 @@ async def require_admin_or_manager(current_user: dict = Depends(get_current_user
         return current_user
     raise HTTPException(status_code=403, detail="Admin or Admission Manager access required")
 
+async def require_target_assigner(current_user: dict = Depends(get_current_user)):
+    """Allow access to admin, Team Lead, or Admission Manager"""
+    if current_user.get("role") == "admin":
+        return current_user
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    if user and user.get("designation") in ["Team Lead", "Admission Manager"]:
+        return current_user
+    raise HTTPException(status_code=403, detail="Admin, Team Lead, or Admission Manager access required")
+
 # ===================== AUTH ENDPOINTS =====================
 
 @api_router.post("/auth/register", response_model=TokenResponse)
