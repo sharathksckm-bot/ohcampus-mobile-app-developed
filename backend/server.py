@@ -225,7 +225,8 @@ async def get_filters():
     states = await db.colleges.distinct("state", {"is_featured": True})
     cities = await db.colleges.distinct("city", {"is_featured": True})
     categories = await db.colleges.distinct("category", {"is_featured": True})
-    return FiltersResponse(states=sorted(states), cities=sorted(cities), categories=sorted(categories))
+    courses = await db.courses.distinct("name")
+    return FiltersResponse(states=sorted(states), cities=sorted(cities), categories=sorted(categories), courses=sorted(courses))
 
 @api_router.get("/filters/cities")
 async def get_cities_by_state(state: Optional[str] = None):
@@ -242,6 +243,7 @@ async def get_colleges(
     state: Optional[str] = None,
     city: Optional[str] = None,
     category: Optional[str] = None,
+    course: Optional[str] = None,
     search: Optional[str] = None
 ):
     query = {"is_featured": True}
@@ -254,8 +256,61 @@ async def get_colleges(
     if search:
         query["name"] = {"$regex": search, "$options": "i"}
     
+    # If course filter is applied, get college IDs that have this course
+    if course:
+        course_docs = await db.courses.find({"name": {"$regex": course, "$options": "i"}}, {"college_id": 1}).to_list(500)
+        college_ids = list(set([c["college_id"] for c in course_docs]))
+        if college_ids:
+            query["id"] = {"$in": college_ids}
+        else:
+            return []
+    
     colleges = await db.colleges.find(query, {"_id": 0}).to_list(100)
     return colleges
+
+@api_router.get("/colleges/compare")
+async def compare_colleges(college_ids: str):
+    """Compare multiple colleges - pass comma-separated IDs"""
+    ids = [id.strip() for id in college_ids.split(",")]
+    if len(ids) < 2:
+        raise HTTPException(status_code=400, detail="Please provide at least 2 college IDs to compare")
+    if len(ids) > 4:
+        raise HTTPException(status_code=400, detail="Maximum 4 colleges can be compared at once")
+    
+    result = []
+    for college_id in ids:
+        college = await db.colleges.find_one({"id": college_id}, {"_id": 0})
+        if college:
+            # Get courses for this college
+            courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+            # Get fees for this college
+            fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+            # Get admission charges
+            admission_charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+            
+            # Calculate total fees per course (excluding hostel)
+            fees_by_course = {}
+            for fee in fees:
+                course_id = fee["course_id"]
+                if course_id not in fees_by_course:
+                    fees_by_course[course_id] = {
+                        "total_tuition": 0,
+                        "total_hostel": 0,
+                        "fees": []
+                    }
+                fees_by_course[course_id]["total_tuition"] += fee.get("amount", 0)
+                fees_by_course[course_id]["total_hostel"] += fee.get("hostel_fee", 0) or 0
+                fees_by_course[course_id]["fees"].append(fee)
+            
+            result.append({
+                "college": college,
+                "courses": courses,
+                "fees": fees,
+                "fees_by_course": fees_by_course,
+                "admission_charges": admission_charges
+            })
+    
+    return result
 
 @api_router.get("/colleges/{college_id}", response_model=College)
 async def get_college(college_id: str):
