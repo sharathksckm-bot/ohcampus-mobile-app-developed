@@ -412,18 +412,28 @@ def main():
     print("\n📊 Testing Data Endpoints...")
     tester.test_get_filters()
     college_id = tester.test_get_colleges()
+    tester.test_colleges_with_course_filter()  # NEW: Test course filtering
     
     if college_id:
         tester.test_get_college_detail(college_id)
         course_id = tester.test_get_courses(college_id)
         tester.test_get_fees(college_id)
         tester.test_get_faqs(college_id)
+        tester.test_fee_summary(college_id)  # NEW: Test fee summary
+        tester.test_admission_charges(college_id)  # NEW: Test admission charges
+        
+        # Test comparison with multiple colleges (get more college IDs)
+        success, colleges_response = tester.run_test("Get All Colleges for Comparison", "GET", "colleges", 200)
+        if success and isinstance(colleges_response, list) and len(colleges_response) >= 2:
+            college_ids = [c['id'] for c in colleges_response[:4]]  # Get up to 4 college IDs
+            tester.test_compare_colleges(college_ids)  # NEW: Test comparison
         
         # Test admin operations
         if admin_login_success:
             print("\n👨‍💼 Testing Admin Operations...")
             fee_id = tester.test_admin_create_fee(college_id, course_id)
             faq_id = tester.test_admin_create_faq()
+            charges_id = tester.test_admin_create_admission_charges(college_id, course_id)  # NEW: Test admission charges creation
     
     # Test authorization
     print("\n🛡️ Testing Authorization...")
