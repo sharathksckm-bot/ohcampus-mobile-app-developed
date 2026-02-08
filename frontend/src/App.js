@@ -100,6 +100,14 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/performance" 
+        element={
+          <ProtectedRoute>
+            <CounselorPerformance />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Admin Routes */}
       <Route 
