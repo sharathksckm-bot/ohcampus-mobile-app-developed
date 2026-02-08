@@ -1407,6 +1407,7 @@ async def create_admission(admission_data: AdmissionCreate, current_user: dict =
         "balance": balance,
         "instalments": [inst.model_dump() for inst in admission_data.instalments],
         "remark": admission_data.remark,
+        "scholarship_amount": admission_data.scholarship_amount,
         "counselor_id": current_user["user_id"],
         "counselor_name": counselor.get("name") if counselor else None,
         "created_at": datetime.now(timezone.utc).isoformat(),
