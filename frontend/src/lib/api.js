@@ -50,8 +50,10 @@ export const filtersAPI = {
 export const collegesAPI = {
   getAll: (params) => api.get('/colleges', { params }),
   getById: (id) => api.get(`/colleges/${id}`),
+  compare: (collegeIds) => api.get(`/colleges/compare`, { params: { college_ids: collegeIds } }),
   create: (data) => api.post('/colleges', data),
   update: (id, data) => api.put(`/colleges/${id}`, data),
+  getFeeSummary: (collegeId) => api.get(`/colleges/${collegeId}/fee-summary`),
 };
 
 // Courses API
@@ -68,6 +70,15 @@ export const feesAPI = {
   create: (data) => api.post('/fees', data),
   update: (id, data) => api.put(`/fees/${id}`, data),
   delete: (id) => api.delete(`/fees/${id}`),
+};
+
+// Admission Charges API
+export const admissionChargesAPI = {
+  getAll: (params) => api.get('/admission-charges', { params }),
+  getByCollege: (collegeId) => api.get(`/colleges/${collegeId}/admission-charges`),
+  create: (data) => api.post('/admission-charges', data),
+  update: (id, data) => api.put(`/admission-charges/${id}`, data),
+  delete: (id) => api.delete(`/admission-charges/${id}`),
 };
 
 // FAQs API
