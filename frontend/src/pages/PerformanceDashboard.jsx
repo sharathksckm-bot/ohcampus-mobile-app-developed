@@ -682,7 +682,7 @@ export default function PerformanceDashboard() {
                     <Gift className="h-5 w-5 text-purple-500" />
                     Scholarship Summary Report
                   </CardTitle>
-                  <Select value={scholarshipViewBy} onValueChange={(v) => { setScholarshipViewBy(v); }}>
+                  <Select value={scholarshipViewBy} onValueChange={(v) => { setScholarshipViewBy(v); fetchScholarshipSummary(); }}>
                     <SelectTrigger className="w-40">
                       <SelectValue placeholder="View By" />
                     </SelectTrigger>
