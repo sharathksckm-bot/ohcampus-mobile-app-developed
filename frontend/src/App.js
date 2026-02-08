@@ -11,6 +11,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import CollegeDetail from "./pages/CollegeDetail";
 import CompareColleges from "./pages/CompareColleges";
+import Courses from "./pages/Courses";
 import AdminDashboard from "./pages/AdminDashboard";
 import FeeManagement from "./pages/FeeManagement";
 import FAQManagement from "./pages/FAQManagement";
