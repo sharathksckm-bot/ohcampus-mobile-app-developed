@@ -212,12 +212,12 @@ Create a web-based counseling platform for OhCampus counselors with:
 - [x] "By City" and "By State" tabs on Admin College Management
 
 ### P1 (High Priority)
-- [ ] Password reset functionality
-- [ ] User profile management
+- [x] Password reset functionality
+- [x] User profile management
+- [x] Activity logging for admins
 
 ### P2 (Medium Priority)
 - [ ] Email notifications for admission deadlines
-- [ ] Activity logging for admins
 - [ ] Advanced analytics dashboard
 
 ### P3 (Nice to Have)
@@ -230,13 +230,28 @@ Create a web-based counseling platform for OhCampus counselors with:
 - `/app/backend/tests/test_seat_status_features.py` - 25 tests for seat status and college management
 - `/app/backend/tests/test_new_features.py` - Tests for multi-select filters, CSV import, etc.
 - `/app/backend/tests/test_iteration5_features.py` - 18 tests for courses filters, tabs, and alerts UI
+- `/app/backend/tests/test_iteration9_features.py` - 21 tests for profile, activity log, and password reset
 
 ## Test Credentials
 - **Admin**: admin@ohcampus.com / admin123
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Latest Updates (Feb 2026)
-### Completed Features
+### Iteration 9 - Completed Features (Feb 8, 2026)
+1. **Password Reset**: Admins can reset any user's password via User Management page (Key icon button in Actions column).
+2. **User Profile Page**: Users can access their profile from the navbar dropdown to:
+   - View and update their name and phone number
+   - Change their password with validation
+3. **Activity Log Page**: Admins can view all system activities at `/admin/activity-log`:
+   - Stats cards showing Total Events, Logins Today, Active Users, Admissions count
+   - Searchable and filterable activity history table
+   - Filter by User or Action type
+   - Pagination for large activity sets
+4. **Navigation Updates**:
+   - Profile link added to user dropdown menu in Navbar
+   - Activity Log link added to Admin sidebar
+
+### Previous Updates
 1. **Level & Location Filters on Courses Page**: Counselors can now filter courses by Level (UG/PG), State, and City with cascading behavior (city options update based on selected state).
 2. **"By City" & "By State" Tabs**: Admin College Management page now has separate tabs to group colleges by City or State instead of the previous single "By Location" tab.
 3. **Admission Alerts Management UI**: Admins can now manage admission alerts for each college via a dedicated dialog:
@@ -247,6 +262,5 @@ Create a web-based counseling platform for OhCampus counselors with:
    - Changes are saved to the backend and reflected immediately
 
 ## Next Action Items
-1. Add password reset functionality
-2. Implement user profile management
-3. Add email notifications for admission deadlines
+1. Add email notifications for admission deadlines
+2. Implement advanced analytics dashboard
