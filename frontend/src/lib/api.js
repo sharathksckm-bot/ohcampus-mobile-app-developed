@@ -119,6 +119,21 @@ export const usersAPI = {
   create: (data) => api.post('/admin/users', data),
   update: (id, data) => api.put(`/admin/users/${id}`, data),
   delete: (id) => api.delete(`/admin/users/${id}`),
+  resetPassword: (id, newPassword) => api.put(`/admin/users/${id}/reset-password`, { new_password: newPassword }),
+  setPassword: (id, newPassword) => api.put(`/admin/users/${id}/set-password`, { new_password: newPassword }),
+};
+
+// Profile API (Current user)
+export const profileAPI = {
+  get: () => api.get('/profile'),
+  update: (data) => api.put('/profile', data),
+  changePassword: (currentPassword, newPassword) => api.put('/profile/password', { current_password: currentPassword, new_password: newPassword }),
+};
+
+// Activity Logs API (Admin only)
+export const activityAPI = {
+  getAll: (params) => api.get('/admin/activity-logs', { params }),
+  getActions: () => api.get('/admin/activity-logs/actions'),
 };
 
 // Admissions API
