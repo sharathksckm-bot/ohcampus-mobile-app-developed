@@ -39,10 +39,16 @@ security = HTTPBearer()
 
 # ===================== MODELS =====================
 
+# Designation constants
+DESIGNATIONS = ["Admission Counselor", "Senior Admission Counselor", "Team Lead", "Admission Manager"]
+
 class UserBase(BaseModel):
     email: str
     name: str
     role: str = "counselor"  # counselor or admin
+    designation: Optional[str] = None  # Admission Counselor, Senior Admission Counselor, Team Lead, Admission Manager
+    team_lead_id: Optional[str] = None  # Reference to team lead user
+    phone: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
@@ -50,7 +56,37 @@ class UserCreate(UserBase):
 class User(UserBase):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    created_by: Optional[str] = None  # Admin who created this user
+    is_active: bool = True
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+# Admission/Candidate Models
+class FeeInstalment(BaseModel):
+    amount: float
+    paid_date: str
+    description: Optional[str] = None
+
+class AdmissionBase(BaseModel):
+    candidate_name: str
+    place: str
+    college_id: str
+    course_id: str
+    admission_date: str
+    fees_paid: float = 0
+    total_fees: float
+    balance: float = 0
+    instalments: List[FeeInstalment] = []
+    remark: Optional[str] = None
+
+class Admission(AdmissionBase):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    counselor_id: str  # Who created this admission
+    counselor_name: Optional[str] = None
+    college_name: Optional[str] = None
+    course_name: Optional[str] = None
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 class LoginRequest(BaseModel):
     email: str
