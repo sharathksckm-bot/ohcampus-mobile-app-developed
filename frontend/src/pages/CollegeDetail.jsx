@@ -855,6 +855,132 @@ export default function CollegeDetail() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Course Detail Dialog */}
+      <Dialog open={courseDialogOpen} onOpenChange={setCourseDialogOpen}>
+        <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-heading text-lg flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-[#0066CC]" />
+              {selectedCourse?.name}
+            </DialogTitle>
+            <DialogDescription className="font-body">
+              {selectedCourse?.level} • {selectedCourse?.duration}
+            </DialogDescription>
+          </DialogHeader>
+
+          {courseDetailLoading ? (
+            <div className="space-y-4 py-4">
+              <Skeleton className="h-6 w-1/4" />
+              <Skeleton className="h-20 w-full" />
+              <Skeleton className="h-6 w-1/4" />
+              <Skeleton className="h-20 w-full" />
+            </div>
+          ) : courseDetail ? (
+            <div className="space-y-5 py-4">
+              {/* Quick Info */}
+              <div className="flex flex-wrap gap-2">
+                {getSeatStatusBadge(courseDetail.course.seat_status || 'Available')}
+                {courseDetail.course.category && (
+                  <Badge variant="outline" className="font-body">{courseDetail.course.category}</Badge>
+                )}
+              </div>
+
+              {/* Description */}
+              {courseDetail.course.description && (
+                <div>
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm">Description</h4>
+                  <p className="text-[#475569] font-body text-sm leading-relaxed">
+                    {courseDetail.course.description}
+                  </p>
+                </div>
+              )}
+
+              {/* Eligibility */}
+              {courseDetail.course.eligibility && (
+                <div>
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm flex items-center gap-1">
+                    <Users className="h-4 w-4 text-[#0066CC]" />
+                    Eligibility
+                  </h4>
+                  <p className="text-[#475569] font-body text-sm bg-slate-50 p-3 rounded-lg">
+                    {courseDetail.course.eligibility}
+                  </p>
+                </div>
+              )}
+
+              {/* Scope */}
+              {courseDetail.course.scope && (
+                <div>
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm">Scope & Career</h4>
+                  <p className="text-[#475569] font-body text-sm leading-relaxed">
+                    {courseDetail.course.scope}
+                  </p>
+                </div>
+              )}
+
+              {/* Job Profiles */}
+              {courseDetail.course.job_profiles && courseDetail.course.job_profiles.length > 0 && (
+                <div>
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm flex items-center gap-1">
+                    <Briefcase className="h-4 w-4 text-[#0066CC]" />
+                    Job Profiles
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {courseDetail.course.job_profiles.map((job, i) => (
+                      <Badge key={i} variant="secondary" className="font-body text-xs">
+                        {job}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Fee Structure */}
+              {courseDetail.fees && courseDetail.fees.length > 0 && (
+                <div>
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm flex items-center gap-1">
+                    <IndianRupee className="h-4 w-4 text-[#0066CC]" />
+                    Fee Structure
+                  </h4>
+                  <div className="border rounded-lg overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-slate-50">
+                          <TableHead className="font-heading text-xs">Period</TableHead>
+                          <TableHead className="font-heading text-xs">Tuition</TableHead>
+                          <TableHead className="font-heading text-xs">Hostel</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {courseDetail.fees.map((fee, i) => (
+                          <TableRow key={i}>
+                            <TableCell className="font-body text-sm">
+                              {fee.fee_type === 'annual' ? `Year ${fee.year_or_semester}` : `Sem ${fee.year_or_semester}`}
+                            </TableCell>
+                            <TableCell className="font-body text-sm font-semibold">
+                              {formatCurrency(fee.amount)}
+                            </TableCell>
+                            <TableCell className="font-body text-sm text-[#475569]">
+                              {formatCurrency(fee.hostel_fee)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    <div className="p-3 bg-[#0066CC] text-white flex justify-between items-center">
+                      <span className="font-body text-sm">Total Tuition</span>
+                      <span className="font-heading font-bold">
+                        {formatCurrency(getTotalFees(courseDetail.fees))}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
