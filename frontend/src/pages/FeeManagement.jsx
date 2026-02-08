@@ -57,6 +57,7 @@ import { toast } from 'sonner';
 export default function FeeManagement() {
   const [colleges, setColleges] = useState([]);
   const [selectedCollege, setSelectedCollege] = useState(null);
+  const [collegeSearchQuery, setCollegeSearchQuery] = useState('');
   const [courses, setCourses] = useState([]);
   const [fees, setFees] = useState([]);
   const [admissionCharges, setAdmissionCharges] = useState([]);
