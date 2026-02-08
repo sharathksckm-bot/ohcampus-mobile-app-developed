@@ -92,8 +92,19 @@ export default function Courses() {
         coursesAPI.getAllWithCollege({}),
         coursesAPI.getCategories(),
       ]);
-      setCourses(coursesRes.data);
+      const coursesData = coursesRes.data;
+      setCourses(coursesData);
       setCategories(categoriesRes.data.categories || []);
+      
+      // Extract unique levels
+      const uniqueLevels = [...new Set(coursesData.map(c => c.level).filter(Boolean))];
+      setLevels(uniqueLevels);
+      
+      // Extract unique states and cities from college info
+      const uniqueStates = [...new Set(coursesData.map(c => c.college?.state).filter(Boolean))];
+      const uniqueCities = [...new Set(coursesData.map(c => c.college?.city).filter(Boolean))];
+      setStates(uniqueStates);
+      setCities(uniqueCities);
     } catch (error) {
       toast.error('Failed to load courses');
     } finally {
@@ -120,9 +131,37 @@ export default function Courses() {
     if (selectedCategory !== 'all') {
       result = result.filter(c => c.category === selectedCategory);
     }
+    
+    if (selectedLevel !== 'all') {
+      result = result.filter(c => c.level === selectedLevel);
+    }
+    
+    if (selectedState !== 'all') {
+      result = result.filter(c => c.college?.state === selectedState);
+    }
+    
+    if (selectedCity !== 'all') {
+      result = result.filter(c => c.college?.city === selectedCity);
+    }
 
     return result;
-  }, [courses, searchQuery, selectedCategory]);
+  }, [courses, searchQuery, selectedCategory, selectedLevel, selectedState, selectedCity]);
+
+  // Get filtered cities based on selected state
+  const filteredCities = useMemo(() => {
+    if (selectedState === 'all') return cities;
+    return [...new Set(courses.filter(c => c.college?.state === selectedState).map(c => c.college?.city).filter(Boolean))];
+  }, [courses, cities, selectedState]);
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('all');
+    setSelectedLevel('all');
+    setSelectedState('all');
+    setSelectedCity('all');
+  };
+
+  const hasActiveFilters = searchQuery || selectedCategory !== 'all' || selectedLevel !== 'all' || selectedState !== 'all' || selectedCity !== 'all';
 
   // Fetch course detail
   const handleViewCourse = async (course) => {
