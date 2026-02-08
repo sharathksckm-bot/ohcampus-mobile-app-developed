@@ -70,9 +70,15 @@ const getSeatStatusBadge = (status) => {
 export default function Courses() {
   const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [levels, setLevels] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedLevel, setSelectedLevel] = useState('all');
+  const [selectedState, setSelectedState] = useState('all');
+  const [selectedCity, setSelectedCity] = useState('all');
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [courseDetail, setCourseDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
