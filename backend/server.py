@@ -1391,8 +1391,9 @@ async def create_admission(admission_data: AdmissionCreate, current_user: dict =
     total_paid = admission_data.fees_paid + sum(inst.amount for inst in admission_data.instalments)
     balance = admission_data.total_fees - total_paid
     
+    admission_id = str(uuid.uuid4())
     admission = {
-        "id": str(uuid.uuid4()),
+        "id": admission_id,
         "candidate_name": admission_data.candidate_name,
         "place": admission_data.place,
         "college_id": admission_data.college_id,
@@ -1413,6 +1414,10 @@ async def create_admission(admission_data: AdmissionCreate, current_user: dict =
     
     await db.admissions.insert_one(admission)
     admission.pop("_id", None)
+    
+    # Log activity
+    await log_activity(current_user["user_id"], counselor.get("name", ""), current_user["email"], "create_admission", "admission", admission_id, f"Created admission for {admission_data.candidate_name}")
+    
     return admission
 
 @api_router.get("/admissions")
