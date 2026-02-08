@@ -581,30 +581,61 @@ export default function FeeManagement() {
             {loading ? (
               <Skeleton className="h-12 w-full" />
             ) : (
-              <Select 
-                value={selectedCollege?.id || ''} 
-                onValueChange={handleCollegeSelect}
-              >
-                <SelectTrigger 
-                  className="w-full h-12 font-body"
-                  data-testid="college-select"
+              <div className="space-y-3">
+                {/* Search Bar */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
+                  <Input
+                    placeholder="Search colleges by name..."
+                    value={collegeSearchQuery}
+                    onChange={(e) => setCollegeSearchQuery(e.target.value)}
+                    className="pl-10 h-10 font-body"
+                    data-testid="college-search-input"
+                  />
+                </div>
+                
+                {/* College Dropdown */}
+                <Select 
+                  value={selectedCollege?.id || ''} 
+                  onValueChange={handleCollegeSelect}
                 >
-                  <SelectValue placeholder="Choose a featured college" />
-                </SelectTrigger>
-                <SelectContent>
-                  {colleges.map((college) => (
-                    <SelectItem key={college.id} value={college.id}>
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-[#0066CC]" />
-                        <span>{college.name}</span>
-                        <Badge variant="secondary" className="ml-2">
-                          {college.category}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                  <SelectTrigger 
+                    className="w-full h-12 font-body"
+                    data-testid="college-select"
+                  >
+                    <SelectValue placeholder="Choose a featured college" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {colleges
+                      .filter(college => 
+                        college.name.toLowerCase().includes(collegeSearchQuery.toLowerCase()) ||
+                        college.city?.toLowerCase().includes(collegeSearchQuery.toLowerCase()) ||
+                        college.category?.toLowerCase().includes(collegeSearchQuery.toLowerCase())
+                      )
+                      .map((college) => (
+                        <SelectItem key={college.id} value={college.id}>
+                          <div className="flex items-center gap-2">
+                            <Building2 className="h-4 w-4 text-[#0066CC]" />
+                            <span>{college.name}</span>
+                            <Badge variant="secondary" className="ml-2">
+                              {college.category}
+                            </Badge>
+                          </div>
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                
+                {/* Results count */}
+                {collegeSearchQuery && (
+                  <p className="text-xs text-[#94A3B8] font-body">
+                    {colleges.filter(c => 
+                      c.name.toLowerCase().includes(collegeSearchQuery.toLowerCase()) ||
+                      c.city?.toLowerCase().includes(collegeSearchQuery.toLowerCase())
+                    ).length} colleges found
+                  </p>
+                )}
+              </div>
             )}
           </CardContent>
         </Card>
