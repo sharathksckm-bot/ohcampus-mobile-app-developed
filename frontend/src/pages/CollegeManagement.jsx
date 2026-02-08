@@ -249,6 +249,66 @@ export default function CollegeManagement() {
     setCourseDialogOpen(true);
   };
 
+  // Open alerts management dialog
+  const handleManageAlerts = (college) => {
+    setAlertsCollege(college);
+    setAlerts(college.admission_alerts || []);
+    setAlertsDialogOpen(true);
+  };
+
+  // Add new alert
+  const handleAddAlert = () => {
+    setAlerts(prev => [...prev, {
+      title: '',
+      message: '',
+      alert_type: 'info',
+      start_date: '',
+      end_date: '',
+      is_active: true
+    }]);
+  };
+
+  // Update alert field
+  const handleUpdateAlert = (index, field, value) => {
+    setAlerts(prev => prev.map((alert, i) => 
+      i === index ? { ...alert, [field]: value } : alert
+    ));
+  };
+
+  // Remove alert
+  const handleRemoveAlert = (index) => {
+    setAlerts(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Save alerts
+  const handleSaveAlerts = async () => {
+    if (!alertsCollege) return;
+    
+    // Validate alerts
+    const validAlerts = alerts.filter(a => a.title.trim() && a.message.trim());
+    if (validAlerts.length !== alerts.length) {
+      toast.error('Please fill in all required fields (Title and Message) for each alert');
+      return;
+    }
+
+    setSavingAlerts(true);
+    try {
+      await collegesAPI.updateAdmissionAlerts(alertsCollege.id, validAlerts);
+      
+      // Update local state
+      setColleges(prev => prev.map(c => 
+        c.id === alertsCollege.id ? { ...c, admission_alerts: validAlerts } : c
+      ));
+      
+      toast.success('Admission alerts updated successfully');
+      setAlertsDialogOpen(false);
+    } catch (error) {
+      toast.error('Failed to update admission alerts');
+    } finally {
+      setSavingAlerts(false);
+    }
+  };
+
   // Clear all filters
   const clearFilters = () => {
     setSearchQuery('');
