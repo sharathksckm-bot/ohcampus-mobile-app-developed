@@ -938,6 +938,476 @@ async def delete_faq(faq_id: str, current_user: dict = Depends(require_admin)):
         raise HTTPException(status_code=404, detail="FAQ not found")
     return {"message": "FAQ deleted successfully"}
 
+# ===================== USER MANAGEMENT ENDPOINTS (Admin Only) =====================
+
+class CounselorCreate(BaseModel):
+    email: str
+    name: str
+    password: str
+    designation: str  # Admission Counselor, Senior Admission Counselor, Team Lead, Admission Manager
+    team_lead_id: Optional[str] = None
+    phone: Optional[str] = None
+
+class CounselorUpdate(BaseModel):
+    name: Optional[str] = None
+    designation: Optional[str] = None
+    team_lead_id: Optional[str] = None
+    phone: Optional[str] = None
+    is_active: Optional[bool] = None
+
+@api_router.get("/admin/users")
+async def get_all_users(current_user: dict = Depends(require_admin)):
+    """Get all counselor users (admin only)"""
+    users = await db.users.find({"role": "counselor"}, {"_id": 0, "password_hash": 0}).to_list(500)
+    
+    # Enrich with team lead names
+    for user in users:
+        if user.get("team_lead_id"):
+            team_lead = await db.users.find_one({"id": user["team_lead_id"]}, {"_id": 0, "name": 1})
+            user["team_lead_name"] = team_lead.get("name") if team_lead else None
+    
+    return users
+
+@api_router.get("/admin/users/team-leads")
+async def get_team_leads(current_user: dict = Depends(require_admin)):
+    """Get users who can be team leads (Team Lead or Admission Manager)"""
+    team_leads = await db.users.find(
+        {"role": "counselor", "designation": {"$in": ["Team Lead", "Admission Manager"]}, "is_active": {"$ne": False}},
+        {"_id": 0, "id": 1, "name": 1, "designation": 1}
+    ).to_list(100)
+    return team_leads
+
+@api_router.get("/admin/users/{user_id}")
+async def get_user(user_id: str, current_user: dict = Depends(require_admin)):
+    """Get a specific user by ID"""
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+@api_router.post("/admin/users", status_code=201)
+async def create_counselor(user_data: CounselorCreate, current_user: dict = Depends(require_admin)):
+    """Create a new counselor user (admin only)"""
+    # Validate designation
+    if user_data.designation not in DESIGNATIONS:
+        raise HTTPException(status_code=400, detail=f"Invalid designation. Must be one of: {', '.join(DESIGNATIONS)}")
+    
+    # Check if email already exists
+    existing = await db.users.find_one({"email": user_data.email})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Validate team lead if provided
+    if user_data.team_lead_id:
+        team_lead = await db.users.find_one({"id": user_data.team_lead_id})
+        if not team_lead:
+            raise HTTPException(status_code=400, detail="Team lead not found")
+        if team_lead.get("designation") not in ["Team Lead", "Admission Manager"]:
+            raise HTTPException(status_code=400, detail="Selected user is not a Team Lead or Admission Manager")
+    
+    user = {
+        "id": str(uuid.uuid4()),
+        "email": user_data.email,
+        "name": user_data.name,
+        "role": "counselor",
+        "designation": user_data.designation,
+        "team_lead_id": user_data.team_lead_id,
+        "phone": user_data.phone,
+        "password_hash": hash_password(user_data.password),
+        "created_by": current_user["user_id"],
+        "is_active": True,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.users.insert_one(user)
+    
+    # Return user without password_hash
+    user.pop("password_hash", None)
+    user.pop("_id", None)
+    return user
+
+@api_router.put("/admin/users/{user_id}")
+async def update_counselor(user_id: str, user_data: CounselorUpdate, current_user: dict = Depends(require_admin)):
+    """Update a counselor user (admin only)"""
+    existing = await db.users.find_one({"id": user_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    update_data = {}
+    if user_data.name is not None:
+        update_data["name"] = user_data.name
+    if user_data.designation is not None:
+        if user_data.designation not in DESIGNATIONS:
+            raise HTTPException(status_code=400, detail=f"Invalid designation. Must be one of: {', '.join(DESIGNATIONS)}")
+        update_data["designation"] = user_data.designation
+    if user_data.team_lead_id is not None:
+        if user_data.team_lead_id:
+            team_lead = await db.users.find_one({"id": user_data.team_lead_id})
+            if not team_lead or team_lead.get("designation") not in ["Team Lead", "Admission Manager"]:
+                raise HTTPException(status_code=400, detail="Invalid team lead")
+        update_data["team_lead_id"] = user_data.team_lead_id if user_data.team_lead_id else None
+    if user_data.phone is not None:
+        update_data["phone"] = user_data.phone
+    if user_data.is_active is not None:
+        update_data["is_active"] = user_data.is_active
+    
+    if update_data:
+        await db.users.update_one({"id": user_id}, {"$set": update_data})
+    
+    updated = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
+    return updated
+
+@api_router.delete("/admin/users/{user_id}")
+async def delete_counselor(user_id: str, current_user: dict = Depends(require_admin)):
+    """Delete a counselor user (admin only)"""
+    existing = await db.users.find_one({"id": user_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if existing.get("role") == "admin":
+        raise HTTPException(status_code=400, detail="Cannot delete admin user")
+    
+    # Soft delete - just mark as inactive
+    await db.users.update_one({"id": user_id}, {"$set": {"is_active": False}})
+    return {"message": "User deactivated successfully"}
+
+@api_router.get("/admin/designations")
+async def get_designations():
+    """Get list of available designations"""
+    return {"designations": DESIGNATIONS}
+
+# ===================== ADMISSIONS ENDPOINTS =====================
+
+class AdmissionCreate(BaseModel):
+    candidate_name: str
+    place: str
+    college_id: str
+    course_id: str
+    admission_date: str
+    fees_paid: float = 0
+    total_fees: float
+    instalments: List[FeeInstalment] = []
+    remark: Optional[str] = None
+
+class AdmissionUpdate(BaseModel):
+    candidate_name: Optional[str] = None
+    place: Optional[str] = None
+    college_id: Optional[str] = None
+    course_id: Optional[str] = None
+    admission_date: Optional[str] = None
+    fees_paid: Optional[float] = None
+    total_fees: Optional[float] = None
+    instalments: Optional[List[FeeInstalment]] = None
+    remark: Optional[str] = None
+
+@api_router.post("/admissions", status_code=201)
+async def create_admission(admission_data: AdmissionCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new admission record"""
+    # Validate college
+    college = await db.colleges.find_one({"id": admission_data.college_id}, {"_id": 0})
+    if not college:
+        raise HTTPException(status_code=400, detail="College not found")
+    
+    # Validate course
+    course = await db.courses.find_one({"id": admission_data.course_id}, {"_id": 0})
+    if not course:
+        raise HTTPException(status_code=400, detail="Course not found")
+    
+    # Get counselor info
+    counselor = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    # Calculate balance
+    total_paid = admission_data.fees_paid + sum(inst.amount for inst in admission_data.instalments)
+    balance = admission_data.total_fees - total_paid
+    
+    admission = {
+        "id": str(uuid.uuid4()),
+        "candidate_name": admission_data.candidate_name,
+        "place": admission_data.place,
+        "college_id": admission_data.college_id,
+        "college_name": college.get("name"),
+        "course_id": admission_data.course_id,
+        "course_name": course.get("name"),
+        "admission_date": admission_data.admission_date,
+        "fees_paid": total_paid,
+        "total_fees": admission_data.total_fees,
+        "balance": balance,
+        "instalments": [inst.model_dump() for inst in admission_data.instalments],
+        "remark": admission_data.remark,
+        "counselor_id": current_user["user_id"],
+        "counselor_name": counselor.get("name") if counselor else None,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.admissions.insert_one(admission)
+    admission.pop("_id", None)
+    return admission
+
+@api_router.get("/admissions")
+async def get_admissions(current_user: dict = Depends(get_current_user)):
+    """Get admissions based on user role and designation"""
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    query = {}
+    
+    if current_user.get("role") == "admin":
+        # Admin sees all
+        pass
+    elif user and user.get("designation") == "Admission Manager":
+        # Admission Manager sees all
+        pass
+    elif user and user.get("designation") == "Team Lead":
+        # Team Lead sees their own + team members' admissions
+        team_member_ids = await db.users.distinct("id", {"team_lead_id": current_user["user_id"]})
+        team_member_ids.append(current_user["user_id"])
+        query["counselor_id"] = {"$in": team_member_ids}
+    else:
+        # Regular counselor sees only their own
+        query["counselor_id"] = current_user["user_id"]
+    
+    admissions = await db.admissions.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return admissions
+
+@api_router.get("/admissions/{admission_id}")
+async def get_admission(admission_id: str, current_user: dict = Depends(get_current_user)):
+    """Get a specific admission by ID"""
+    admission = await db.admissions.find_one({"id": admission_id}, {"_id": 0})
+    if not admission:
+        raise HTTPException(status_code=404, detail="Admission not found")
+    
+    # Check access
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    if current_user.get("role") != "admin" and user.get("designation") != "Admission Manager":
+        if user.get("designation") == "Team Lead":
+            team_member_ids = await db.users.distinct("id", {"team_lead_id": current_user["user_id"]})
+            team_member_ids.append(current_user["user_id"])
+            if admission["counselor_id"] not in team_member_ids:
+                raise HTTPException(status_code=403, detail="Access denied")
+        elif admission["counselor_id"] != current_user["user_id"]:
+            raise HTTPException(status_code=403, detail="Access denied")
+    
+    return admission
+
+@api_router.put("/admissions/{admission_id}")
+async def update_admission(admission_id: str, admission_data: AdmissionUpdate, current_user: dict = Depends(get_current_user)):
+    """Update an admission record"""
+    existing = await db.admissions.find_one({"id": admission_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Admission not found")
+    
+    # Check access (only creator, team lead, admin, or manager can edit)
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    can_edit = False
+    if current_user.get("role") == "admin":
+        can_edit = True
+    elif user.get("designation") == "Admission Manager":
+        can_edit = True
+    elif user.get("designation") == "Team Lead":
+        team_member_ids = await db.users.distinct("id", {"team_lead_id": current_user["user_id"]})
+        team_member_ids.append(current_user["user_id"])
+        if existing["counselor_id"] in team_member_ids:
+            can_edit = True
+    elif existing["counselor_id"] == current_user["user_id"]:
+        can_edit = True
+    
+    if not can_edit:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    update_data = {"updated_at": datetime.now(timezone.utc).isoformat()}
+    
+    if admission_data.candidate_name is not None:
+        update_data["candidate_name"] = admission_data.candidate_name
+    if admission_data.place is not None:
+        update_data["place"] = admission_data.place
+    if admission_data.college_id is not None:
+        college = await db.colleges.find_one({"id": admission_data.college_id}, {"_id": 0})
+        if not college:
+            raise HTTPException(status_code=400, detail="College not found")
+        update_data["college_id"] = admission_data.college_id
+        update_data["college_name"] = college.get("name")
+    if admission_data.course_id is not None:
+        course = await db.courses.find_one({"id": admission_data.course_id}, {"_id": 0})
+        if not course:
+            raise HTTPException(status_code=400, detail="Course not found")
+        update_data["course_id"] = admission_data.course_id
+        update_data["course_name"] = course.get("name")
+    if admission_data.admission_date is not None:
+        update_data["admission_date"] = admission_data.admission_date
+    if admission_data.total_fees is not None:
+        update_data["total_fees"] = admission_data.total_fees
+    if admission_data.instalments is not None:
+        update_data["instalments"] = [inst.model_dump() for inst in admission_data.instalments]
+    if admission_data.remark is not None:
+        update_data["remark"] = admission_data.remark
+    
+    # Recalculate fees_paid and balance
+    if admission_data.instalments is not None or admission_data.fees_paid is not None or admission_data.total_fees is not None:
+        current_instalments = update_data.get("instalments", existing.get("instalments", []))
+        instalment_total = sum(inst.get("amount", 0) for inst in current_instalments)
+        base_paid = admission_data.fees_paid if admission_data.fees_paid is not None else 0
+        total_paid = base_paid + instalment_total
+        total_fees = update_data.get("total_fees", existing.get("total_fees", 0))
+        update_data["fees_paid"] = total_paid
+        update_data["balance"] = total_fees - total_paid
+    
+    await db.admissions.update_one({"id": admission_id}, {"$set": update_data})
+    
+    updated = await db.admissions.find_one({"id": admission_id}, {"_id": 0})
+    return updated
+
+@api_router.delete("/admissions/{admission_id}")
+async def delete_admission(admission_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete an admission record"""
+    existing = await db.admissions.find_one({"id": admission_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Admission not found")
+    
+    # Only admin or the creator can delete
+    if current_user.get("role") != "admin" and existing["counselor_id"] != current_user["user_id"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    await db.admissions.delete_one({"id": admission_id})
+    return {"message": "Admission deleted successfully"}
+
+# ===================== PERFORMANCE STATS ENDPOINTS =====================
+
+@api_router.get("/admin/stats/performance")
+async def get_performance_stats(current_user: dict = Depends(require_admin_or_manager)):
+    """Get performance statistics (admin and admission manager only)"""
+    # Total admissions
+    total_admissions = await db.admissions.count_documents({})
+    
+    # Fees collected vs pending
+    pipeline_fees = [
+        {
+            "$group": {
+                "_id": None,
+                "total_fees": {"$sum": "$total_fees"},
+                "fees_paid": {"$sum": "$fees_paid"},
+                "balance": {"$sum": "$balance"}
+            }
+        }
+    ]
+    fees_result = await db.admissions.aggregate(pipeline_fees).to_list(1)
+    fees_stats = fees_result[0] if fees_result else {"total_fees": 0, "fees_paid": 0, "balance": 0}
+    
+    # Admissions by counselor
+    pipeline_by_counselor = [
+        {
+            "$group": {
+                "_id": "$counselor_id",
+                "counselor_name": {"$first": "$counselor_name"},
+                "count": {"$sum": 1},
+                "total_fees_collected": {"$sum": "$fees_paid"}
+            }
+        },
+        {"$sort": {"count": -1}}
+    ]
+    by_counselor = await db.admissions.aggregate(pipeline_by_counselor).to_list(100)
+    
+    # Admissions by college
+    pipeline_by_college = [
+        {
+            "$group": {
+                "_id": "$college_id",
+                "college_name": {"$first": "$college_name"},
+                "count": {"$sum": 1},
+                "total_fees_collected": {"$sum": "$fees_paid"}
+            }
+        },
+        {"$sort": {"count": -1}}
+    ]
+    by_college = await db.admissions.aggregate(pipeline_by_college).to_list(100)
+    
+    # Admissions by course
+    pipeline_by_course = [
+        {
+            "$group": {
+                "_id": "$course_id",
+                "course_name": {"$first": "$course_name"},
+                "count": {"$sum": 1}
+            }
+        },
+        {"$sort": {"count": -1}},
+        {"$limit": 10}
+    ]
+    by_course = await db.admissions.aggregate(pipeline_by_course).to_list(10)
+    
+    # Monthly trends (last 6 months)
+    six_months_ago = (datetime.now(timezone.utc) - timedelta(days=180)).isoformat()
+    pipeline_monthly = [
+        {
+            "$match": {"created_at": {"$gte": six_months_ago}}
+        },
+        {
+            "$group": {
+                "_id": {"$substr": ["$created_at", 0, 7]},  # YYYY-MM
+                "count": {"$sum": 1},
+                "fees_collected": {"$sum": "$fees_paid"}
+            }
+        },
+        {"$sort": {"_id": 1}}
+    ]
+    monthly_trends = await db.admissions.aggregate(pipeline_monthly).to_list(12)
+    
+    # Weekly trends (last 4 weeks)
+    four_weeks_ago = (datetime.now(timezone.utc) - timedelta(days=28)).isoformat()
+    pipeline_weekly = [
+        {
+            "$match": {"created_at": {"$gte": four_weeks_ago}}
+        },
+        {
+            "$group": {
+                "_id": {"$substr": ["$created_at", 0, 10]},  # YYYY-MM-DD
+                "count": {"$sum": 1}
+            }
+        },
+        {"$sort": {"_id": 1}}
+    ]
+    daily_data = await db.admissions.aggregate(pipeline_weekly).to_list(30)
+    
+    return {
+        "total_admissions": total_admissions,
+        "fees_stats": {
+            "total_fees": fees_stats.get("total_fees", 0),
+            "fees_collected": fees_stats.get("fees_paid", 0),
+            "fees_pending": fees_stats.get("balance", 0)
+        },
+        "by_counselor": by_counselor,
+        "by_college": by_college,
+        "by_course": by_course,
+        "monthly_trends": monthly_trends,
+        "daily_trends": daily_data
+    }
+
+@api_router.get("/admin/stats/admissions-list")
+async def get_all_admissions_list(
+    current_user: dict = Depends(require_admin_or_manager),
+    skip: int = 0,
+    limit: int = 100,
+    college_id: Optional[str] = None,
+    counselor_id: Optional[str] = None
+):
+    """Get complete list of admitted students (admin and admission manager only)"""
+    query = {}
+    if college_id:
+        query["college_id"] = college_id
+    if counselor_id:
+        query["counselor_id"] = counselor_id
+    
+    total = await db.admissions.count_documents(query)
+    admissions = await db.admissions.find(query, {"_id": 0}).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    return {
+        "total": total,
+        "skip": skip,
+        "limit": limit,
+        "admissions": admissions
+    }
+
 # ===================== SEED DATA ENDPOINT =====================
 
 @api_router.post("/seed")
