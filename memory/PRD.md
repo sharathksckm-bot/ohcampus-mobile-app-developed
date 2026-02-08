@@ -103,6 +103,12 @@ Create a web-based counseling platform for OhCampus counselors with:
 - `/api/filters` - Get filter options (states, cities, categories, courses)
 - `/api/courses` - Get all courses with seat_status
 - `/api/courses/:id/seat-status` - Update seat status (Admin)
+- `/api/admin/users` - CRUD for counselor users (Admin only)
+- `/api/admin/users/team-leads` - Get Team Leads and Managers for dropdown
+- `/api/admin/designations` - Get list of designations
+- `/api/admissions` - CRUD for admissions (filtered by user role/team)
+- `/api/admin/stats/performance` - Performance stats (Admin/Manager)
+- `/api/admin/stats/admissions-list` - Full admissions list with filters
 
 ### Frontend Pages
 - Landing Page with OhCampus branding
@@ -110,13 +116,27 @@ Create a web-based counseling platform for OhCampus counselors with:
 - Counselor Dashboard with multi-select filters + Compare mode
 - College Detail page with tabs (Highlights, What's New, Fees with seat status, FAQs) + Admission Alerts
 - College Comparison page (side-by-side table layout)
+- Courses page with Level/Location filters
+- **Admissions page** (NEW for Counselors)
+  - Add/Edit admitted candidates
+  - Dynamic fee instalments with paid dates
+  - Stats: Total Admissions, Fees Collected, Pending Balance
 - Admin Dashboard with stats
-- **Admin College Management page** (NEW)
+- **User Management page** (NEW for Admin)
+  - Create/Edit/Deactivate counselors
+  - Designations: Admission Counselor, Senior Admission Counselor, Team Lead, Admission Manager
+  - Assign Team Lead to counselors
+- **Performance Dashboard** (NEW for Admin/Manager)
+  - Total Admissions, Fees Collected, Fees Pending, Collection Rate
+  - By Counselor, By College, By Course stats
+  - Monthly trends, All Admissions list with filters
+- Admin College Management page
   - Search bar for colleges
   - State/City/Category/Course filters
-  - Tabs: All Colleges, By Location, By Category, By Course
+  - Tabs: All Colleges, By City, By State, By Category, By Course
   - Manage Courses dialog with seat status dropdown
-- Fee Management page (Single Fee, Bulk Fee Dialog, CSV Import, Admission Charges)
+  - Manage Alerts dialog (CRUD for admission alerts)
+- Fee Management page (with College search, Single Fee, Bulk Fee Dialog, CSV Import, Admission Charges)
 - FAQ Management page
 
 ### Sample Data
