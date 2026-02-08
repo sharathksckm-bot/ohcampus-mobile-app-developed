@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import CollegeDetail from "./pages/CollegeDetail";
+import CompareColleges from "./pages/CompareColleges";
 import AdminDashboard from "./pages/AdminDashboard";
 import FeeManagement from "./pages/FeeManagement";
 import FAQManagement from "./pages/FAQManagement";
@@ -66,6 +67,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <CollegeDetail />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/compare" 
+        element={
+          <ProtectedRoute>
+            <CompareColleges />
           </ProtectedRoute>
         } 
       />
