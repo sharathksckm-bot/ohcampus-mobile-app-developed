@@ -136,6 +136,16 @@ export const statsAPI = {
   getAdmissionsList: (params) => api.get('/admin/stats/admissions-list', { params }),
 };
 
+// Target Tracking API
+export const targetsAPI = {
+  getAll: (params) => api.get('/targets', { params }),
+  getCounselors: () => api.get('/targets/counselors'),
+  getProgress: (period) => api.get('/targets/progress', { params: { period } }),
+  create: (data) => api.post('/targets', data),
+  update: (id, data) => api.put(`/targets/${id}`, data),
+  delete: (id) => api.delete(`/targets/${id}`),
+};
+
 // Seed API
 export const seedAPI = {
   seed: () => api.post('/seed'),
