@@ -220,7 +220,8 @@ export default function Admissions() {
           paid_date: inst.paid_date,
           description: inst.description
         })).filter(inst => inst.amount > 0),
-        remark: formData.remark
+        remark: formData.remark,
+        scholarship_amount: formData.scholarship_amount ? parseFloat(formData.scholarship_amount) : null
       };
 
       if (editingAdmission) {
