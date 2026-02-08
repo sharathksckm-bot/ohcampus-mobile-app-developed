@@ -23,6 +23,11 @@ const sidebarItems = [
     path: '/admin',
   },
   {
+    name: 'College Management',
+    icon: Building2,
+    path: '/admin/colleges',
+  },
+  {
     name: 'Fee Management',
     icon: IndianRupee,
     path: '/admin/fees',
