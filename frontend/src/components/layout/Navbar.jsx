@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { User, LogOut, Settings, LayoutDashboard, Building2, BookOpen, UserPlus } from 'lucide-react';
+import { User, LogOut, Settings, LayoutDashboard, Building2, BookOpen, UserPlus, BarChart3 } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, logout, isAdmin } = useAuth();
@@ -25,6 +25,9 @@ export const Navbar = () => {
   const isActiveLink = (path) => {
     return location.pathname === path;
   };
+
+  // Check if user can see Performance tab (Team Lead or Admission Manager)
+  const canSeePerformance = user?.designation === 'Team Lead' || user?.designation === 'Admission Manager';
 
   return (
     <nav className="sticky top-0 z-50 glass-effect border-b border-slate-200">
