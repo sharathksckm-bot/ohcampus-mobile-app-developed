@@ -14,6 +14,8 @@ import {
   ChevronRight,
   GraduationCap,
   Building2,
+  Users,
+  BarChart3,
 } from 'lucide-react';
 
 const sidebarItems = [
@@ -23,9 +25,19 @@ const sidebarItems = [
     path: '/admin',
   },
   {
+    name: 'Performance',
+    icon: BarChart3,
+    path: '/admin/performance',
+  },
+  {
     name: 'College Management',
     icon: Building2,
     path: '/admin/colleges',
+  },
+  {
+    name: 'User Management',
+    icon: Users,
+    path: '/admin/users',
   },
   {
     name: 'Fee Management',
