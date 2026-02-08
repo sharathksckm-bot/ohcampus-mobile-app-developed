@@ -305,6 +305,21 @@ export default function CollegeDetail() {
           {/* Fees Tab */}
           <TabsContent value="fees" className="animate-fade-in">
             <div className="space-y-6">
+              {/* Export Button */}
+              {feeSummary.length > 0 && (
+                <div className="flex justify-end">
+                  <Button
+                    onClick={handleExportPDF}
+                    disabled={exporting}
+                    className="bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-body rounded-full"
+                    data-testid="export-pdf-btn"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    {exporting ? 'Exporting...' : 'Export to PDF'}
+                  </Button>
+                </div>
+              )}
+              
               {feeSummary.length > 0 ? (
                 feeSummary.map(({ course, fee_type, fees, admission_charges, totals }) => (
                   <Card key={course.id} className="border-slate-200 overflow-hidden">
