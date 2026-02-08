@@ -809,6 +809,199 @@ export default function CollegeManagement() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Admission Alerts Management Dialog */}
+        <Dialog open={alertsDialogOpen} onOpenChange={setAlertsDialogOpen}>
+          <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="font-heading flex items-center gap-2">
+                <Bell className="h-5 w-5 text-[#0066CC]" />
+                Manage Admission Alerts
+              </DialogTitle>
+              <DialogDescription className="font-body">
+                {alertsCollege?.name} - Add, edit, or remove admission alerts for counselors to see
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              {/* Add Alert Button */}
+              <Button
+                onClick={handleAddAlert}
+                variant="outline"
+                className="w-full border-dashed"
+                data-testid="add-alert-btn"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add New Alert
+              </Button>
+
+              {/* Alert List */}
+              {alerts.length === 0 ? (
+                <div className="text-center py-8 text-[#94A3B8]">
+                  <Bell className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                  <p className="font-body">No admission alerts configured</p>
+                  <p className="text-sm">Click "Add New Alert" to create one</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {alerts.map((alert, index) => {
+                    const typeConfig = getAlertTypeConfig(alert.alert_type);
+                    return (
+                      <Card key={index} className="relative" data-testid={`alert-card-${index}`}>
+                        <CardContent className="p-4 space-y-4">
+                          {/* Remove Button */}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleRemoveAlert(index)}
+                            data-testid={`remove-alert-${index}`}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+
+                          {/* Title */}
+                          <div className="pr-10">
+                            <Label className="font-body text-sm">Alert Title *</Label>
+                            <Input
+                              value={alert.title}
+                              onChange={(e) => handleUpdateAlert(index, 'title', e.target.value)}
+                              placeholder="e.g., MBA Admissions Open"
+                              className="mt-1"
+                              data-testid={`alert-title-${index}`}
+                            />
+                          </div>
+
+                          {/* Message */}
+                          <div>
+                            <Label className="font-body text-sm">Message *</Label>
+                            <Textarea
+                              value={alert.message}
+                              onChange={(e) => handleUpdateAlert(index, 'message', e.target.value)}
+                              placeholder="Enter the alert message..."
+                              className="mt-1 min-h-[80px]"
+                              data-testid={`alert-message-${index}`}
+                            />
+                          </div>
+
+                          {/* Type and Active Status */}
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label className="font-body text-sm">Alert Type</Label>
+                              <Select
+                                value={alert.alert_type}
+                                onValueChange={(value) => handleUpdateAlert(index, 'alert_type', value)}
+                              >
+                                <SelectTrigger className="mt-1" data-testid={`alert-type-${index}`}>
+                                  <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {ALERT_TYPES.map(type => {
+                                    const TypeIcon = type.icon;
+                                    return (
+                                      <SelectItem key={type.value} value={type.value}>
+                                        <div className="flex items-center gap-2">
+                                          <TypeIcon className="h-4 w-4" />
+                                          {type.label}
+                                        </div>
+                                      </SelectItem>
+                                    );
+                                  })}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <Label className="font-body text-sm">Status</Label>
+                              <Select
+                                value={alert.is_active ? 'active' : 'inactive'}
+                                onValueChange={(value) => handleUpdateAlert(index, 'is_active', value === 'active')}
+                              >
+                                <SelectTrigger className="mt-1" data-testid={`alert-status-${index}`}>
+                                  <SelectValue placeholder="Select status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="active">
+                                    <div className="flex items-center gap-2">
+                                      <Check className="h-4 w-4 text-green-600" />
+                                      Active
+                                    </div>
+                                  </SelectItem>
+                                  <SelectItem value="inactive">
+                                    <div className="flex items-center gap-2">
+                                      <XCircle className="h-4 w-4 text-gray-400" />
+                                      Inactive
+                                    </div>
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+
+                          {/* Dates */}
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label className="font-body text-sm">Start Date (Optional)</Label>
+                              <Input
+                                type="date"
+                                value={alert.start_date || ''}
+                                onChange={(e) => handleUpdateAlert(index, 'start_date', e.target.value)}
+                                className="mt-1"
+                                data-testid={`alert-start-date-${index}`}
+                              />
+                            </div>
+                            <div>
+                              <Label className="font-body text-sm">End Date (Optional)</Label>
+                              <Input
+                                type="date"
+                                value={alert.end_date || ''}
+                                onChange={(e) => handleUpdateAlert(index, 'end_date', e.target.value)}
+                                className="mt-1"
+                                data-testid={`alert-end-date-${index}`}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Preview Badge */}
+                          <div className="pt-2 border-t">
+                            <Label className="font-body text-sm text-[#94A3B8]">Preview:</Label>
+                            <Badge className={`${typeConfig.color} border mt-1`}>
+                              {React.createElement(typeConfig.icon, { className: "h-3 w-3 mr-1" })}
+                              {typeConfig.label}
+                            </Badge>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setAlertsDialogOpen(false)} className="font-body">
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSaveAlerts} 
+                disabled={savingAlerts}
+                className="font-body bg-[#0066CC] hover:bg-[#0052A3]"
+                data-testid="save-alerts-btn"
+              >
+                {savingAlerts ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Save Alerts
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );
