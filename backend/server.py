@@ -96,10 +96,30 @@ class CourseBase(BaseModel):
     duration_years: Optional[int] = None  # For calculating fee periods
     duration_semesters: Optional[int] = None  # For calculating fee periods
     seat_status: str = "Available"  # Available, Closing, Under Waiting, Closed
+    description: Optional[str] = None
+    eligibility: Optional[str] = None
+    scope: Optional[str] = None
+    job_profiles: List[str] = []
+    category: Optional[str] = None  # Engineering, Management, Medicine, etc.
 
 class Course(CourseBase):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+
+# Placement model
+class PlacementStats(BaseModel):
+    year: str
+    highest_package: Optional[float] = None
+    average_package: Optional[float] = None
+    median_package: Optional[float] = None
+    placement_rate: Optional[float] = None
+    total_offers: Optional[int] = None
+    top_recruiters: List[str] = []
+
+class CollegePlacement(BaseModel):
+    college_id: str
+    stats: List[PlacementStats] = []
+    description: Optional[str] = None
 
 class FeeBase(BaseModel):
     college_id: str
