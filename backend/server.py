@@ -77,6 +77,7 @@ class AdmissionBase(BaseModel):
     balance: float = 0
     instalments: List[FeeInstalment] = []
     remark: Optional[str] = None
+    scholarship_amount: Optional[float] = None  # One-time scholarship if offered
 
 class Admission(AdmissionBase):
     model_config = ConfigDict(extra="ignore")
