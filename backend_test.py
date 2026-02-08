@@ -139,7 +139,8 @@ class OhCampusAPITester:
             states = response.get('states', [])
             cities = response.get('cities', [])
             categories = response.get('categories', [])
-            print(f"   Found: {len(states)} states, {len(cities)} cities, {len(categories)} categories")
+            courses = response.get('courses', [])  # NEW: Test courses in filters
+            print(f"   Found: {len(states)} states, {len(cities)} cities, {len(categories)} categories, {len(courses)} courses")
         return success
 
     def test_get_colleges(self):
