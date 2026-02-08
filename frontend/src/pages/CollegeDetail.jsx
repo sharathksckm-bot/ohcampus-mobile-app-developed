@@ -422,6 +422,148 @@ export default function CollegeDetail() {
             </Card>
           </TabsContent>
 
+          {/* Courses Offered Tab */}
+          <TabsContent value="courses" className="animate-fade-in">
+            <Card className="border-slate-200">
+              <CardHeader>
+                <CardTitle className="text-xl font-heading font-semibold text-[#0F172A] flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-[#0066CC]" />
+                  Courses Offered
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {courses && courses.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {courses.map((course, index) => (
+                      <Card 
+                        key={course.id} 
+                        className="cursor-pointer hover:shadow-md transition-all duration-300 border-slate-200 group"
+                        onClick={() => handleViewCourse(course)}
+                        data-testid={`course-card-${course.id}`}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <Badge variant="secondary" className="font-body">
+                              {course.level}
+                            </Badge>
+                            {getSeatStatusBadge(course.seat_status || 'Available')}
+                          </div>
+                          <h4 className="font-heading font-semibold text-[#0F172A] mb-2 group-hover:text-[#0066CC] transition-colors">
+                            {course.name}
+                          </h4>
+                          <div className="flex items-center gap-4 text-sm text-[#475569] font-body">
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-4 w-4" />
+                              {course.duration}
+                            </span>
+                            {course.category && (
+                              <Badge variant="outline" className="text-xs">
+                                {course.category}
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="mt-3 flex items-center text-[#0066CC] font-body text-sm font-medium group-hover:gap-2 transition-all">
+                            View Details
+                            <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-[#475569] font-body text-center py-8">
+                    No courses available for this college.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Placements Tab */}
+          <TabsContent value="placements" className="animate-fade-in">
+            <Card className="border-slate-200">
+              <CardHeader>
+                <CardTitle className="text-xl font-heading font-semibold text-[#0F172A] flex items-center gap-2">
+                  <Briefcase className="h-5 w-5 text-[#0066CC]" />
+                  Placement Statistics
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {placements && placements.stats && placements.stats.length > 0 ? (
+                  <div className="space-y-6">
+                    {/* Description */}
+                    {placements.description && (
+                      <p className="text-[#475569] font-body bg-slate-50 p-4 rounded-lg">
+                        {placements.description}
+                      </p>
+                    )}
+                    
+                    {/* Stats Table */}
+                    <div className="border rounded-lg overflow-hidden">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-slate-50">
+                            <TableHead className="font-heading font-semibold">Year</TableHead>
+                            <TableHead className="font-heading font-semibold">
+                              <div className="flex items-center gap-1">
+                                <TrendingUp className="h-4 w-4 text-green-600" />
+                                Highest Package
+                              </div>
+                            </TableHead>
+                            <TableHead className="font-heading font-semibold">Average Package</TableHead>
+                            <TableHead className="font-heading font-semibold">Placement Rate</TableHead>
+                            <TableHead className="font-heading font-semibold">Total Offers</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {placements.stats.map((stat, i) => (
+                            <TableRow key={i}>
+                              <TableCell className="font-body font-semibold">{stat.year}</TableCell>
+                              <TableCell className="font-body text-green-600 font-semibold">
+                                {formatCurrency(stat.highest_package)}
+                              </TableCell>
+                              <TableCell className="font-body">{formatCurrency(stat.average_package)}</TableCell>
+                              <TableCell>
+                                <Badge className="bg-blue-100 text-blue-700 font-body">
+                                  {stat.placement_rate}%
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="font-body">{stat.total_offers}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                    
+                    {/* Top Recruiters */}
+                    {placements.stats[0]?.top_recruiters && placements.stats[0].top_recruiters.length > 0 && (
+                      <div>
+                        <h4 className="font-heading font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                          <Award className="h-5 w-5 text-[#FF6B35]" />
+                          Top Recruiters ({placements.stats[0].year})
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {placements.stats[0].top_recruiters.map((recruiter, i) => (
+                            <Badge key={i} variant="secondary" className="font-body py-1.5 px-3">
+                              {recruiter}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Briefcase className="h-12 w-12 mx-auto text-[#94A3B8] mb-3" />
+                    <p className="text-[#475569] font-body">
+                      Placement statistics not available for this college.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* What's New Tab */}
           <TabsContent value="whats-new" className="animate-fade-in">
             <Card className="border-slate-200">
