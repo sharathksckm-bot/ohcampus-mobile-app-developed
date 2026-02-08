@@ -50,6 +50,7 @@ import {
   FileSpreadsheet,
   AlertCircle,
   CheckCircle,
+  X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -62,6 +63,7 @@ export default function FeeManagement() {
   const [loading, setLoading] = useState(true);
   const [coursesLoading, setCoursesLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [bulkFeeDialogOpen, setBulkFeeDialogOpen] = useState(false);
   const [admissionDialogOpen, setAdmissionDialogOpen] = useState(false);
   const [csvDialogOpen, setCsvDialogOpen] = useState(false);
   const [editingFee, setEditingFee] = useState(null);
@@ -79,6 +81,14 @@ export default function FeeManagement() {
     admission_fee: '',
     description: '',
   });
+  
+  // Bulk fee form state
+  const [bulkFormData, setBulkFormData] = useState({
+    course_id: '',
+    fee_type: 'annual',
+    fees: []
+  });
+  
   const [admissionFormData, setAdmissionFormData] = useState({
     course_id: '',
     registration_fee: '',
@@ -200,6 +210,132 @@ export default function FeeManagement() {
     setAdmissionDialogOpen(true);
   };
 
+  // Initialize bulk fee form when opening dialog
+  const handleOpenBulkFeeDialog = (courseId = null, feeType = 'annual') => {
+    const course = courseId ? courses.find(c => c.id === courseId) : null;
+    const existingFees = courseId ? fees.filter(f => f.course_id === courseId && f.fee_type === feeType) : [];
+    
+    // Determine number of periods based on course duration
+    let numPeriods = feeType === 'annual' ? (course?.duration_years || 4) : (course?.duration_semesters || 8);
+    
+    // Pre-populate with existing fees or empty entries
+    const feeEntries = Array.from({ length: numPeriods }, (_, i) => {
+      const existing = existingFees.find(f => f.year_or_semester === i + 1);
+      return {
+        year_or_semester: i + 1,
+        amount: existing?.amount?.toString() || '',
+        hostel_fee: existing?.hostel_fee?.toString() || '',
+        description: existing?.description || ''
+      };
+    });
+    
+    setBulkFormData({
+      course_id: courseId || '',
+      fee_type: feeType,
+      fees: feeEntries
+    });
+    setBulkFeeDialogOpen(true);
+  };
+
+  // Update bulk fee entry
+  const updateBulkFeeEntry = (index, field, value) => {
+    setBulkFormData(prev => {
+      const newFees = [...prev.fees];
+      newFees[index] = { ...newFees[index], [field]: value };
+      return { ...prev, fees: newFees };
+    });
+  };
+
+  // Handle bulk fee course change
+  const handleBulkFeeCourseChange = (courseId) => {
+    const course = courses.find(c => c.id === courseId);
+    const existingFees = fees.filter(f => f.course_id === courseId && f.fee_type === bulkFormData.fee_type);
+    
+    let numPeriods = bulkFormData.fee_type === 'annual' ? (course?.duration_years || 4) : (course?.duration_semesters || 8);
+    
+    const feeEntries = Array.from({ length: numPeriods }, (_, i) => {
+      const existing = existingFees.find(f => f.year_or_semester === i + 1);
+      return {
+        year_or_semester: i + 1,
+        amount: existing?.amount?.toString() || '',
+        hostel_fee: existing?.hostel_fee?.toString() || '',
+        description: existing?.description || ''
+      };
+    });
+    
+    setBulkFormData(prev => ({
+      ...prev,
+      course_id: courseId,
+      fees: feeEntries
+    }));
+  };
+
+  // Handle bulk fee type change
+  const handleBulkFeeTypeChange = (feeType) => {
+    const course = courses.find(c => c.id === bulkFormData.course_id);
+    const existingFees = bulkFormData.course_id ? fees.filter(f => f.course_id === bulkFormData.course_id && f.fee_type === feeType) : [];
+    
+    let numPeriods = feeType === 'annual' ? (course?.duration_years || 4) : (course?.duration_semesters || 8);
+    
+    const feeEntries = Array.from({ length: numPeriods }, (_, i) => {
+      const existing = existingFees.find(f => f.year_or_semester === i + 1);
+      return {
+        year_or_semester: i + 1,
+        amount: existing?.amount?.toString() || '',
+        hostel_fee: existing?.hostel_fee?.toString() || '',
+        description: existing?.description || ''
+      };
+    });
+    
+    setBulkFormData(prev => ({
+      ...prev,
+      fee_type: feeType,
+      fees: feeEntries
+    }));
+  };
+
+  // Submit bulk fees
+  const handleBulkFeeSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!bulkFormData.course_id) {
+      toast.error('Please select a course');
+      return;
+    }
+    
+    // Filter out empty entries
+    const validFees = bulkFormData.fees.filter(f => f.amount && parseFloat(f.amount) > 0);
+    
+    if (validFees.length === 0) {
+      toast.error('Please enter at least one fee amount');
+      return;
+    }
+    
+    setSubmitting(true);
+    try {
+      const payload = {
+        college_id: selectedCollege.id,
+        course_id: bulkFormData.course_id,
+        fee_type: bulkFormData.fee_type,
+        fees: validFees.map(f => ({
+          year_or_semester: f.year_or_semester,
+          amount: parseFloat(f.amount),
+          hostel_fee: f.hostel_fee ? parseFloat(f.hostel_fee) : null,
+          description: f.description || null
+        }))
+      };
+      
+      await feesAPI.createBulk(payload);
+      toast.success(`Successfully saved ${validFees.length} fee records`);
+      setBulkFeeDialogOpen(false);
+      fetchCollegeData(selectedCollege.id);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to save fees');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -303,6 +439,73 @@ export default function FeeManagement() {
     }
   };
 
+  // CSV Import handlers
+  const handleCSVImport = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (!file.name.endsWith('.csv')) {
+      toast.error('Please select a CSV file');
+      return;
+    }
+    
+    setImporting(true);
+    setImportResult(null);
+    
+    try {
+      const response = await feesAPI.importCSV(file);
+      setImportResult(response.data);
+      
+      if (response.data.imported_count > 0) {
+        toast.success(`Successfully imported ${response.data.imported_count} fee records`);
+        if (selectedCollege) {
+          fetchCollegeData(selectedCollege.id);
+        }
+      }
+      
+      if (response.data.total_errors > 0) {
+        toast.warning(`${response.data.total_errors} rows had errors`);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to import CSV');
+      setImportResult({
+        imported_count: 0,
+        errors: [error.response?.data?.detail || 'Unknown error'],
+        total_errors: 1
+      });
+    } finally {
+      setImporting(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const downloadCSVTemplate = async () => {
+    try {
+      const response = await feesAPI.getCSVTemplate();
+      const template = response.data;
+      
+      // Create CSV content
+      const headers = template.columns.join(',');
+      const exampleRow = template.columns.map(col => template.example_row[col] || '').join(',');
+      const csvContent = `${headers}\n${exampleRow}`;
+      
+      // Download
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'fees_template.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Template downloaded');
+    } catch (error) {
+      toast.error('Failed to download template');
+    }
+  };
+
   const formatCurrency = (amount) => {
     if (!amount) return '—';
     return new Intl.NumberFormat('en-IN', {
@@ -344,6 +547,11 @@ export default function FeeManagement() {
     } else {
       return Array.from({ length: course.duration_semesters || 8 }, (_, i) => i + 1);
     }
+  };
+
+  const getPeriodLabel = (num, type) => {
+    const suffix = num === 1 ? 'st' : num === 2 ? 'nd' : num === 3 ? 'rd' : 'th';
+    return type === 'annual' ? `${num}${suffix} Year` : `${num}${suffix} Semester`;
   };
 
   return (
@@ -404,15 +612,17 @@ export default function FeeManagement() {
           <>
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-4">
+              {/* Add Single Fee Button */}
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
                   <Button
-                    className="bg-[#0066CC] hover:bg-[#0052A3] text-white font-body rounded-full"
+                    variant="outline"
+                    className="font-body rounded-full"
                     onClick={() => handleOpenDialog()}
                     data-testid="add-fee-btn"
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Tuition/Hostel Fee
+                    Add Single Fee
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[500px]">
@@ -421,7 +631,7 @@ export default function FeeManagement() {
                       {editingFee ? 'Edit Fee' : 'Add New Fee'}
                     </DialogTitle>
                     <DialogDescription className="font-body">
-                      {editingFee ? 'Update the fee details below' : 'Add fee structure for a course'}
+                      {editingFee ? 'Update the fee details below' : 'Add fee structure for a single period'}
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleSubmit} className="space-y-4">
@@ -474,7 +684,7 @@ export default function FeeManagement() {
                           <SelectContent>
                             {getPeriodOptions().map((num) => (
                               <SelectItem key={num} value={num.toString()}>
-                                {formData.fee_type === 'annual' ? `${num}${num === 1 ? 'st' : num === 2 ? 'nd' : num === 3 ? 'rd' : 'th'} Year` : `${num}${num === 1 ? 'st' : num === 2 ? 'nd' : num === 3 ? 'rd' : 'th'} Semester`}
+                                {getPeriodLabel(num, formData.fee_type)}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -550,6 +760,149 @@ export default function FeeManagement() {
                 </DialogContent>
               </Dialog>
 
+              {/* Bulk Fee Dialog - Add All Years/Semesters */}
+              <Dialog open={bulkFeeDialogOpen} onOpenChange={setBulkFeeDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    className="bg-[#0066CC] hover:bg-[#0052A3] text-white font-body rounded-full"
+                    onClick={() => handleOpenBulkFeeDialog()}
+                    data-testid="bulk-fee-btn"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add All Year/Semester Fees
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="font-heading">
+                      Add Complete Fee Structure
+                    </DialogTitle>
+                    <DialogDescription className="font-body">
+                      Add fees for all years or semesters at once. Leave empty fields for periods with no fees.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleBulkFeeSubmit} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="font-body">Course *</Label>
+                        <Select
+                          value={bulkFormData.course_id}
+                          onValueChange={handleBulkFeeCourseChange}
+                        >
+                          <SelectTrigger data-testid="bulk-fee-course-select">
+                            <SelectValue placeholder="Select course" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {courses.map((course) => (
+                              <SelectItem key={course.id} value={course.id}>
+                                {course.name} ({course.duration})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="font-body">Fee Type *</Label>
+                        <Select
+                          value={bulkFormData.fee_type}
+                          onValueChange={handleBulkFeeTypeChange}
+                        >
+                          <SelectTrigger data-testid="bulk-fee-type-select">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="annual">Annual (Year-wise)</SelectItem>
+                            <SelectItem value="semester">Semester-wise</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    {bulkFormData.fees.length > 0 && (
+                      <div className="space-y-3 mt-4">
+                        <div className="grid grid-cols-12 gap-2 px-2 text-sm font-semibold text-[#475569]">
+                          <div className="col-span-3">Period</div>
+                          <div className="col-span-3">Tuition Fee (₹) *</div>
+                          <div className="col-span-3">Hostel Fee (₹)</div>
+                          <div className="col-span-3">Description</div>
+                        </div>
+                        {bulkFormData.fees.map((fee, index) => (
+                          <div key={index} className="grid grid-cols-12 gap-2 items-center p-2 bg-slate-50 rounded-lg">
+                            <div className="col-span-3 font-medium text-[#0F172A]">
+                              {getPeriodLabel(fee.year_or_semester, bulkFormData.fee_type)}
+                            </div>
+                            <div className="col-span-3">
+                              <Input
+                                type="number"
+                                value={fee.amount}
+                                onChange={(e) => updateBulkFeeEntry(index, 'amount', e.target.value)}
+                                placeholder="150000"
+                                className="font-body h-9"
+                                data-testid={`bulk-fee-amount-${index}`}
+                              />
+                            </div>
+                            <div className="col-span-3">
+                              <Input
+                                type="number"
+                                value={fee.hostel_fee}
+                                onChange={(e) => updateBulkFeeEntry(index, 'hostel_fee', e.target.value)}
+                                placeholder="80000"
+                                className="font-body h-9"
+                                data-testid={`bulk-hostel-fee-${index}`}
+                              />
+                            </div>
+                            <div className="col-span-3">
+                              <Input
+                                value={fee.description}
+                                onChange={(e) => updateBulkFeeEntry(index, 'description', e.target.value)}
+                                placeholder="Optional"
+                                className="font-body h-9"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {!bulkFormData.course_id && (
+                      <Alert className="bg-blue-50 border-blue-200">
+                        <AlertCircle className="h-4 w-4 text-blue-600" />
+                        <AlertDescription className="font-body text-blue-700">
+                          Select a course to see the fee entry fields for all years/semesters.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setBulkFeeDialogOpen(false)}
+                        className="font-body"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={submitting || !bulkFormData.course_id}
+                        className="bg-[#0066CC] hover:bg-[#0052A3] text-white font-body"
+                        data-testid="save-bulk-fees-btn"
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          'Save All Fees'
+                        )}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+
+              {/* Admission Charges Dialog */}
               <Dialog open={admissionDialogOpen} onOpenChange={setAdmissionDialogOpen}>
                 <DialogTrigger asChild>
                   <Button
@@ -707,6 +1060,140 @@ export default function FeeManagement() {
                       </Button>
                     </DialogFooter>
                   </form>
+                </DialogContent>
+              </Dialog>
+
+              {/* CSV Import Dialog */}
+              <Dialog open={csvDialogOpen} onOpenChange={setCsvDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="font-body rounded-full border-green-500 text-green-600 hover:bg-green-50"
+                    data-testid="csv-import-btn"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Import CSV
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[550px]">
+                  <DialogHeader>
+                    <DialogTitle className="font-heading flex items-center gap-2">
+                      <FileSpreadsheet className="h-5 w-5 text-green-600" />
+                      Import Fees from CSV
+                    </DialogTitle>
+                    <DialogDescription className="font-body">
+                      Upload a CSV file to bulk import fee records. Download the template first.
+                    </DialogDescription>
+                  </DialogHeader>
+                  
+                  <div className="space-y-4">
+                    {/* Download Template */}
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <p className="text-sm text-[#475569] font-body mb-3">
+                        First, download the template to see the required format:
+                      </p>
+                      <Button
+                        variant="outline"
+                        onClick={downloadCSVTemplate}
+                        className="font-body"
+                        data-testid="download-template-btn"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download Template
+                      </Button>
+                    </div>
+
+                    {/* File Upload */}
+                    <div className="p-4 border-2 border-dashed border-slate-200 rounded-lg">
+                      <div className="text-center">
+                        <Upload className="h-8 w-8 mx-auto text-slate-400 mb-2" />
+                        <p className="text-sm text-[#475569] font-body mb-3">
+                          Select a CSV file to import
+                        </p>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept=".csv"
+                          onChange={handleCSVImport}
+                          className="hidden"
+                          id="csv-file-input"
+                          data-testid="csv-file-input"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={importing}
+                          className="font-body"
+                        >
+                          {importing ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Importing...
+                            </>
+                          ) : (
+                            <>
+                              <FileSpreadsheet className="mr-2 h-4 w-4" />
+                              Choose File
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Import Result */}
+                    {importResult && (
+                      <div className="space-y-3">
+                        {importResult.imported_count > 0 && (
+                          <Alert className="bg-green-50 border-green-200">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <AlertDescription className="font-body text-green-700">
+                              Successfully imported {importResult.imported_count} fee records.
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                        
+                        {importResult.total_errors > 0 && (
+                          <Alert className="bg-red-50 border-red-200">
+                            <AlertCircle className="h-4 w-4 text-red-600" />
+                            <AlertDescription className="font-body text-red-700">
+                              <p className="font-semibold mb-1">{importResult.total_errors} errors found:</p>
+                              <ul className="text-xs list-disc list-inside max-h-32 overflow-y-auto">
+                                {importResult.errors.map((error, i) => (
+                                  <li key={i}>{error}</li>
+                                ))}
+                              </ul>
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Instructions */}
+                    <div className="text-xs text-[#475569] font-body space-y-1 p-3 bg-blue-50 rounded-lg">
+                      <p className="font-semibold text-blue-700">CSV Format Notes:</p>
+                      <ul className="list-disc list-inside space-y-1 text-blue-600">
+                        <li><code>fee_type</code>: "annual" or "semester"</li>
+                        <li><code>year_or_semester</code>: 1, 2, 3, etc.</li>
+                        <li><code>college_id</code> and <code>course_id</code> must exist in database</li>
+                        <li>hostel_fee and admission_fee are optional</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setCsvDialogOpen(false);
+                        setImportResult(null);
+                      }}
+                      className="font-body"
+                    >
+                      Close
+                    </Button>
+                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
@@ -926,7 +1413,7 @@ export default function FeeManagement() {
                         <div className="text-center py-12">
                           <IndianRupee className="h-12 w-12 mx-auto text-[#94A3B8] mb-3" />
                           <p className="text-[#475569] font-body">
-                            No fee records found. Click "Add Tuition/Hostel Fee" to create one.
+                            No fee records found. Click "Add All Year/Semester Fees" to create a complete fee structure.
                           </p>
                         </div>
                       ) : null}
@@ -963,9 +1450,20 @@ export default function FeeManagement() {
                       
                       return (
                         <div key={courseId} className="p-4 bg-slate-50 rounded-lg">
-                          <h4 className="font-heading font-semibold text-[#0F172A] mb-3">
-                            {course?.name || 'Unknown Course'}
-                          </h4>
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-heading font-semibold text-[#0F172A]">
+                              {course?.name || 'Unknown Course'}
+                            </h4>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleOpenBulkFeeDialog(courseId, courseFees[0]?.fee_type || 'annual')}
+                              className="text-[#0066CC] hover:text-[#0052A3]"
+                            >
+                              <Pencil className="h-3 w-3 mr-1" />
+                              Edit All Fees
+                            </Button>
+                          </div>
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div>
                               <p className="text-xs text-[#475569] font-body">Total Tuition</p>
