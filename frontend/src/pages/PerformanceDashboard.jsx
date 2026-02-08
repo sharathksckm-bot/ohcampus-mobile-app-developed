@@ -684,6 +684,7 @@ export default function PerformanceDashboard() {
                           <TableHead className="font-heading">Counselor</TableHead>
                           <TableHead className="font-heading">Date</TableHead>
                           <TableHead className="font-heading text-right">Total</TableHead>
+                          <TableHead className="font-heading text-right">Scholarship</TableHead>
                           <TableHead className="font-heading text-right">Paid</TableHead>
                           <TableHead className="font-heading text-right">Balance</TableHead>
                           <TableHead className="font-heading">Remarks</TableHead>
@@ -711,6 +712,16 @@ export default function PerformanceDashboard() {
                             <TableCell className="font-body text-[#475569]">{admission.counselor_name}</TableCell>
                             <TableCell className="font-body text-[#475569]">{admission.admission_date}</TableCell>
                             <TableCell className="text-right font-body">{formatCurrency(admission.total_fees)}</TableCell>
+                            <TableCell className="text-right">
+                              {admission.scholarship_amount ? (
+                                <Badge className="bg-purple-100 text-purple-700 border-purple-200">
+                                  <Gift className="h-3 w-3 mr-1" />
+                                  {formatCurrency(admission.scholarship_amount)}
+                                </Badge>
+                              ) : (
+                                <span className="text-xs text-[#94A3B8]">—</span>
+                              )}
+                            </TableCell>
                             <TableCell className="text-right font-body text-green-600">{formatCurrency(admission.fees_paid)}</TableCell>
                             <TableCell className="text-right">
                               <Badge className={admission.balance > 0 ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}>
