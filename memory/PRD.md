@@ -142,9 +142,11 @@ Create a web-based counseling platform for OhCampus counselors with:
 - [x] Admission Alerts system
 - [x] Admin College Management with search and filters
 - [x] Seat Availability status for courses
+- [x] Admin UI for managing admission alerts (CRUD operations)
+- [x] Level and Location filters on Courses page
+- [x] "By City" and "By State" tabs on Admin College Management
 
 ### P1 (High Priority)
-- [ ] Admin panel for managing admission alerts (dedicated UI)
 - [ ] Password reset functionality
 - [ ] User profile management
 
@@ -162,12 +164,24 @@ Create a web-based counseling platform for OhCampus counselors with:
 ## Test Files
 - `/app/backend/tests/test_seat_status_features.py` - 25 tests for seat status and college management
 - `/app/backend/tests/test_new_features.py` - Tests for multi-select filters, CSV import, etc.
+- `/app/backend/tests/test_iteration5_features.py` - 18 tests for courses filters, tabs, and alerts UI
 
 ## Test Credentials
 - **Admin**: admin@ohcampus.com / admin123
 - **Counselor**: counselor@ohcampus.com / counselor123
 
+## Latest Updates (Feb 2026)
+### Completed Features
+1. **Level & Location Filters on Courses Page**: Counselors can now filter courses by Level (UG/PG), State, and City with cascading behavior (city options update based on selected state).
+2. **"By City" & "By State" Tabs**: Admin College Management page now has separate tabs to group colleges by City or State instead of the previous single "By Location" tab.
+3. **Admission Alerts Management UI**: Admins can now manage admission alerts for each college via a dedicated dialog:
+   - Add new alerts with title, message, type (Info/Warning/Important/Deadline), and status
+   - Set optional start and end dates
+   - View preview of alert styling
+   - Delete existing alerts
+   - Changes are saved to the backend and reflected immediately
+
 ## Next Action Items
-1. Create Admin UI for managing admission alerts per college
-2. Add password reset functionality
-3. Implement user profile management
+1. Add password reset functionality
+2. Implement user profile management
+3. Add email notifications for admission deadlines
