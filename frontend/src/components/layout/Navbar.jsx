@@ -147,6 +147,15 @@ export const Navbar = () => {
                         <UserPlus className="mr-2 h-4 w-4" />
                         Admissions
                       </DropdownMenuItem>
+                      {canSeePerformance && (
+                        <DropdownMenuItem 
+                          className="cursor-pointer md:hidden"
+                          onClick={() => navigate('/performance')}
+                        >
+                          <BarChart3 className="mr-2 h-4 w-4" />
+                          Performance
+                        </DropdownMenuItem>
+                      )}
                     </>
                   )}
                   <DropdownMenuSeparator />
