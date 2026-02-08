@@ -98,17 +98,19 @@ export default function CollegeDetail() {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const [collegeRes, coursesRes, feeSummaryRes, faqsRes] = await Promise.all([
+      const [collegeRes, coursesRes, feeSummaryRes, faqsRes, placementsRes] = await Promise.all([
         collegesAPI.getById(collegeId),
         coursesAPI.getByCollege(collegeId),
         collegesAPI.getFeeSummary(collegeId),
         faqsAPI.getAll({ college_id: collegeId, include_global: true }),
+        placementsAPI.getByCollege(collegeId),
       ]);
       
       setCollege(collegeRes.data);
       setCourses(coursesRes.data);
       setFeeSummary(feeSummaryRes.data);
       setFaqs(faqsRes.data);
+      setPlacements(placementsRes.data);
     } catch (error) {
       console.error('Failed to fetch college details:', error);
       toast.error('Failed to load college details');
@@ -120,6 +122,28 @@ export default function CollegeDetail() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // View course details
+  const handleViewCourse = async (course) => {
+    setSelectedCourse(course);
+    setCourseDialogOpen(true);
+    setCourseDetailLoading(true);
+    
+    try {
+      const response = await coursesAPI.getById(course.id);
+      setCourseDetail(response.data);
+    } catch (error) {
+      toast.error('Failed to load course details');
+    } finally {
+      setCourseDetailLoading(false);
+    }
+  };
+
+  // Get total fees for a course from courseDetail
+  const getTotalFees = (fees) => {
+    if (!fees || fees.length === 0) return 0;
+    return fees.reduce((sum, f) => sum + (f.amount || 0), 0);
+  };
 
   const formatCurrency = (amount) => {
     if (!amount) return '—';
