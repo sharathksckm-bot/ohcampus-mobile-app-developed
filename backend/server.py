@@ -805,30 +805,107 @@ async def seed_database():
         {"id": "course-22", "name": "M.Tech - VLSI Design", "college_id": "col-8", "duration": "2 Years", "level": "PG", "duration_years": 2, "duration_semesters": 4},
     ]
     
-    # Sample fees data
+    # Sample fees data - comprehensive year/semester wise
     fees_data = [
-        # AIMS MBA Fees
-        {"id": "fee-1", "college_id": "col-1", "course_id": "course-1", "fee_type": "annual", "year_or_semester": 1, "amount": 450000, "hostel_fee": 120000, "description": "First Year Annual Fee"},
-        {"id": "fee-2", "college_id": "col-1", "course_id": "course-1", "fee_type": "annual", "year_or_semester": 2, "amount": 450000, "hostel_fee": 120000, "description": "Second Year Annual Fee"},
-        {"id": "fee-3", "college_id": "col-1", "course_id": "course-2", "fee_type": "annual", "year_or_semester": 1, "amount": 180000, "hostel_fee": 100000, "description": "First Year Annual Fee"},
+        # AIMS MBA Fees (Annual - 2 years)
+        {"id": "fee-1", "college_id": "col-1", "course_id": "course-1", "fee_type": "annual", "year_or_semester": 1, "amount": 450000, "hostel_fee": 120000, "admission_fee": 25000, "description": "First Year Annual Fee"},
+        {"id": "fee-2", "college_id": "col-1", "course_id": "course-1", "fee_type": "annual", "year_or_semester": 2, "amount": 450000, "hostel_fee": 120000, "admission_fee": 0, "description": "Second Year Annual Fee"},
         
-        # PESU B.Tech Fees
-        {"id": "fee-4", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 1, "amount": 175000, "hostel_fee": 60000, "description": "Semester 1 Fee"},
-        {"id": "fee-5", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 2, "amount": 175000, "hostel_fee": 60000, "description": "Semester 2 Fee"},
-        {"id": "fee-6", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 3, "amount": 185000, "hostel_fee": 65000, "description": "Semester 3 Fee"},
-        {"id": "fee-7", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 4, "amount": 185000, "hostel_fee": 65000, "description": "Semester 4 Fee"},
+        # AIMS BBA Fees (Annual - 3 years)
+        {"id": "fee-3", "college_id": "col-1", "course_id": "course-2", "fee_type": "annual", "year_or_semester": 1, "amount": 180000, "hostel_fee": 100000, "admission_fee": 15000, "description": "First Year Annual Fee"},
+        {"id": "fee-3b", "college_id": "col-1", "course_id": "course-2", "fee_type": "annual", "year_or_semester": 2, "amount": 180000, "hostel_fee": 100000, "admission_fee": 0, "description": "Second Year Annual Fee"},
+        {"id": "fee-3c", "college_id": "col-1", "course_id": "course-2", "fee_type": "annual", "year_or_semester": 3, "amount": 180000, "hostel_fee": 100000, "admission_fee": 0, "description": "Third Year Annual Fee"},
         
-        # Alliance MBA Fees
-        {"id": "fee-8", "college_id": "col-3", "course_id": "course-8", "fee_type": "annual", "year_or_semester": 1, "amount": 650000, "hostel_fee": 150000, "description": "First Year Annual Fee"},
-        {"id": "fee-9", "college_id": "col-3", "course_id": "course-8", "fee_type": "annual", "year_or_semester": 2, "amount": 650000, "hostel_fee": 150000, "description": "Second Year Annual Fee"},
+        # PESU B.Tech CSE Fees (Semester - 8 semesters)
+        {"id": "fee-4", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 1, "amount": 175000, "hostel_fee": 60000, "admission_fee": 20000, "description": "Semester 1 Fee"},
+        {"id": "fee-5", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 2, "amount": 175000, "hostel_fee": 60000, "admission_fee": 0, "description": "Semester 2 Fee"},
+        {"id": "fee-6", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 3, "amount": 185000, "hostel_fee": 65000, "admission_fee": 0, "description": "Semester 3 Fee"},
+        {"id": "fee-7", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 4, "amount": 185000, "hostel_fee": 65000, "admission_fee": 0, "description": "Semester 4 Fee"},
+        {"id": "fee-7a", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 5, "amount": 195000, "hostel_fee": 70000, "admission_fee": 0, "description": "Semester 5 Fee"},
+        {"id": "fee-7b", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 6, "amount": 195000, "hostel_fee": 70000, "admission_fee": 0, "description": "Semester 6 Fee"},
+        {"id": "fee-7c", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 7, "amount": 200000, "hostel_fee": 75000, "admission_fee": 0, "description": "Semester 7 Fee"},
+        {"id": "fee-7d", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 8, "amount": 200000, "hostel_fee": 75000, "admission_fee": 0, "description": "Semester 8 Fee"},
         
-        # SRM B.Tech Fees
-        {"id": "fee-10", "college_id": "col-4", "course_id": "course-11", "fee_type": "annual", "year_or_semester": 1, "amount": 350000, "hostel_fee": 110000, "description": "First Year Annual Fee"},
-        {"id": "fee-11", "college_id": "col-4", "course_id": "course-11", "fee_type": "annual", "year_or_semester": 2, "amount": 350000, "hostel_fee": 110000, "description": "Second Year Annual Fee"},
+        # Alliance MBA Fees (Annual - 2 years)
+        {"id": "fee-8", "college_id": "col-3", "course_id": "course-8", "fee_type": "annual", "year_or_semester": 1, "amount": 650000, "hostel_fee": 150000, "admission_fee": 50000, "description": "First Year Annual Fee"},
+        {"id": "fee-9", "college_id": "col-3", "course_id": "course-8", "fee_type": "annual", "year_or_semester": 2, "amount": 650000, "hostel_fee": 150000, "admission_fee": 0, "description": "Second Year Annual Fee"},
         
-        # Manipal MBBS Fees
-        {"id": "fee-12", "college_id": "col-5", "course_id": "course-14", "fee_type": "annual", "year_or_semester": 1, "amount": 2500000, "hostel_fee": 200000, "description": "First Year Annual Fee"},
-        {"id": "fee-13", "college_id": "col-5", "course_id": "course-14", "fee_type": "annual", "year_or_semester": 2, "amount": 2500000, "hostel_fee": 200000, "description": "Second Year Annual Fee"},
+        # SRM B.Tech AI Fees (Annual - 4 years)
+        {"id": "fee-10", "college_id": "col-4", "course_id": "course-11", "fee_type": "annual", "year_or_semester": 1, "amount": 350000, "hostel_fee": 110000, "admission_fee": 30000, "description": "First Year Annual Fee"},
+        {"id": "fee-11", "college_id": "col-4", "course_id": "course-11", "fee_type": "annual", "year_or_semester": 2, "amount": 350000, "hostel_fee": 110000, "admission_fee": 0, "description": "Second Year Annual Fee"},
+        {"id": "fee-11a", "college_id": "col-4", "course_id": "course-11", "fee_type": "annual", "year_or_semester": 3, "amount": 375000, "hostel_fee": 115000, "admission_fee": 0, "description": "Third Year Annual Fee"},
+        {"id": "fee-11b", "college_id": "col-4", "course_id": "course-11", "fee_type": "annual", "year_or_semester": 4, "amount": 375000, "hostel_fee": 115000, "admission_fee": 0, "description": "Fourth Year Annual Fee"},
+        
+        # Manipal MBBS Fees (Annual - 5 years)
+        {"id": "fee-12", "college_id": "col-5", "course_id": "course-14", "fee_type": "annual", "year_or_semester": 1, "amount": 2500000, "hostel_fee": 200000, "admission_fee": 100000, "description": "First Year Annual Fee"},
+        {"id": "fee-13", "college_id": "col-5", "course_id": "course-14", "fee_type": "annual", "year_or_semester": 2, "amount": 2500000, "hostel_fee": 200000, "admission_fee": 0, "description": "Second Year Annual Fee"},
+        {"id": "fee-13a", "college_id": "col-5", "course_id": "course-14", "fee_type": "annual", "year_or_semester": 3, "amount": 2600000, "hostel_fee": 210000, "admission_fee": 0, "description": "Third Year Annual Fee"},
+        {"id": "fee-13b", "college_id": "col-5", "course_id": "course-14", "fee_type": "annual", "year_or_semester": 4, "amount": 2600000, "hostel_fee": 210000, "admission_fee": 0, "description": "Fourth Year Annual Fee"},
+        {"id": "fee-13c", "college_id": "col-5", "course_id": "course-14", "fee_type": "annual", "year_or_semester": 5, "amount": 2700000, "hostel_fee": 220000, "admission_fee": 0, "description": "Fifth Year Annual Fee"},
+    ]
+    
+    # Admission charges data
+    admission_charges_data = [
+        {
+            "id": "ac-1",
+            "college_id": "col-1",
+            "course_id": "course-1",
+            "registration_fee": 5000,
+            "admission_fee": 25000,
+            "caution_deposit": 10000,
+            "uniform_fee": 8000,
+            "library_fee": 5000,
+            "lab_fee": 0,
+            "other_charges": 2000,
+            "other_charges_description": "ID Card & Documentation",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "ac-2",
+            "college_id": "col-2",
+            "course_id": "course-4",
+            "registration_fee": 3000,
+            "admission_fee": 20000,
+            "caution_deposit": 15000,
+            "uniform_fee": 5000,
+            "library_fee": 8000,
+            "lab_fee": 12000,
+            "other_charges": 5000,
+            "other_charges_description": "Workshop & Equipment",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "ac-3",
+            "college_id": "col-3",
+            "course_id": "course-8",
+            "registration_fee": 10000,
+            "admission_fee": 50000,
+            "caution_deposit": 25000,
+            "uniform_fee": 15000,
+            "library_fee": 10000,
+            "lab_fee": 0,
+            "other_charges": 10000,
+            "other_charges_description": "International Immersion Program",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "ac-4",
+            "college_id": "col-5",
+            "course_id": "course-14",
+            "registration_fee": 25000,
+            "admission_fee": 100000,
+            "caution_deposit": 50000,
+            "uniform_fee": 20000,
+            "library_fee": 15000,
+            "lab_fee": 30000,
+            "other_charges": 10000,
+            "other_charges_description": "Clinical Training Equipment",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
     ]
     
     # Sample FAQs
