@@ -435,6 +435,16 @@ export default function Admissions() {
                         <TableCell className="text-right font-body font-medium">
                           {formatCurrency(admission.total_fees)}
                         </TableCell>
+                        <TableCell className="text-right">
+                          {admission.scholarship_amount ? (
+                            <Badge className="bg-purple-100 text-purple-700 border-purple-200">
+                              <Gift className="h-3 w-3 mr-1" />
+                              {formatCurrency(admission.scholarship_amount)}
+                            </Badge>
+                          ) : (
+                            <span className="text-xs text-[#94A3B8]">—</span>
+                          )}
+                        </TableCell>
                         <TableCell className="text-right font-body text-green-600">
                           {formatCurrency(admission.fees_paid)}
                         </TableCell>
