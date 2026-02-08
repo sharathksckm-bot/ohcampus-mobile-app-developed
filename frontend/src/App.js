@@ -14,12 +14,14 @@ import CompareColleges from "./pages/CompareColleges";
 import Courses from "./pages/Courses";
 import Admissions from "./pages/Admissions";
 import CounselorPerformance from "./pages/CounselorPerformance";
+import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import FeeManagement from "./pages/FeeManagement";
 import FAQManagement from "./pages/FAQManagement";
 import CollegeManagement from "./pages/CollegeManagement";
 import UserManagement from "./pages/UserManagement";
 import PerformanceDashboard from "./pages/PerformanceDashboard";
+import ActivityLog from "./pages/ActivityLog";
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -100,6 +102,14 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/profile" 
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Admin Routes */}
       <Route 
@@ -147,6 +157,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute requiredRole="admin">
             <PerformanceDashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/activity-log" 
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <ActivityLog />
           </ProtectedRoute>
         } 
       />
