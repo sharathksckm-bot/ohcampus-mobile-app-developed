@@ -54,6 +54,7 @@ export const collegesAPI = {
   create: (data) => api.post('/colleges', data),
   update: (id, data) => api.put(`/colleges/${id}`, data),
   getFeeSummary: (collegeId) => api.get(`/colleges/${collegeId}/fee-summary`),
+  updateAdmissionAlerts: (id, alerts) => api.put(`/colleges/${id}/admission-alerts`, alerts),
 };
 
 // Courses API
