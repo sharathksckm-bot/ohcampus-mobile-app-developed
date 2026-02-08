@@ -80,6 +80,14 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/courses" 
+        element={
+          <ProtectedRoute>
+            <Courses />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Admin Routes */}
       <Route 
