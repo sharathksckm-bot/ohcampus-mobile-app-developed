@@ -131,7 +131,7 @@ export default function ActivityLog() {
           activityAPI.getActions(),
           usersAPI.getAll()
         ]);
-        setActions(actionsRes.data || []);
+        setActions(actionsRes.data?.actions || []);
         setUsers(usersRes.data || []);
       } catch {
         // Ignore errors for actions/users
