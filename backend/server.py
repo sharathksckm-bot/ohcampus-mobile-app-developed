@@ -855,6 +855,16 @@ async def seed_database():
             "is_featured": True,
             "established": "1985",
             "accreditation": "NAAC 'A++' Grade",
+            "admission_alerts": [
+                {
+                    "title": "SRMJEEE 2025 Applications",
+                    "message": "SRM Joint Engineering Entrance Exam applications are open. Last date: April 30th, 2025.",
+                    "alert_type": "deadline",
+                    "start_date": "2025-01-01",
+                    "end_date": "2025-04-30",
+                    "is_active": True
+                }
+            ],
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         {
@@ -879,6 +889,16 @@ async def seed_database():
             "is_featured": True,
             "established": "1953",
             "accreditation": "NAAC 'A++' Grade",
+            "admission_alerts": [
+                {
+                    "title": "MBBS Counseling Schedule",
+                    "message": "NEET counseling for MBBS admissions starts from June 1st. Prepare your documents.",
+                    "alert_type": "warning",
+                    "start_date": "2025-05-01",
+                    "end_date": "2025-06-30",
+                    "is_active": True
+                }
+            ],
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         {
@@ -903,6 +923,7 @@ async def seed_database():
             "is_featured": True,
             "established": "2012",
             "accreditation": "NAAC 'A' Grade",
+            "admission_alerts": [],
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         {
@@ -927,6 +948,7 @@ async def seed_database():
             "is_featured": True,
             "established": "1969",
             "accreditation": "NAAC 'A++' Grade",
+            "admission_alerts": [],
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         {
@@ -951,6 +973,16 @@ async def seed_database():
             "is_featured": True,
             "established": "1984",
             "accreditation": "NAAC 'A++' Grade",
+            "admission_alerts": [
+                {
+                    "title": "VITEEE 2025 Registration",
+                    "message": "VIT Engineering Entrance Exam registration is open. Apply online before March 31st.",
+                    "alert_type": "important",
+                    "start_date": "2025-01-15",
+                    "end_date": "2025-03-31",
+                    "is_active": True
+                }
+            ],
             "created_at": datetime.now(timezone.utc).isoformat()
         }
     ]
