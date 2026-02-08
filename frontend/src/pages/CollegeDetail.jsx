@@ -420,18 +420,22 @@ export default function CollegeDetail() {
                 feeSummary.map(({ course, fee_type, fees, admission_charges, totals }) => (
                   <Card key={course.id} className="border-slate-200 overflow-hidden">
                     <CardHeader className="bg-slate-50 border-b border-slate-200">
-                      <CardTitle className="text-lg font-heading font-semibold text-[#0F172A] flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <BookOpen className="h-5 w-5 text-[#0066CC]" />
-                          {course.name}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="font-body">
-                            {course.level} • {course.duration}
-                          </Badge>
-                          <Badge className={fee_type === 'annual' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}>
-                            {fee_type === 'annual' ? 'Annual Fees' : 'Semester Fees'}
-                          </Badge>
+                      <CardTitle className="text-lg font-heading font-semibold text-[#0F172A]">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                          <div className="flex items-center gap-2">
+                            <BookOpen className="h-5 w-5 text-[#0066CC]" />
+                            {course.name}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            {/* Seat Status Badge */}
+                            {getSeatStatusBadge(course.seat_status || 'Available')}
+                            <Badge variant="outline" className="font-body">
+                              {course.level} • {course.duration}
+                            </Badge>
+                            <Badge className={fee_type === 'annual' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}>
+                              {fee_type === 'annual' ? 'Annual Fees' : 'Semester Fees'}
+                            </Badge>
+                          </div>
                         </div>
                       </CardTitle>
                     </CardHeader>
