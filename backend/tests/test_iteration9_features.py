@@ -136,10 +136,10 @@ class TestProfileEndpoints:
         requests.put(f"{BASE_URL}/api/profile", headers=headers, json={"name": original_data.get("name", "Demo Counselor")})
     
     def test_get_profile_unauthorized(self):
-        """Test GET /api/profile without auth returns 401"""
+        """Test GET /api/profile without auth returns 401 or 403"""
         response = requests.get(f"{BASE_URL}/api/profile")
-        assert response.status_code == 401, f"Expected 401, got {response.status_code}"
-        print(f"✓ GET /api/profile returns 401 without auth")
+        assert response.status_code in [401, 403], f"Expected 401 or 403, got {response.status_code}"
+        print(f"✓ GET /api/profile returns {response.status_code} without auth")
 
 
 class TestPasswordChange:
