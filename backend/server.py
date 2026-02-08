@@ -1434,6 +1434,222 @@ async def get_all_admissions_list(
         "admissions": admissions
     }
 
+# ===================== TARGET TRACKING ENDPOINTS =====================
+
+class TargetCreate(BaseModel):
+    counselor_id: str
+    target_type: str  # monthly, quarterly
+    period: str  # e.g., "2026-02" for monthly, "2026-Q1" for quarterly
+    target_count: int
+    target_fees: Optional[float] = None
+
+class TargetUpdate(BaseModel):
+    target_count: Optional[int] = None
+    target_fees: Optional[float] = None
+
+@api_router.get("/targets")
+async def get_targets(
+    current_user: dict = Depends(require_target_assigner),
+    counselor_id: Optional[str] = None,
+    period: Optional[str] = None
+):
+    """Get targets (Admin sees all, Team Lead sees team, Manager sees all)"""
+    query = {}
+    
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    # Filter based on role
+    if current_user.get("role") != "admin" and user.get("designation") != "Admission Manager":
+        # Team Lead sees only their team
+        if user.get("designation") == "Team Lead":
+            team_member_ids = await db.users.distinct("id", {"team_lead_id": current_user["user_id"]})
+            team_member_ids.append(current_user["user_id"])
+            query["counselor_id"] = {"$in": team_member_ids}
+    
+    if counselor_id:
+        query["counselor_id"] = counselor_id
+    if period:
+        query["period"] = period
+    
+    targets = await db.targets.find(query, {"_id": 0}).sort("period", -1).to_list(100)
+    return targets
+
+@api_router.get("/targets/counselors")
+async def get_assignable_counselors(current_user: dict = Depends(require_target_assigner)):
+    """Get counselors that the current user can assign targets to"""
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    if current_user.get("role") == "admin" or user.get("designation") == "Admission Manager":
+        # Admin and Manager see all counselors
+        counselors = await db.users.find(
+            {"role": "counselor", "is_active": {"$ne": False}},
+            {"_id": 0, "id": 1, "name": 1, "designation": 1}
+        ).to_list(100)
+    elif user.get("designation") == "Team Lead":
+        # Team Lead sees only their team + themselves
+        counselors = await db.users.find(
+            {"$or": [{"team_lead_id": current_user["user_id"]}, {"id": current_user["user_id"]}], "is_active": {"$ne": False}},
+            {"_id": 0, "id": 1, "name": 1, "designation": 1}
+        ).to_list(100)
+    else:
+        counselors = []
+    
+    return counselors
+
+@api_router.post("/targets", status_code=201)
+async def create_target(target_data: TargetCreate, current_user: dict = Depends(require_target_assigner)):
+    """Create a new target assignment"""
+    # Validate counselor exists
+    counselor = await db.users.find_one({"id": target_data.counselor_id}, {"_id": 0})
+    if not counselor:
+        raise HTTPException(status_code=400, detail="Counselor not found")
+    
+    # Check if user can assign to this counselor
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    if current_user.get("role") != "admin" and user.get("designation") != "Admission Manager":
+        if user.get("designation") == "Team Lead":
+            # Team Lead can only assign to their team
+            team_member_ids = await db.users.distinct("id", {"team_lead_id": current_user["user_id"]})
+            team_member_ids.append(current_user["user_id"])
+            if target_data.counselor_id not in team_member_ids:
+                raise HTTPException(status_code=403, detail="Cannot assign target to this counselor")
+    
+    # Check if target for this period already exists
+    existing = await db.targets.find_one({
+        "counselor_id": target_data.counselor_id,
+        "period": target_data.period
+    })
+    if existing:
+        raise HTTPException(status_code=400, detail="Target for this period already exists")
+    
+    assigner = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    target = {
+        "id": str(uuid.uuid4()),
+        "counselor_id": target_data.counselor_id,
+        "counselor_name": counselor.get("name"),
+        "target_type": target_data.target_type,
+        "period": target_data.period,
+        "target_count": target_data.target_count,
+        "target_fees": target_data.target_fees,
+        "assigned_by": current_user["user_id"],
+        "assigned_by_name": assigner.get("name") if assigner else None,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.targets.insert_one(target)
+    target.pop("_id", None)
+    return target
+
+@api_router.put("/targets/{target_id}")
+async def update_target(target_id: str, target_data: TargetUpdate, current_user: dict = Depends(require_target_assigner)):
+    """Update an existing target"""
+    existing = await db.targets.find_one({"id": target_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Target not found")
+    
+    update_data = {"updated_at": datetime.now(timezone.utc).isoformat()}
+    
+    if target_data.target_count is not None:
+        update_data["target_count"] = target_data.target_count
+    if target_data.target_fees is not None:
+        update_data["target_fees"] = target_data.target_fees
+    
+    await db.targets.update_one({"id": target_id}, {"$set": update_data})
+    
+    updated = await db.targets.find_one({"id": target_id}, {"_id": 0})
+    return updated
+
+@api_router.delete("/targets/{target_id}")
+async def delete_target(target_id: str, current_user: dict = Depends(require_target_assigner)):
+    """Delete a target"""
+    existing = await db.targets.find_one({"id": target_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Target not found")
+    
+    await db.targets.delete_one({"id": target_id})
+    return {"message": "Target deleted successfully"}
+
+@api_router.get("/targets/progress")
+async def get_targets_with_progress(
+    current_user: dict = Depends(require_target_assigner),
+    period: Optional[str] = None
+):
+    """Get targets with actual progress calculated"""
+    # Get current period if not specified
+    if not period:
+        period = datetime.now(timezone.utc).strftime("%Y-%m")
+    
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    query = {"period": period}
+    
+    # Filter based on role
+    if current_user.get("role") != "admin" and user.get("designation") != "Admission Manager":
+        if user.get("designation") == "Team Lead":
+            team_member_ids = await db.users.distinct("id", {"team_lead_id": current_user["user_id"]})
+            team_member_ids.append(current_user["user_id"])
+            query["counselor_id"] = {"$in": team_member_ids}
+    
+    targets = await db.targets.find(query, {"_id": 0}).to_list(100)
+    
+    # Calculate progress for each target
+    results = []
+    for target in targets:
+        # Get admissions count and fees for this period
+        # Parse period to get date range
+        if target["target_type"] == "monthly":
+            # Period format: "2026-02"
+            year, month = target["period"].split("-")
+            start_date = f"{year}-{month}-01"
+            if int(month) == 12:
+                end_date = f"{int(year)+1}-01-01"
+            else:
+                end_date = f"{year}-{int(month)+1:02d}-01"
+        else:
+            # Quarterly: "2026-Q1"
+            year, quarter = target["period"].split("-Q")
+            quarter = int(quarter)
+            start_month = (quarter - 1) * 3 + 1
+            end_month = quarter * 3 + 1
+            start_date = f"{year}-{start_month:02d}-01"
+            if end_month > 12:
+                end_date = f"{int(year)+1}-01-01"
+            else:
+                end_date = f"{year}-{end_month:02d}-01"
+        
+        # Count admissions
+        admission_query = {
+            "counselor_id": target["counselor_id"],
+            "admission_date": {"$gte": start_date, "$lt": end_date}
+        }
+        
+        admission_count = await db.admissions.count_documents(admission_query)
+        
+        # Sum fees collected
+        pipeline = [
+            {"$match": admission_query},
+            {"$group": {"_id": None, "total_fees_collected": {"$sum": "$fees_paid"}}}
+        ]
+        fees_result = await db.admissions.aggregate(pipeline).to_list(1)
+        fees_collected = fees_result[0]["total_fees_collected"] if fees_result else 0
+        
+        # Calculate progress percentages
+        count_progress = (admission_count / target["target_count"] * 100) if target["target_count"] > 0 else 0
+        fees_progress = (fees_collected / target["target_fees"] * 100) if target.get("target_fees") and target["target_fees"] > 0 else 0
+        
+        results.append({
+            **target,
+            "actual_count": admission_count,
+            "actual_fees": fees_collected,
+            "count_progress": round(count_progress, 1),
+            "fees_progress": round(fees_progress, 1)
+        })
+    
+    return results
+
 # ===================== SEED DATA ENDPOINT =====================
 
 @api_router.post("/seed")
