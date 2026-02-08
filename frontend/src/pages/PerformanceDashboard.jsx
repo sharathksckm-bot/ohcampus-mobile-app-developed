@@ -572,6 +572,271 @@ export default function PerformanceDashboard() {
             </Card>
           </TabsContent>
 
+          {/* Target Alerts Tab */}
+          <TabsContent value="alerts" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="font-heading text-lg flex items-center gap-2">
+                  <Bell className="h-5 w-5 text-red-500" />
+                  Target Alerts
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loadingAlerts ? (
+                  <div className="space-y-4">
+                    {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
+                  </div>
+                ) : !alertsData ? (
+                  <div className="text-center py-8">
+                    <Bell className="h-12 w-12 mx-auto text-[#94A3B8] mb-4" />
+                    <p className="text-[#475569] font-body">Click to load target alerts</p>
+                  </div>
+                ) : alertsData.alerts.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Check className="h-12 w-12 mx-auto text-green-500 mb-4" />
+                    <p className="text-[#475569] font-body font-medium">All counselors are on track!</p>
+                    <p className="text-sm text-[#94A3B8]">No one is falling behind on their targets this month.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Summary Cards */}
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                      <Card className="bg-red-50 border-red-200">
+                        <CardContent className="p-4 text-center">
+                          <AlertTriangle className="h-8 w-8 mx-auto text-red-500 mb-2" />
+                          <p className="text-2xl font-heading font-bold text-red-600">{alertsData.critical_count}</p>
+                          <p className="text-xs text-red-600">Critical</p>
+                        </CardContent>
+                      </Card>
+                      <Card className="bg-orange-50 border-orange-200">
+                        <CardContent className="p-4 text-center">
+                          <Bell className="h-8 w-8 mx-auto text-orange-500 mb-2" />
+                          <p className="text-2xl font-heading font-bold text-orange-600">{alertsData.warning_count}</p>
+                          <p className="text-xs text-orange-600">Warning</p>
+                        </CardContent>
+                      </Card>
+                      <Card className="bg-blue-50 border-blue-200">
+                        <CardContent className="p-4 text-center">
+                          <Calendar className="h-8 w-8 mx-auto text-blue-500 mb-2" />
+                          <p className="text-2xl font-heading font-bold text-blue-600">{alertsData.day_of_month}</p>
+                          <p className="text-xs text-blue-600">Day of Month</p>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {/* Alert List */}
+                    <div className="space-y-3">
+                      {alertsData.alerts.map((alert, index) => (
+                        <Card key={index} className={`border-l-4 ${alert.alert_severity === 'critical' ? 'border-l-red-500 bg-red-50' : 'border-l-orange-500 bg-orange-50'}`}>
+                          <CardContent className="p-4">
+                            <div className="flex items-start justify-between mb-3">
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-heading font-semibold text-[#0F172A]">{alert.counselor_name}</span>
+                                  <Badge className={alert.alert_severity === 'critical' ? 'bg-red-500' : 'bg-orange-500'}>
+                                    {alert.alert_severity}
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-[#475569]">{alert.designation} • {alert.counselor_email}</p>
+                              </div>
+                              <Badge variant="outline" className="font-body">
+                                {alert.days_remaining} days left
+                              </Badge>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <p className="text-xs text-[#94A3B8] mb-1">Admissions Progress</p>
+                                <div className="flex items-center gap-2">
+                                  <Progress value={alert.admission_progress} className="flex-1 h-2" />
+                                  <span className="text-sm font-body font-medium">{alert.current_admissions}/{alert.target_count}</span>
+                                </div>
+                                <p className="text-xs text-[#94A3B8] mt-1">{alert.admission_progress}% (expected: {alert.expected_progress}%)</p>
+                              </div>
+                              {alert.target_fees > 0 && (
+                                <div>
+                                  <p className="text-xs text-[#94A3B8] mb-1">Fees Progress</p>
+                                  <div className="flex items-center gap-2">
+                                    <Progress value={alert.fees_progress} className="flex-1 h-2" />
+                                    <span className="text-sm font-body font-medium">{alert.fees_progress}%</span>
+                                  </div>
+                                  <p className="text-xs text-[#94A3B8] mt-1">{formatCurrency(alert.current_fees_collected)} / {formatCurrency(alert.target_fees)}</p>
+                                </div>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Scholarship Summary Tab */}
+          <TabsContent value="scholarships" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="font-heading text-lg flex items-center gap-2">
+                    <Gift className="h-5 w-5 text-purple-500" />
+                    Scholarship Summary Report
+                  </CardTitle>
+                  <Select value={scholarshipViewBy} onValueChange={(v) => { setScholarshipViewBy(v); }}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="View By" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="month">By Month</SelectItem>
+                      <SelectItem value="college">By College</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {loadingScholarship ? (
+                  <div className="space-y-4">
+                    {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
+                  </div>
+                ) : !scholarshipData ? (
+                  <div className="text-center py-8">
+                    <Gift className="h-12 w-12 mx-auto text-[#94A3B8] mb-4" />
+                    <p className="text-[#475569] font-body">Click to load scholarship summary</p>
+                    <Button onClick={fetchScholarshipSummary} className="mt-4 bg-purple-500 hover:bg-purple-600">
+                      Load Report
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Summary Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <Card className="bg-purple-50 border-purple-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-purple-100 rounded-lg">
+                              <Users className="h-5 w-5 text-purple-600" />
+                            </div>
+                            <div>
+                              <p className="text-2xl font-heading font-bold text-purple-600">{scholarshipData.summary.total_scholarships}</p>
+                              <p className="text-xs text-purple-600">Recipients</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      <Card className="bg-green-50 border-green-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-green-100 rounded-lg">
+                              <IndianRupee className="h-5 w-5 text-green-600" />
+                            </div>
+                            <div>
+                              <p className="text-2xl font-heading font-bold text-green-600">{formatCurrency(scholarshipData.summary.total_amount)}</p>
+                              <p className="text-xs text-green-600">Total Awarded</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      <Card className="bg-blue-50 border-blue-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-blue-100 rounded-lg">
+                              <TrendingUp className="h-5 w-5 text-blue-600" />
+                            </div>
+                            <div>
+                              <p className="text-2xl font-heading font-bold text-blue-600">{formatCurrency(scholarshipData.summary.avg_amount)}</p>
+                              <p className="text-xs text-blue-600">Average</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      <Card className="bg-orange-50 border-orange-200">
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-orange-100 rounded-lg">
+                              <Percent className="h-5 w-5 text-orange-600" />
+                            </div>
+                            <div>
+                              <p className="text-2xl font-heading font-bold text-orange-600">{scholarshipData.summary.percentage_with_scholarship}%</p>
+                              <p className="text-xs text-orange-600">With Scholarship</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {/* Breakdown Table */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="font-heading text-base">
+                          {scholarshipViewBy === 'month' ? 'Monthly Breakdown' : 'College-wise Breakdown'}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {scholarshipData.breakdown.length > 0 ? (
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="font-heading">{scholarshipViewBy === 'month' ? 'Month' : 'College'}</TableHead>
+                                <TableHead className="font-heading text-right">Recipients</TableHead>
+                                <TableHead className="font-heading text-right">Total Amount</TableHead>
+                                <TableHead className="font-heading text-right">Avg Amount</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {scholarshipData.breakdown.map((item, index) => (
+                                <TableRow key={index}>
+                                  <TableCell className="font-body font-medium">{item.label}</TableCell>
+                                  <TableCell className="text-right">
+                                    <Badge variant="secondary">{item.count}</Badge>
+                                  </TableCell>
+                                  <TableCell className="text-right font-body text-green-600">{formatCurrency(item.total_amount)}</TableCell>
+                                  <TableCell className="text-right font-body text-[#475569]">{formatCurrency(item.avg_amount)}</TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        ) : (
+                          <p className="text-center text-[#94A3B8] py-8">No scholarship data available</p>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    {/* Recent Scholarship Recipients */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="font-heading text-base">Recent Scholarship Recipients</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {scholarshipData.recent_scholarships.length > 0 ? (
+                          <div className="space-y-3">
+                            {scholarshipData.recent_scholarships.map((recipient, index) => (
+                              <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <Gift className="h-5 w-5 text-purple-600" />
+                                  </div>
+                                  <div>
+                                    <p className="font-body font-medium text-[#0F172A]">{recipient.candidate_name}</p>
+                                    <p className="text-xs text-[#94A3B8]">{recipient.college_name} • {recipient.course_name}</p>
+                                  </div>
+                                </div>
+                                <Badge className="bg-purple-100 text-purple-700 border-purple-200">
+                                  {formatCurrency(recipient.scholarship_amount)}
+                                </Badge>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-center text-[#94A3B8] py-4">No recent scholarships</p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
