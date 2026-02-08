@@ -9,12 +9,14 @@ Create a web-based counseling platform for OhCampus counselors with:
 5. PDF Export: Export fee structures as PDF
 6. CSV Import: Bulk import fees from CSV
 7. Admission Alerts: Display important admission-related alerts on college pages
+8. Admin College Management: Search, filter, and manage colleges with seat status
 
 ## User Choices
 - JWT-based authentication
 - Sample data for demonstration
 - OhCampus branding (logo and colors)
 - Multi-select filters with search functionality
+- Seat Status: Available, Closing, Under Waiting, Closed (default: Available)
 
 ## Architecture
 - **Frontend**: React 19 with Tailwind CSS, Shadcn/UI components
@@ -25,7 +27,7 @@ Create a web-based counseling platform for OhCampus counselors with:
 
 ## User Personas
 1. **Counselors**: Education counselors who guide students to colleges
-2. **Admins**: Platform administrators who manage fee structures, FAQs, and admission alerts
+2. **Admins**: Platform administrators who manage fee structures, FAQs, admission alerts, and seat availability
 
 ## Core Requirements
 - [x] Counselor can filter colleges by State/City/Category/Course
@@ -47,24 +49,35 @@ Create a web-based counseling platform for OhCampus counselors with:
 - [x] CSV import for bulk fee upload
 - [x] Mobile-friendly interface
 - [x] Secure JWT authentication
+- [x] Admin College Management with search bar
+- [x] Admin College Management filters (State, City, Category, Course)
+- [x] Admin College Management tabs (All, By Location, By Category, By Course)
+- [x] Seat Availability status for courses (Available, Closing, Under Waiting, Closed)
+- [x] Seat status displayed on counselor college detail page
 
 ## What's Been Implemented
 
 ### Latest Updates (Feb 2026)
-- **Multi-select Filters**: All filters (State, City, Category, Course) now support multiple selection with search
-- **Admission Alerts System**: Backend support + Frontend display for admission alerts on college detail pages
-- **Bulk Fee Creation**: New dialog to add all year/semester fees at once for a course
-- **CSV Import UI**: Complete UI for importing fees from CSV with template download
-- **Compare Mode Fix**: Fixed z-index overlap issue with search bar
+- **Admin College Management Page**: New `/admin/colleges` page with:
+  - Search bar to find colleges by name, city, or state
+  - Filters: State, City, Category, Course dropdowns
+  - Tabs: All Colleges, By Location, By Category, By Course
+  - Stats cards: Total Colleges, Total Courses, Closing Soon, Closed
+  - "Manage Courses" button for each college
+- **Seat Availability Status**: 
+  - 4 predefined statuses: Available (green), Closing (yellow), Under Waiting (blue), Closed (red)
+  - Default status: Available
+  - Admin can update via dropdown in "Manage Courses" dialog
+  - Status displayed on counselor view (college detail Fees tab)
 
 ### Backend APIs
 - `/api/auth/login` - JWT authentication
 - `/api/auth/register` - User registration
-- `/api/colleges` - List featured colleges with filters (state, city, category, course)
+- `/api/colleges` - List featured colleges with filters (state, city, category, course, search)
 - `/api/colleges/:id` - Get college details with address and admission alerts
 - `/api/colleges/:id/admission-alerts` - Update admission alerts for a college (Admin)
 - `/api/colleges/compare` - Compare up to 4 colleges
-- `/api/colleges/:id/fee-summary` - Get fee totals by course
+- `/api/colleges/:id/fee-summary` - Get fee totals by course (includes seat_status)
 - `/api/fees` - CRUD for fee management (year/semester-wise)
 - `/api/fees/bulk` - Create multiple fees at once for a course
 - `/api/fees/import-csv` - Import fees from CSV file
@@ -72,30 +85,42 @@ Create a web-based counseling platform for OhCampus counselors with:
 - `/api/admission-charges` - CRUD for admission charges
 - `/api/faqs` - CRUD for FAQ management
 - `/api/filters` - Get filter options (states, cities, categories, courses)
+- `/api/courses` - Get all courses with seat_status
+- `/api/courses/:id/seat-status` - Update seat status (Admin)
 
 ### Frontend Pages
 - Landing Page with OhCampus branding
 - Login/Register pages
 - Counselor Dashboard with multi-select filters + Compare mode
-- College Detail page with tabs (Highlights, What's New, Fees, FAQs) + Admission Alerts
+- College Detail page with tabs (Highlights, What's New, Fees with seat status, FAQs) + Admission Alerts
 - College Comparison page (side-by-side table layout)
 - Admin Dashboard with stats
+- **Admin College Management page** (NEW)
+  - Search bar for colleges
+  - State/City/Category/Course filters
+  - Tabs: All Colleges, By Location, By Category, By Course
+  - Manage Courses dialog with seat status dropdown
 - Fee Management page (Single Fee, Bulk Fee Dialog, CSV Import, Admission Charges)
 - FAQ Management page
 
 ### Sample Data
 - 8 Featured colleges with addresses and admission alerts
-- 22 Courses with duration_years/duration_semesters
+- 24 Courses with duration_years/duration_semesters and seat_status
 - 24 Fee records (year-wise and semester-wise)
 - 4 Admission charge records
 - 7 FAQs (Global + College-specific)
 - Demo users (admin@ohcampus.com, counselor@ohcampus.com)
 
-## Admission Alerts Feature
-- Colleges can have multiple admission alerts with types: info, warning, important, deadline
-- Alerts show only on college detail pages when `admission_alerts` array is non-empty
-- Alert types have different colors: blue (info), yellow (warning), red (important), orange (deadline)
-- Deadline alerts show the end date as a badge
+## Seat Status Feature
+- **Statuses**: Available, Closing, Under Waiting, Closed
+- **Default**: Available (when creating new courses)
+- **Admin View**: Dropdown in "Manage Courses" dialog with color-coded options
+- **Counselor View**: Badge displayed next to course name on college detail Fees tab
+- **Color Coding**:
+  - Available: Green
+  - Closing: Yellow
+  - Under Waiting: Blue
+  - Closed: Red
 
 ## Prioritized Backlog
 
@@ -115,9 +140,11 @@ Create a web-based counseling platform for OhCampus counselors with:
 - [x] PDF export for fee structures
 - [x] CSV import for fees
 - [x] Admission Alerts system
+- [x] Admin College Management with search and filters
+- [x] Seat Availability status for courses
 
 ### P1 (High Priority)
-- [ ] Admin panel for managing admission alerts (UI)
+- [ ] Admin panel for managing admission alerts (dedicated UI)
 - [ ] Password reset functionality
 - [ ] User profile management
 
@@ -132,11 +159,15 @@ Create a web-based counseling platform for OhCampus counselors with:
 - [ ] College ratings/reviews
 - [ ] Application tracking for students
 
+## Test Files
+- `/app/backend/tests/test_seat_status_features.py` - 25 tests for seat status and college management
+- `/app/backend/tests/test_new_features.py` - Tests for multi-select filters, CSV import, etc.
+
 ## Test Credentials
 - **Admin**: admin@ohcampus.com / admin123
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Next Action Items
 1. Create Admin UI for managing admission alerts per college
-2. Add more colleges to the database
-3. Implement password reset functionality
+2. Add password reset functionality
+3. Implement user profile management
