@@ -2002,14 +2002,13 @@ async def get_scholarship_summary(
 # ===================== TARGET ALERTS =====================
 
 @api_router.get("/admin/target-alerts")
-async def get_target_alerts(current_user: dict = Depends(require_admin_or_manager)):
+async def get_admin_target_alerts(current_user: dict = Depends(require_admin_or_manager)):
     """Get counselors who are falling behind on their targets (below 50% progress at mid-month or later)"""
     
     now = datetime.now(timezone.utc)
     current_month = now.strftime("%Y-%m")
     day_of_month = now.day
     days_in_month = 30  # Approximate
-    progress_threshold = (day_of_month / days_in_month) * 0.5  # At 50% of month, should be at 50% of target
     
     alerts = []
     
