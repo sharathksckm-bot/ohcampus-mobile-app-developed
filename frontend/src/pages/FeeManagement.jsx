@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AdminLayout } from '../components/layout/AdminLayout';
 import { collegesAPI, coursesAPI, feesAPI, admissionChargesAPI } from '../lib/api';
 import { Button } from '../components/ui/button';
@@ -32,6 +32,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Badge } from '../components/ui/badge';
 import { Skeleton } from '../components/ui/skeleton';
+import { Alert, AlertDescription } from '../components/ui/alert';
 import {
   Plus,
   Pencil,
@@ -44,6 +45,11 @@ import {
   Loader2,
   Receipt,
   Calculator,
+  Upload,
+  Download,
+  FileSpreadsheet,
+  AlertCircle,
+  CheckCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -57,7 +63,11 @@ export default function FeeManagement() {
   const [coursesLoading, setCoursesLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [admissionDialogOpen, setAdmissionDialogOpen] = useState(false);
+  const [csvDialogOpen, setCsvDialogOpen] = useState(false);
   const [editingFee, setEditingFee] = useState(null);
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState(null);
+  const fileInputRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [formData, setFormData] = useState({
