@@ -65,6 +65,16 @@ export const Navbar = () => {
                   Courses
                 </Button>
               </Link>
+              <Link to="/admissions">
+                <Button 
+                  variant="ghost" 
+                  className={`font-body ${isActiveLink('/admissions') ? 'bg-blue-50 text-[#0066CC]' : 'text-[#475569] hover:text-[#0066CC]'}`}
+                  data-testid="nav-admissions"
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Admissions
+                </Button>
+              </Link>
             </div>
           )}
 
