@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/layout/Navbar';
 import { collegesAPI, coursesAPI, faqsAPI } from '../lib/api';
+import { exportFeeToPDF } from '../lib/pdfExport';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -35,7 +36,8 @@ import {
   Home,
   BookOpen,
   Receipt,
-  Calculator
+  Calculator,
+  Download
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -48,6 +50,7 @@ export default function CollegeDetail() {
   const [faqs, setFaqs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('highlights');
+  const [exporting, setExporting] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
