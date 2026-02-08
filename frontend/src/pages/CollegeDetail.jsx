@@ -347,12 +347,12 @@ export default function CollegeDetail() {
               Highlights
             </TabsTrigger>
             <TabsTrigger 
-              value="whats-new" 
+              value="courses" 
               className="rounded-lg font-body data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
-              data-testid="whats-new-tab"
+              data-testid="courses-tab"
             >
-              <Bell className="h-4 w-4 mr-2" />
-              What's New
+              <BookOpen className="h-4 w-4 mr-2" />
+              Courses ({courses.length})
             </TabsTrigger>
             <TabsTrigger 
               value="fees" 
@@ -361,6 +361,22 @@ export default function CollegeDetail() {
             >
               <IndianRupee className="h-4 w-4 mr-2" />
               Fees
+            </TabsTrigger>
+            <TabsTrigger 
+              value="placements" 
+              className="rounded-lg font-body data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
+              data-testid="placements-tab"
+            >
+              <Briefcase className="h-4 w-4 mr-2" />
+              Placements
+            </TabsTrigger>
+            <TabsTrigger 
+              value="whats-new" 
+              className="rounded-lg font-body data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
+              data-testid="whats-new-tab"
+            >
+              <Bell className="h-4 w-4 mr-2" />
+              What's New
             </TabsTrigger>
             <TabsTrigger 
               value="faqs" 
