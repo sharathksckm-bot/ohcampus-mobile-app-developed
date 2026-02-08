@@ -61,6 +61,14 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
     user: dict
 
+class AdmissionAlert(BaseModel):
+    title: str
+    message: str
+    alert_type: str = "info"  # info, warning, important, deadline
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    is_active: bool = True
+
 class CollegeBase(BaseModel):
     name: str
     state: str
@@ -73,6 +81,7 @@ class CollegeBase(BaseModel):
     is_featured: bool = True
     established: Optional[str] = None
     accreditation: Optional[str] = None
+    admission_alerts: List[AdmissionAlert] = []
 
 class College(CollegeBase):
     model_config = ConfigDict(extra="ignore")
