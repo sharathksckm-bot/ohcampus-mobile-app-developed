@@ -160,6 +160,16 @@ export default function CollegeManagement() {
     return grouped;
   }, [colleges]);
 
+  // Group colleges by city
+  const collegesByCity = useMemo(() => {
+    const grouped = {};
+    colleges.forEach(c => {
+      if (!grouped[c.city]) grouped[c.city] = [];
+      grouped[c.city].push(c);
+    });
+    return grouped;
+  }, [colleges]);
+
   const collegesByCategory = useMemo(() => {
     const grouped = {};
     colleges.forEach(c => {
