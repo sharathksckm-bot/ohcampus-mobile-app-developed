@@ -237,6 +237,17 @@ Create a web-based counseling platform for OhCampus counselors with:
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Latest Updates (Feb 2026)
+### Iteration 10 - Scholarship Feature (Feb 8, 2026)
+1. **Scholarship Amount Field**: Added one-time scholarship field to admissions
+   - Shows in Admitted Candidates table with purple badge and Gift icon
+   - Available on Admissions page, Performance Dashboard, and Counselor Performance page
+   - Optional field - shows "—" if no scholarship offered
+2. **Full Edit Capability**: Admin, Team Lead, and Admission Manager can edit ALL admission details:
+   - Candidate name, place, admission date
+   - Total fees and scholarship amount
+   - Fee instalments and remarks
+3. **Backend Updates**: `scholarship_amount` field added to AdmissionBase, AdmissionCreate, AdmissionUpdate models
+
 ### Iteration 9 - Completed Features (Feb 8, 2026)
 1. **Password Reset**: Admins can reset any user's password via User Management page (Key icon button in Actions column).
 2. **User Profile Page**: Users can access their profile from the navbar dropdown to:
