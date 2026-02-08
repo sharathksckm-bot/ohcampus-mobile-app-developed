@@ -118,6 +118,15 @@ export default function PerformanceDashboard() {
   });
   const [savingAdmission, setSavingAdmission] = useState(false);
 
+  // Scholarship summary state
+  const [scholarshipData, setScholarshipData] = useState(null);
+  const [scholarshipViewBy, setScholarshipViewBy] = useState('month');
+  const [loadingScholarship, setLoadingScholarship] = useState(false);
+
+  // Target alerts state
+  const [alertsData, setAlertsData] = useState(null);
+  const [loadingAlerts, setLoadingAlerts] = useState(false);
+
   const canAssignTargets = user?.role === 'admin' || 
     ['Team Lead', 'Admission Manager'].includes(user?.designation);
 
