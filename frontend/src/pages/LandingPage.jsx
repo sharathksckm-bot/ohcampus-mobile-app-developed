@@ -62,16 +62,6 @@ export default function LandingPage() {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <Link to="/register">
-                  <Button 
-                    size="lg"
-                    variant="outline"
-                    className="border-2 border-white text-white hover:bg-white/10 font-body rounded-full px-8 py-6 text-lg"
-                    data-testid="hero-register-btn"
-                  >
-                    Create Account
-                  </Button>
-                </Link>
               </div>
             </div>
           </div>
