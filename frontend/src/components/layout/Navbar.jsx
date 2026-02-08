@@ -78,6 +78,18 @@ export const Navbar = () => {
                   Admissions
                 </Button>
               </Link>
+              {canSeePerformance && (
+                <Link to="/performance">
+                  <Button 
+                    variant="ghost" 
+                    className={`font-body ${isActiveLink('/performance') ? 'bg-blue-50 text-[#0066CC]' : 'text-[#475569] hover:text-[#0066CC]'}`}
+                    data-testid="nav-performance"
+                  >
+                    <BarChart3 className="h-4 w-4 mr-2" />
+                    Performance
+                  </Button>
+                </Link>
+              )}
             </div>
           )}
 
