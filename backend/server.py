@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -6,10 +7,11 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+from typing import List, Optional
 import uuid
-from datetime import datetime, timezone
-
+from datetime import datetime, timezone, timedelta
+import hashlib
+import jwt
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -19,52 +21,671 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Create the main app without a prefix
-app = FastAPI()
+# JWT Configuration
+JWT_SECRET = os.environ.get('JWT_SECRET', 'ohcampus-secret-key-2024')
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRATION_HOURS = 24
+
+# Create the main app
+app = FastAPI(title="OhCampus Counselor Platform API")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Security
+security = HTTPBearer()
 
-# Define Models
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
-    
+# ===================== MODELS =====================
+
+class UserBase(BaseModel):
+    email: str
+    name: str
+    role: str = "counselor"  # counselor or admin
+
+class UserCreate(UserBase):
+    password: str
+
+class User(UserBase):
+    model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
+class LoginRequest(BaseModel):
+    email: str
+    password: str
 
-# Add your routes to the router instead of directly to app
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: dict
+
+class CollegeBase(BaseModel):
+    name: str
+    state: str
+    city: str
+    category: str
+    image_url: Optional[str] = None
+    highlights: List[str] = []
+    whats_new: List[str] = []
+    is_featured: bool = True
+    established: Optional[str] = None
+    accreditation: Optional[str] = None
+
+class College(CollegeBase):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class CourseBase(BaseModel):
+    name: str
+    college_id: str
+    duration: str
+    level: str  # UG, PG, Doctoral
+
+class Course(CourseBase):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+
+class FeeBase(BaseModel):
+    college_id: str
+    course_id: str
+    fee_type: str  # annual, semester
+    year_or_semester: int  # 1, 2, 3, etc.
+    amount: float
+    hostel_fee: Optional[float] = None
+    description: Optional[str] = None
+
+class Fee(FeeBase):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class FAQBase(BaseModel):
+    question: str
+    answer: str
+    college_id: Optional[str] = None  # None means global FAQ
+    is_global: bool = True
+    order: int = 0
+
+class FAQ(FAQBase):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class FiltersResponse(BaseModel):
+    states: List[str]
+    cities: List[str]
+    categories: List[str]
+
+# ===================== HELPERS =====================
+
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def verify_password(password: str, hashed: str) -> bool:
+    return hash_password(password) == hashed
+
+def create_token(user_id: str, email: str, role: str) -> str:
+    payload = {
+        "user_id": user_id,
+        "email": email,
+        "role": role,
+        "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRATION_HOURS)
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    try:
+        token = credentials.credentials
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+async def require_admin(current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return current_user
+
+# ===================== AUTH ENDPOINTS =====================
+
+@api_router.post("/auth/register", response_model=TokenResponse)
+async def register(user_data: UserCreate):
+    # Check if user exists
+    existing = await db.users.find_one({"email": user_data.email})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    user = User(
+        email=user_data.email,
+        name=user_data.name,
+        role=user_data.role
+    )
+    user_dict = user.model_dump()
+    user_dict["password_hash"] = hash_password(user_data.password)
+    
+    await db.users.insert_one(user_dict)
+    
+    token = create_token(user.id, user.email, user.role)
+    return TokenResponse(
+        access_token=token,
+        user={"id": user.id, "email": user.email, "name": user.name, "role": user.role}
+    )
+
+@api_router.post("/auth/login", response_model=TokenResponse)
+async def login(login_data: LoginRequest):
+    user = await db.users.find_one({"email": login_data.email}, {"_id": 0})
+    if not user or not verify_password(login_data.password, user.get("password_hash", "")):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    token = create_token(user["id"], user["email"], user["role"])
+    return TokenResponse(
+        access_token=token,
+        user={"id": user["id"], "email": user["email"], "name": user["name"], "role": user["role"]}
+    )
+
+@api_router.get("/auth/me")
+async def get_me(current_user: dict = Depends(get_current_user)):
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0, "password_hash": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+# ===================== FILTERS ENDPOINT =====================
+
+@api_router.get("/filters", response_model=FiltersResponse)
+async def get_filters():
+    states = await db.colleges.distinct("state", {"is_featured": True})
+    cities = await db.colleges.distinct("city", {"is_featured": True})
+    categories = await db.colleges.distinct("category", {"is_featured": True})
+    return FiltersResponse(states=sorted(states), cities=sorted(cities), categories=sorted(categories))
+
+@api_router.get("/filters/cities")
+async def get_cities_by_state(state: Optional[str] = None):
+    query = {"is_featured": True}
+    if state:
+        query["state"] = state
+    cities = await db.colleges.distinct("city", query)
+    return {"cities": sorted(cities)}
+
+# ===================== COLLEGES ENDPOINTS =====================
+
+@api_router.get("/colleges", response_model=List[College])
+async def get_colleges(
+    state: Optional[str] = None,
+    city: Optional[str] = None,
+    category: Optional[str] = None,
+    search: Optional[str] = None
+):
+    query = {"is_featured": True}
+    if state:
+        query["state"] = state
+    if city:
+        query["city"] = city
+    if category:
+        query["category"] = category
+    if search:
+        query["name"] = {"$regex": search, "$options": "i"}
+    
+    colleges = await db.colleges.find(query, {"_id": 0}).to_list(100)
+    return colleges
+
+@api_router.get("/colleges/{college_id}", response_model=College)
+async def get_college(college_id: str):
+    college = await db.colleges.find_one({"id": college_id}, {"_id": 0})
+    if not college:
+        raise HTTPException(status_code=404, detail="College not found")
+    return college
+
+@api_router.post("/colleges", response_model=College)
+async def create_college(college_data: CollegeBase, current_user: dict = Depends(require_admin)):
+    college = College(**college_data.model_dump())
+    await db.colleges.insert_one(college.model_dump())
+    return college
+
+@api_router.put("/colleges/{college_id}", response_model=College)
+async def update_college(college_id: str, college_data: CollegeBase, current_user: dict = Depends(require_admin)):
+    existing = await db.colleges.find_one({"id": college_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="College not found")
+    
+    update_data = college_data.model_dump()
+    await db.colleges.update_one({"id": college_id}, {"$set": update_data})
+    
+    updated = await db.colleges.find_one({"id": college_id}, {"_id": 0})
+    return updated
+
+# ===================== COURSES ENDPOINTS =====================
+
+@api_router.get("/colleges/{college_id}/courses", response_model=List[Course])
+async def get_courses(college_id: str):
+    courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+    return courses
+
+@api_router.post("/courses", response_model=Course)
+async def create_course(course_data: CourseBase, current_user: dict = Depends(require_admin)):
+    course = Course(**course_data.model_dump())
+    await db.courses.insert_one(course.model_dump())
+    return course
+
+@api_router.get("/courses", response_model=List[Course])
+async def get_all_courses():
+    courses = await db.courses.find({}, {"_id": 0}).to_list(500)
+    return courses
+
+# ===================== FEES ENDPOINTS =====================
+
+@api_router.get("/fees", response_model=List[Fee])
+async def get_all_fees(college_id: Optional[str] = None, course_id: Optional[str] = None):
+    query = {}
+    if college_id:
+        query["college_id"] = college_id
+    if course_id:
+        query["course_id"] = course_id
+    fees = await db.fees.find(query, {"_id": 0}).to_list(500)
+    return fees
+
+@api_router.get("/colleges/{college_id}/fees", response_model=List[Fee])
+async def get_college_fees(college_id: str):
+    fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+    return fees
+
+@api_router.post("/fees", response_model=Fee)
+async def create_fee(fee_data: FeeBase, current_user: dict = Depends(require_admin)):
+    fee = Fee(**fee_data.model_dump())
+    await db.fees.insert_one(fee.model_dump())
+    return fee
+
+@api_router.put("/fees/{fee_id}", response_model=Fee)
+async def update_fee(fee_id: str, fee_data: FeeBase, current_user: dict = Depends(require_admin)):
+    existing = await db.fees.find_one({"id": fee_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Fee not found")
+    
+    update_data = fee_data.model_dump()
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.fees.update_one({"id": fee_id}, {"$set": update_data})
+    
+    updated = await db.fees.find_one({"id": fee_id}, {"_id": 0})
+    return updated
+
+@api_router.delete("/fees/{fee_id}")
+async def delete_fee(fee_id: str, current_user: dict = Depends(require_admin)):
+    result = await db.fees.delete_one({"id": fee_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Fee not found")
+    return {"message": "Fee deleted successfully"}
+
+# ===================== FAQ ENDPOINTS =====================
+
+@api_router.get("/faqs", response_model=List[FAQ])
+async def get_faqs(college_id: Optional[str] = None, include_global: bool = True):
+    if college_id:
+        if include_global:
+            query = {"$or": [{"college_id": college_id}, {"is_global": True}]}
+        else:
+            query = {"college_id": college_id}
+    else:
+        query = {}
+    
+    faqs = await db.faqs.find(query, {"_id": 0}).sort("order", 1).to_list(100)
+    return faqs
+
+@api_router.post("/faqs", response_model=FAQ)
+async def create_faq(faq_data: FAQBase, current_user: dict = Depends(require_admin)):
+    faq = FAQ(**faq_data.model_dump())
+    if faq.college_id:
+        faq.is_global = False
+    await db.faqs.insert_one(faq.model_dump())
+    return faq
+
+@api_router.put("/faqs/{faq_id}", response_model=FAQ)
+async def update_faq(faq_id: str, faq_data: FAQBase, current_user: dict = Depends(require_admin)):
+    existing = await db.faqs.find_one({"id": faq_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="FAQ not found")
+    
+    update_data = faq_data.model_dump()
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    if update_data.get("college_id"):
+        update_data["is_global"] = False
+    await db.faqs.update_one({"id": faq_id}, {"$set": update_data})
+    
+    updated = await db.faqs.find_one({"id": faq_id}, {"_id": 0})
+    return updated
+
+@api_router.delete("/faqs/{faq_id}")
+async def delete_faq(faq_id: str, current_user: dict = Depends(require_admin)):
+    result = await db.faqs.delete_one({"id": faq_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="FAQ not found")
+    return {"message": "FAQ deleted successfully"}
+
+# ===================== SEED DATA ENDPOINT =====================
+
+@api_router.post("/seed")
+async def seed_database():
+    """Seed the database with sample data for demonstration"""
+    
+    # Check if already seeded
+    existing_colleges = await db.colleges.count_documents({})
+    if existing_colleges > 0:
+        return {"message": "Database already seeded", "colleges_count": existing_colleges}
+    
+    # Sample colleges data
+    colleges_data = [
+        {
+            "id": "col-1",
+            "name": "Acharya Institute of Management Studies (AIMS)",
+            "state": "Karnataka",
+            "city": "Bangalore",
+            "category": "Management",
+            "image_url": "https://images.unsplash.com/photo-1664273891579-22f28332f3c4?crop=entropy&cs=srgb&fm=jpg&q=85",
+            "highlights": [
+                "NAAC 'A' Grade Accreditation",
+                "Industry-aligned curriculum with 100+ corporate partnerships",
+                "State-of-the-art campus with modern amenities",
+                "Dedicated placement cell with 95% placement record"
+            ],
+            "whats_new": [
+                "New AI & Data Analytics specialization launched for 2024-25",
+                "Partnership with Microsoft for student certifications",
+                "International exchange program with 5 universities"
+            ],
+            "is_featured": True,
+            "established": "1994",
+            "accreditation": "NAAC 'A' Grade",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "col-2",
+            "name": "PES University (PESU)",
+            "state": "Karnataka",
+            "city": "Bangalore",
+            "category": "Engineering",
+            "image_url": "https://images.unsplash.com/photo-1760131556605-7f2e63d00385?crop=entropy&cs=srgb&fm=jpg&q=85",
+            "highlights": [
+                "NAAC 'A+' Grade Accreditation",
+                "Top 50 Engineering Colleges in India",
+                "Research-focused curriculum with 200+ publications annually",
+                "Strong alumni network in Fortune 500 companies"
+            ],
+            "whats_new": [
+                "New Robotics Lab inaugurated with ₹10 Cr investment",
+                "MOU signed with IIT Madras for joint research",
+                "Startup incubation center launched"
+            ],
+            "is_featured": True,
+            "established": "1973",
+            "accreditation": "NAAC 'A+' Grade",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "col-3",
+            "name": "Alliance University (AU)",
+            "state": "Karnataka",
+            "city": "Bangalore",
+            "category": "Management",
+            "image_url": "https://images.unsplash.com/photo-1670284768187-5cc68eada1b3?crop=entropy&cs=srgb&fm=jpg&q=85",
+            "highlights": [
+                "NAAC 'A+' Grade Accreditation",
+                "Global MBA programs with dual degree options",
+                "150-acre smart campus with world-class infrastructure",
+                "International faculty with diverse expertise"
+            ],
+            "whats_new": [
+                "New 5-year Integrated MBA program launched",
+                "Collaboration with Harvard Business School for case studies",
+                "Virtual reality learning lab established"
+            ],
+            "is_featured": True,
+            "established": "2010",
+            "accreditation": "NAAC 'A+' Grade",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "col-4",
+            "name": "SRM Institute of Science and Technology",
+            "state": "Tamil Nadu",
+            "city": "Chennai",
+            "category": "Engineering",
+            "image_url": "https://images.unsplash.com/photo-1759299615947-bc798076b479?crop=entropy&cs=srgb&fm=jpg&q=85",
+            "highlights": [
+                "NAAC 'A++' Grade Accreditation",
+                "250+ acre campus with 52,000+ students",
+                "2500+ faculty members from top institutions",
+                "Ranked among top 10 private universities in India"
+            ],
+            "whats_new": [
+                "SRM Medical College expansion completed",
+                "New School of Artificial Intelligence established",
+                "International research grants worth ₹50 Cr received"
+            ],
+            "is_featured": True,
+            "established": "1985",
+            "accreditation": "NAAC 'A++' Grade",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "col-5",
+            "name": "Manipal Academy of Higher Education",
+            "state": "Karnataka",
+            "city": "Mangalore",
+            "category": "Medicine & Health Sciences",
+            "image_url": "https://images.unsplash.com/photo-1664273891579-22f28332f3c4?crop=entropy&cs=srgb&fm=jpg&q=85",
+            "highlights": [
+                "Institution of Eminence status by Government of India",
+                "1200+ bed teaching hospital",
+                "Research collaboration with Mayo Clinic and Johns Hopkins",
+                "100% placement for medical graduates"
+            ],
+            "whats_new": [
+                "New Cancer Research Center inaugurated",
+                "Telemedicine program expanded to 50 villages",
+                "AI-based diagnostic tools introduced in curriculum"
+            ],
+            "is_featured": True,
+            "established": "1953",
+            "accreditation": "NAAC 'A++' Grade",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "col-6",
+            "name": "REVA University",
+            "state": "Karnataka",
+            "city": "Bangalore",
+            "category": "Engineering",
+            "image_url": "https://images.unsplash.com/photo-1760131556605-7f2e63d00385?crop=entropy&cs=srgb&fm=jpg&q=85",
+            "highlights": [
+                "NAAC 'A' Grade Accreditation",
+                "45-acre green campus with modern infrastructure",
+                "Strong industry connect with 300+ companies",
+                "Focus on innovation and entrepreneurship"
+            ],
+            "whats_new": [
+                "New School of Computing launched",
+                "₹5 Cr research grant for renewable energy project",
+                "Student startup fund of ₹1 Cr announced"
+            ],
+            "is_featured": True,
+            "established": "2012",
+            "accreditation": "NAAC 'A' Grade",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "col-7",
+            "name": "Christ University",
+            "state": "Karnataka",
+            "city": "Bangalore",
+            "category": "Management",
+            "image_url": "https://images.unsplash.com/photo-1670284768187-5cc68eada1b3?crop=entropy&cs=srgb&fm=jpg&q=85",
+            "highlights": [
+                "NAAC 'A++' Grade Accreditation",
+                "Ranked #1 in Karnataka for Arts and Commerce",
+                "Vibrant campus life with 100+ student clubs",
+                "International collaborations with 50+ universities"
+            ],
+            "whats_new": [
+                "New campus in Delhi NCR announced",
+                "Online MBA program launched with global access",
+                "New sports complex with Olympic-standard facilities"
+            ],
+            "is_featured": True,
+            "established": "1969",
+            "accreditation": "NAAC 'A++' Grade",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        },
+        {
+            "id": "col-8",
+            "name": "VIT University",
+            "state": "Tamil Nadu",
+            "city": "Chennai",
+            "category": "Engineering",
+            "image_url": "https://images.unsplash.com/photo-1759299615947-bc798076b479?crop=entropy&cs=srgb&fm=jpg&q=85",
+            "highlights": [
+                "NAAC 'A++' Grade Accreditation",
+                "Institution of Eminence status",
+                "Highest number of patents among private universities",
+                "Global rankings in QS World University Rankings"
+            ],
+            "whats_new": [
+                "New campus in Andhra Pradesh operational",
+                "Space technology program launched with ISRO",
+                "₹100 Cr corpus for student scholarships"
+            ],
+            "is_featured": True,
+            "established": "1984",
+            "accreditation": "NAAC 'A++' Grade",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+    ]
+    
+    # Sample courses data
+    courses_data = [
+        # AIMS Courses
+        {"id": "course-1", "name": "MBA - Master of Business Administration", "college_id": "col-1", "duration": "2 Years", "level": "PG"},
+        {"id": "course-2", "name": "BBA - Bachelor of Business Administration", "college_id": "col-1", "duration": "3 Years", "level": "UG"},
+        {"id": "course-3", "name": "PGDM - Post Graduate Diploma in Management", "college_id": "col-1", "duration": "2 Years", "level": "PG"},
+        
+        # PESU Courses
+        {"id": "course-4", "name": "B.Tech - Computer Science Engineering", "college_id": "col-2", "duration": "4 Years", "level": "UG"},
+        {"id": "course-5", "name": "B.Tech - Electronics & Communication", "college_id": "col-2", "duration": "4 Years", "level": "UG"},
+        {"id": "course-6", "name": "M.Tech - Computer Science", "college_id": "col-2", "duration": "2 Years", "level": "PG"},
+        {"id": "course-7", "name": "MCA - Master of Computer Applications", "college_id": "col-2", "duration": "2 Years", "level": "PG"},
+        
+        # Alliance University Courses
+        {"id": "course-8", "name": "MBA - Global Business", "college_id": "col-3", "duration": "2 Years", "level": "PG"},
+        {"id": "course-9", "name": "BBA - Finance & Marketing", "college_id": "col-3", "duration": "3 Years", "level": "UG"},
+        {"id": "course-10", "name": "MBA - Healthcare Management", "college_id": "col-3", "duration": "2 Years", "level": "PG"},
+        
+        # SRM Courses
+        {"id": "course-11", "name": "B.Tech - Artificial Intelligence", "college_id": "col-4", "duration": "4 Years", "level": "UG"},
+        {"id": "course-12", "name": "B.Tech - Mechanical Engineering", "college_id": "col-4", "duration": "4 Years", "level": "UG"},
+        {"id": "course-13", "name": "M.Tech - Data Science", "college_id": "col-4", "duration": "2 Years", "level": "PG"},
+        
+        # Manipal Courses
+        {"id": "course-14", "name": "MBBS - Bachelor of Medicine", "college_id": "col-5", "duration": "5.5 Years", "level": "UG"},
+        {"id": "course-15", "name": "BDS - Bachelor of Dental Surgery", "college_id": "col-5", "duration": "5 Years", "level": "UG"},
+        {"id": "course-16", "name": "MD - General Medicine", "college_id": "col-5", "duration": "3 Years", "level": "PG"},
+        
+        # REVA Courses
+        {"id": "course-17", "name": "B.Tech - Information Technology", "college_id": "col-6", "duration": "4 Years", "level": "UG"},
+        {"id": "course-18", "name": "BCA - Bachelor of Computer Applications", "college_id": "col-6", "duration": "3 Years", "level": "UG"},
+        
+        # Christ University Courses
+        {"id": "course-19", "name": "MBA - Marketing", "college_id": "col-7", "duration": "2 Years", "level": "PG"},
+        {"id": "course-20", "name": "B.Com - Honours", "college_id": "col-7", "duration": "3 Years", "level": "UG"},
+        
+        # VIT Courses
+        {"id": "course-21", "name": "B.Tech - Biotechnology", "college_id": "col-8", "duration": "4 Years", "level": "UG"},
+        {"id": "course-22", "name": "M.Tech - VLSI Design", "college_id": "col-8", "duration": "2 Years", "level": "PG"},
+    ]
+    
+    # Sample fees data
+    fees_data = [
+        # AIMS MBA Fees
+        {"id": "fee-1", "college_id": "col-1", "course_id": "course-1", "fee_type": "annual", "year_or_semester": 1, "amount": 450000, "hostel_fee": 120000, "description": "First Year Annual Fee"},
+        {"id": "fee-2", "college_id": "col-1", "course_id": "course-1", "fee_type": "annual", "year_or_semester": 2, "amount": 450000, "hostel_fee": 120000, "description": "Second Year Annual Fee"},
+        {"id": "fee-3", "college_id": "col-1", "course_id": "course-2", "fee_type": "annual", "year_or_semester": 1, "amount": 180000, "hostel_fee": 100000, "description": "First Year Annual Fee"},
+        
+        # PESU B.Tech Fees
+        {"id": "fee-4", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 1, "amount": 175000, "hostel_fee": 60000, "description": "Semester 1 Fee"},
+        {"id": "fee-5", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 2, "amount": 175000, "hostel_fee": 60000, "description": "Semester 2 Fee"},
+        {"id": "fee-6", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 3, "amount": 185000, "hostel_fee": 65000, "description": "Semester 3 Fee"},
+        {"id": "fee-7", "college_id": "col-2", "course_id": "course-4", "fee_type": "semester", "year_or_semester": 4, "amount": 185000, "hostel_fee": 65000, "description": "Semester 4 Fee"},
+        
+        # Alliance MBA Fees
+        {"id": "fee-8", "college_id": "col-3", "course_id": "course-8", "fee_type": "annual", "year_or_semester": 1, "amount": 650000, "hostel_fee": 150000, "description": "First Year Annual Fee"},
+        {"id": "fee-9", "college_id": "col-3", "course_id": "course-8", "fee_type": "annual", "year_or_semester": 2, "amount": 650000, "hostel_fee": 150000, "description": "Second Year Annual Fee"},
+        
+        # SRM B.Tech Fees
+        {"id": "fee-10", "college_id": "col-4", "course_id": "course-11", "fee_type": "annual", "year_or_semester": 1, "amount": 350000, "hostel_fee": 110000, "description": "First Year Annual Fee"},
+        {"id": "fee-11", "college_id": "col-4", "course_id": "course-11", "fee_type": "annual", "year_or_semester": 2, "amount": 350000, "hostel_fee": 110000, "description": "Second Year Annual Fee"},
+        
+        # Manipal MBBS Fees
+        {"id": "fee-12", "college_id": "col-5", "course_id": "course-14", "fee_type": "annual", "year_or_semester": 1, "amount": 2500000, "hostel_fee": 200000, "description": "First Year Annual Fee"},
+        {"id": "fee-13", "college_id": "col-5", "course_id": "course-14", "fee_type": "annual", "year_or_semester": 2, "amount": 2500000, "hostel_fee": 200000, "description": "Second Year Annual Fee"},
+    ]
+    
+    # Sample FAQs
+    faqs_data = [
+        # Global FAQs
+        {"id": "faq-1", "question": "What is the admission process?", "answer": "The admission process involves submitting an online application, followed by entrance test scores (if applicable), document verification, and counseling for seat allotment. Each college may have specific requirements.", "college_id": None, "is_global": True, "order": 1, "created_at": datetime.now(timezone.utc).isoformat(), "updated_at": datetime.now(timezone.utc).isoformat()},
+        {"id": "faq-2", "question": "Are scholarships available?", "answer": "Yes, most featured colleges offer merit-based and need-based scholarships. Eligibility criteria vary by institution. Contact the admissions office for specific scholarship programs.", "college_id": None, "is_global": True, "order": 2, "created_at": datetime.now(timezone.utc).isoformat(), "updated_at": datetime.now(timezone.utc).isoformat()},
+        {"id": "faq-3", "question": "What are the hostel facilities like?", "answer": "Featured colleges provide well-equipped hostels with amenities including Wi-Fi, mess facilities, gym, recreational areas, and 24/7 security. Room options include single, double, and triple occupancy.", "college_id": None, "is_global": True, "order": 3, "created_at": datetime.now(timezone.utc).isoformat(), "updated_at": datetime.now(timezone.utc).isoformat()},
+        {"id": "faq-4", "question": "What is the fee payment schedule?", "answer": "Fee payment is typically required at the beginning of each academic year or semester. Most colleges offer EMI options through banking partners. Late payment may incur additional charges.", "college_id": None, "is_global": True, "order": 4, "created_at": datetime.now(timezone.utc).isoformat(), "updated_at": datetime.now(timezone.utc).isoformat()},
+        
+        # College-specific FAQs
+        {"id": "faq-5", "question": "What specializations are available in MBA at AIMS?", "answer": "AIMS offers specializations in Finance, Marketing, HR, Operations, Business Analytics, and International Business. Dual specialization options are also available.", "college_id": "col-1", "is_global": False, "order": 1, "created_at": datetime.now(timezone.utc).isoformat(), "updated_at": datetime.now(timezone.utc).isoformat()},
+        {"id": "faq-6", "question": "Does PESU accept COMEDK scores?", "answer": "Yes, PES University accepts both PESSAT and COMEDK scores for B.Tech admissions. Management quota seats are also available through direct admission.", "college_id": "col-2", "is_global": False, "order": 1, "created_at": datetime.now(timezone.utc).isoformat(), "updated_at": datetime.now(timezone.utc).isoformat()},
+        {"id": "faq-7", "question": "What is the placement record at Alliance University?", "answer": "Alliance University has a 98% placement rate with average package of 8.5 LPA. Top recruiters include Deloitte, KPMG, Amazon, and McKinsey.", "college_id": "col-3", "is_global": False, "order": 1, "created_at": datetime.now(timezone.utc).isoformat(), "updated_at": datetime.now(timezone.utc).isoformat()},
+    ]
+    
+    # Create default admin user
+    admin_user = {
+        "id": "admin-1",
+        "email": "admin@ohcampus.com",
+        "name": "Admin User",
+        "role": "admin",
+        "password_hash": hash_password("admin123"),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Create default counselor user
+    counselor_user = {
+        "id": "counselor-1",
+        "email": "counselor@ohcampus.com",
+        "name": "Demo Counselor",
+        "role": "counselor",
+        "password_hash": hash_password("counselor123"),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Insert data
+    await db.colleges.insert_many(colleges_data)
+    await db.courses.insert_many(courses_data)
+    await db.fees.insert_many(fees_data)
+    await db.faqs.insert_many(faqs_data)
+    await db.users.insert_many([admin_user, counselor_user])
+    
+    return {
+        "message": "Database seeded successfully",
+        "colleges_count": len(colleges_data),
+        "courses_count": len(courses_data),
+        "fees_count": len(fees_data),
+        "faqs_count": len(faqs_data),
+        "users_created": ["admin@ohcampus.com (password: admin123)", "counselor@ohcampus.com (password: counselor123)"]
+    }
+
+# ===================== ROOT ENDPOINT =====================
+
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
-
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.model_dump()
-    status_obj = StatusCheck(**status_dict)
-    
-    # Convert to dict and serialize datetime to ISO string for MongoDB
-    doc = status_obj.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
-    
-    _ = await db.status_checks.insert_one(doc)
-    return status_obj
-
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
-    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
-    
-    # Convert ISO string timestamps back to datetime objects
-    for check in status_checks:
-        if isinstance(check['timestamp'], str):
-            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
-    
-    return status_checks
+    return {"message": "OhCampus Counselor Platform API", "version": "1.0.0"}
 
 # Include the router in the main app
 app.include_router(api_router)
