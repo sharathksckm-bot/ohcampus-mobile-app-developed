@@ -62,6 +62,7 @@ import {
   Check,
   Loader2,
   MessageSquare,
+  Gift,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
