@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Navbar } from '../components/layout/Navbar';
+import { useAuth } from '../context/AuthContext';
 import { admissionsAPI, collegesAPI, coursesAPI } from '../lib/api';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -32,6 +33,12 @@ import {
   DialogFooter,
 } from '../components/ui/dialog';
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../components/ui/tooltip';
+import {
   Search,
   UserPlus,
   Edit,
@@ -47,6 +54,7 @@ import {
   FileText,
   Receipt,
   X,
+  MessageSquare,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
