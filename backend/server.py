@@ -1709,6 +1709,7 @@ async def seed_database():
     await db.fees.insert_many(fees_data)
     await db.admission_charges.insert_many(admission_charges_data)
     await db.faqs.insert_many(faqs_data)
+    await db.placements.insert_many(placements_data)
     await db.users.insert_many([admin_user, counselor_user])
     
     return {
@@ -1718,6 +1719,7 @@ async def seed_database():
         "fees_count": len(fees_data),
         "admission_charges_count": len(admission_charges_data),
         "faqs_count": len(faqs_data),
+        "placements_count": len(placements_data),
         "users_created": ["admin@ohcampus.com (password: admin123)", "counselor@ohcampus.com (password: counselor123)"]
     }
 
