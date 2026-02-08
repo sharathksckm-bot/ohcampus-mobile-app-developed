@@ -343,8 +343,8 @@ class TestScholarshipFeature:
         token = self.get_admin_token()
         self.session.headers.update({"Authorization": f"Bearer {token}"})
         
-        response = self.session.get(f"{BASE_URL}/api/stats/performance")
-        assert response.status_code == 200
+        response = self.session.get(f"{BASE_URL}/api/admin/stats/performance")
+        assert response.status_code == 200, f"Performance stats failed: {response.text}"
         
         data = response.json()
         assert "total_admissions" in data
@@ -355,8 +355,8 @@ class TestScholarshipFeature:
         token = self.get_admin_token()
         self.session.headers.update({"Authorization": f"Bearer {token}"})
         
-        response = self.session.get(f"{BASE_URL}/api/stats/admissions-list")
-        assert response.status_code == 200
+        response = self.session.get(f"{BASE_URL}/api/admin/stats/admissions-list")
+        assert response.status_code == 200, f"Admissions list failed: {response.text}"
         
         data = response.json()
         assert "admissions" in data
