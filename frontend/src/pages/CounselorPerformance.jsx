@@ -117,7 +117,17 @@ export default function CounselorPerformance() {
   // Edit admission dialog
   const [editAdmissionOpen, setEditAdmissionOpen] = useState(false);
   const [editingAdmission, setEditingAdmission] = useState(null);
-  const [admissionForm, setAdmissionForm] = useState({ instalments: [], remark: '' });
+  const [admissionForm, setAdmissionForm] = useState({ 
+    candidate_name: '',
+    place: '',
+    college_id: '',
+    course_id: '',
+    admission_date: '',
+    total_fees: '',
+    instalments: [], 
+    remark: '',
+    scholarship_amount: ''
+  });
   const [savingAdmission, setSavingAdmission] = useState(false);
 
   const canAssignTargets = user?.designation === 'Team Lead' || user?.designation === 'Admission Manager';
