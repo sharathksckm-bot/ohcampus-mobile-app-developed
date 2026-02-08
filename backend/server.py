@@ -696,6 +696,7 @@ async def seed_database():
             "state": "Karnataka",
             "city": "Bangalore",
             "category": "Engineering",
+            "address": "Rukmini Knowledge Park, Kattigenahalli, Yelahanka, Bangalore - 560064, Karnataka",
             "image_url": "https://images.unsplash.com/photo-1760131556605-7f2e63d00385?crop=entropy&cs=srgb&fm=jpg&q=85",
             "highlights": [
                 "NAAC 'A' Grade Accreditation",
@@ -719,6 +720,7 @@ async def seed_database():
             "state": "Karnataka",
             "city": "Bangalore",
             "category": "Management",
+            "address": "Hosur Road, Bangalore - 560029, Karnataka",
             "image_url": "https://images.unsplash.com/photo-1670284768187-5cc68eada1b3?crop=entropy&cs=srgb&fm=jpg&q=85",
             "highlights": [
                 "NAAC 'A++' Grade Accreditation",
@@ -742,6 +744,7 @@ async def seed_database():
             "state": "Tamil Nadu",
             "city": "Chennai",
             "category": "Engineering",
+            "address": "Vandalur-Kelambakkam Road, Chennai - 600127, Tamil Nadu",
             "image_url": "https://images.unsplash.com/photo-1759299615947-bc798076b479?crop=entropy&cs=srgb&fm=jpg&q=85",
             "highlights": [
                 "NAAC 'A++' Grade Accreditation",
