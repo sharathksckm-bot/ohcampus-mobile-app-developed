@@ -602,6 +602,55 @@ export default function UserManagement() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Reset Password Dialog */}
+        <Dialog open={resetPasswordOpen} onOpenChange={setResetPasswordOpen}>
+          <DialogContent className="sm:max-w-[400px]">
+            <DialogHeader>
+              <DialogTitle className="font-heading flex items-center gap-2">
+                <Key className="h-5 w-5 text-purple-500" />
+                Reset Password
+              </DialogTitle>
+              <DialogDescription className="font-body">
+                Set a new password for <strong>{resetPasswordUser?.name}</strong>
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <Label className="font-body">New Password *</Label>
+              <Input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password (min 6 characters)"
+                className="mt-1"
+                data-testid="reset-password-input"
+              />
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setResetPasswordOpen(false)} className="font-body">
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleResetPassword}
+                disabled={resettingPassword}
+                className="font-body bg-purple-600 hover:bg-purple-700"
+                data-testid="confirm-reset-password-btn"
+              >
+                {resettingPassword ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Resetting...
+                  </>
+                ) : (
+                  <>
+                    <Key className="h-4 w-4 mr-2" />
+                    Reset Password
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );
