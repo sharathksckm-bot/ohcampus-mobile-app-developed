@@ -587,35 +587,36 @@ export default function Dashboard() {
             </Button>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {colleges.map((college, index) => (
               <Card 
                 key={college.id} 
-                className={`overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300 animate-fade-in ${
+                className={`overflow-hidden group cursor-pointer hover:shadow-xl transition-all duration-300 animate-fade-in border-l-4 border-l-[#0066CC] ${
                   selectedForCompare.find(c => c.id === college.id) ? 'ring-2 ring-[#FF6B35]' : ''
                 }`}
                 style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => compareMode ? toggleCompareSelection(college) : navigate(`/college/${college.id}`)}
                 data-testid={`college-card-${college.id}`}
               >
-                <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={college.image_url || collegeImages[index % collegeImages.length]} 
-                    alt={college.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 left-4 flex items-center gap-2">
-                    <Badge className="bg-[#FF6B35] hover:bg-[#FF6B35] text-white font-body">
-                      <Star className="h-3 w-3 mr-1 fill-current" />
-                      Featured
-                    </Badge>
-                  </div>
-                  {compareMode && (
-                    <div className="absolute top-4 right-4">
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                <CardContent className="p-5">
+                  {/* Header with Featured Badge and Compare Selection */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-[#FF6B35] hover:bg-[#FF6B35] text-white font-body text-xs">
+                        <Star className="h-3 w-3 mr-1 fill-current" />
+                        Featured
+                      </Badge>
+                      {college.admission_alerts && college.admission_alerts.length > 0 && (
+                        <Badge className="bg-red-500 hover:bg-red-500 text-white font-body text-xs animate-pulse">
+                          {college.admission_alerts.length} Alert{college.admission_alerts.length > 1 ? 's' : ''}
+                        </Badge>
+                      )}
+                    </div>
+                    {compareMode && (
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                         selectedForCompare.find(c => c.id === college.id) 
                           ? 'bg-[#FF6B35] border-[#FF6B35]' 
-                          : 'bg-white/80 border-slate-400'
+                          : 'bg-white border-slate-300'
                       }`}>
                         {selectedForCompare.find(c => c.id === college.id) && (
                           <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -623,49 +624,57 @@ export default function Dashboard() {
                           </svg>
                         )}
                       </div>
-                    </div>
-                  )}
-                  {/* Admission Alerts Indicator */}
-                  {college.admission_alerts && college.admission_alerts.length > 0 && (
-                    <div className="absolute bottom-4 left-4">
-                      <Badge className="bg-red-500 hover:bg-red-500 text-white font-body animate-pulse">
-                        {college.admission_alerts.length} Alert{college.admission_alerts.length > 1 ? 's' : ''}
-                      </Badge>
-                    </div>
-                  )}
-                </div>
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-heading font-semibold text-[#0F172A] mb-2 line-clamp-2 group-hover:text-[#0066CC] transition-colors">
-                    {college.name}
-                  </h3>
-                  <div className="flex items-center gap-2 text-[#475569] font-body text-sm mb-2">
-                    <MapPin className="h-4 w-4" />
-                    <span>{college.city}, {college.state}</span>
+                    )}
                   </div>
-                  {college.address && (
-                    <p className="text-xs text-[#94A3B8] font-body mb-3 line-clamp-1">
-                      {college.address}
-                    </p>
-                  )}
-                  <div className="flex items-center justify-between">
-                    <Badge variant="secondary" className="font-body">
-                      {college.category}
-                    </Badge>
-                    <span className="text-xs text-[#94A3B8] font-body">
-                      Est. {college.established}
-                    </span>
+
+                  {/* College Name with Icon */}
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#0066CC] to-[#0052A3] flex items-center justify-center flex-shrink-0">
+                      <GraduationCap className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-heading font-semibold text-[#0F172A] line-clamp-2 group-hover:text-[#0066CC] transition-colors leading-tight">
+                        {college.name}
+                      </h3>
+                      <div className="flex items-center gap-1 text-[#475569] font-body text-sm mt-1">
+                        <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
+                        <span className="truncate">{college.city}, {college.state}</span>
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Quick Info Grid */}
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    <div className="bg-slate-50 rounded-lg p-2.5">
+                      <p className="text-xs text-[#94A3B8] font-body">Category</p>
+                      <p className="text-sm font-body font-medium text-[#0F172A] truncate">{college.category}</p>
+                    </div>
+                    <div className="bg-slate-50 rounded-lg p-2.5">
+                      <p className="text-xs text-[#94A3B8] font-body">Established</p>
+                      <p className="text-sm font-body font-medium text-[#0F172A]">{college.established}</p>
+                    </div>
+                  </div>
+
+                  {/* Accreditation */}
                   {college.accreditation && (
-                    <div className="mt-3 pt-3 border-t border-slate-100">
-                      <span className="text-xs text-[#0066CC] font-body font-medium">
+                    <div className="flex items-center gap-2 mb-3 p-2 bg-blue-50 rounded-lg">
+                      <div className="w-2 h-2 rounded-full bg-[#0066CC]"></div>
+                      <span className="text-xs text-[#0066CC] font-body font-medium truncate">
                         {college.accreditation}
                       </span>
                     </div>
                   )}
+
+                  {/* View Details Link */}
                   {!compareMode && (
-                    <div className="mt-4 flex items-center text-[#0066CC] font-body text-sm font-semibold group-hover:gap-2 transition-all">
-                      View Details
-                      <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                      <span className="text-xs text-[#94A3B8] font-body">
+                        {college.courses?.length || 0} Courses Available
+                      </span>
+                      <div className="flex items-center text-[#0066CC] font-body text-sm font-semibold group-hover:gap-2 transition-all">
+                        View Details
+                        <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
                   )}
                 </CardContent>
