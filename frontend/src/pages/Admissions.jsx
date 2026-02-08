@@ -92,7 +92,8 @@ export default function Admissions() {
     admission_date: '',
     total_fees: '',
     instalments: [],
-    remark: ''
+    remark: '',
+    scholarship_amount: ''
   });
 
   const [filteredCourses, setFilteredCourses] = useState([]);
