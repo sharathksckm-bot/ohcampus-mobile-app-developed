@@ -398,6 +398,120 @@ async def delete_fee(fee_id: str, current_user: dict = Depends(require_admin)):
         raise HTTPException(status_code=404, detail="Fee not found")
     return {"message": "Fee deleted successfully"}
 
+# ===================== ADMISSION CHARGES ENDPOINTS =====================
+
+@api_router.get("/admission-charges")
+async def get_all_admission_charges(college_id: Optional[str] = None, course_id: Optional[str] = None):
+    query = {}
+    if college_id:
+        query["college_id"] = college_id
+    if course_id:
+        query["course_id"] = course_id
+    charges = await db.admission_charges.find(query, {"_id": 0}).to_list(500)
+    return charges
+
+@api_router.get("/colleges/{college_id}/admission-charges")
+async def get_college_admission_charges(college_id: str):
+    charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+    return charges
+
+@api_router.post("/admission-charges", response_model=AdmissionCharges)
+async def create_admission_charges(data: AdmissionChargesBase, current_user: dict = Depends(require_admin)):
+    # Check if already exists for this college-course combo
+    existing = await db.admission_charges.find_one({
+        "college_id": data.college_id,
+        "course_id": data.course_id
+    })
+    if existing:
+        # Update existing
+        update_data = data.model_dump()
+        update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        await db.admission_charges.update_one(
+            {"college_id": data.college_id, "course_id": data.course_id},
+            {"$set": update_data}
+        )
+        updated = await db.admission_charges.find_one(
+            {"college_id": data.college_id, "course_id": data.course_id},
+            {"_id": 0}
+        )
+        return updated
+    
+    charges = AdmissionCharges(**data.model_dump())
+    await db.admission_charges.insert_one(charges.model_dump())
+    return charges
+
+@api_router.put("/admission-charges/{charge_id}", response_model=AdmissionCharges)
+async def update_admission_charges(charge_id: str, data: AdmissionChargesBase, current_user: dict = Depends(require_admin)):
+    existing = await db.admission_charges.find_one({"id": charge_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Admission charges not found")
+    
+    update_data = data.model_dump()
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.admission_charges.update_one({"id": charge_id}, {"$set": update_data})
+    
+    updated = await db.admission_charges.find_one({"id": charge_id}, {"_id": 0})
+    return updated
+
+@api_router.delete("/admission-charges/{charge_id}")
+async def delete_admission_charges(charge_id: str, current_user: dict = Depends(require_admin)):
+    result = await db.admission_charges.delete_one({"id": charge_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Admission charges not found")
+    return {"message": "Admission charges deleted successfully"}
+
+# ===================== FEE SUMMARY ENDPOINT =====================
+
+@api_router.get("/colleges/{college_id}/fee-summary")
+async def get_fee_summary(college_id: str):
+    """Get complete fee summary with totals for a college"""
+    courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+    fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(500)
+    admission_charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+    
+    # Build summary by course
+    summary = []
+    for course in courses:
+        course_fees = [f for f in fees if f["course_id"] == course["id"]]
+        course_admission = next((a for a in admission_charges if a["course_id"] == course["id"]), None)
+        
+        # Calculate totals
+        total_tuition = sum(f.get("amount", 0) for f in course_fees)
+        total_hostel = sum(f.get("hostel_fee", 0) or 0 for f in course_fees)
+        
+        # Get admission charges total
+        admission_total = 0
+        if course_admission:
+            admission_total = sum([
+                course_admission.get("registration_fee", 0) or 0,
+                course_admission.get("admission_fee", 0) or 0,
+                course_admission.get("caution_deposit", 0) or 0,
+                course_admission.get("uniform_fee", 0) or 0,
+                course_admission.get("library_fee", 0) or 0,
+                course_admission.get("lab_fee", 0) or 0,
+                course_admission.get("other_charges", 0) or 0
+            ])
+        
+        # Determine fee type and sort fees
+        fee_type = course_fees[0]["fee_type"] if course_fees else "annual"
+        sorted_fees = sorted(course_fees, key=lambda x: x["year_or_semester"])
+        
+        summary.append({
+            "course": course,
+            "fee_type": fee_type,
+            "fees": sorted_fees,
+            "admission_charges": course_admission,
+            "totals": {
+                "tuition_total": total_tuition,
+                "hostel_total": total_hostel,
+                "admission_total": admission_total,
+                "grand_total_without_hostel": total_tuition + admission_total,
+                "grand_total_with_hostel": total_tuition + total_hostel + admission_total
+            }
+        })
+    
+    return summary
+
 # ===================== FAQ ENDPOINTS =====================
 
 @api_router.get("/faqs", response_model=List[FAQ])
