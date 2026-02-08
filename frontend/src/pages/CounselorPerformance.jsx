@@ -63,6 +63,7 @@ import {
   Loader2,
   MessageSquare,
   Filter,
+  Gift,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
