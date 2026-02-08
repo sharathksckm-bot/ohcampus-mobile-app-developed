@@ -116,10 +116,6 @@ class TestTargetTracking:
         
         counselor_id = counselors[0]["id"]
         
-        # Create target for a unique period
-        import uuid
-        unique_period = f"2099-{str(uuid.uuid4())[:2]}"  # Unique period to avoid conflicts
-        
         target_data = {
             "counselor_id": counselor_id,
             "target_type": "monthly",
@@ -234,19 +230,23 @@ class TestRemarksColumn:
     """Test Remarks column in admissions list"""
     
     def test_admissions_have_remark_field(self, admin_token):
-        """Admissions should have remark field"""
+        """Admissions should have remark field in admin dashboard"""
         headers = {"Authorization": f"Bearer {admin_token}"}
         response = requests.get(f"{BASE_URL}/api/admin/stats/admissions-list", headers=headers)
         assert response.status_code == 200
-        admissions = response.json()
+        
+        data = response.json()
+        # Response is paginated: {"total": N, "skip": 0, "limit": 100, "admissions": [...]}
+        assert "admissions" in data
+        admissions = data["admissions"]
         
         # Check that admissions have remark field
         for admission in admissions:
-            assert "remark" in admission or admission.get("remark") is None
+            assert "remark" in admission, "Admission missing remark field"
         
         # Count admissions with remarks
         with_remarks = [a for a in admissions if a.get("remark")]
-        print(f"✓ Found {len(with_remarks)}/{len(admissions)} admissions with remarks")
+        print(f"✓ Found {len(with_remarks)}/{len(admissions)} admissions with remarks in admin dashboard")
     
     def test_counselor_admissions_have_remark(self, counselor_token):
         """Counselor's admissions should have remark field"""
@@ -256,7 +256,7 @@ class TestRemarksColumn:
         admissions = response.json()
         
         for admission in admissions:
-            assert "remark" in admission or admission.get("remark") is None
+            assert "remark" in admission, "Admission missing remark field"
         
         with_remarks = [a for a in admissions if a.get("remark")]
         print(f"✓ Counselor sees {len(with_remarks)}/{len(admissions)} admissions with remarks")
@@ -309,10 +309,12 @@ class TestFeePaymentEditPermissions:
         """Admin can edit any admission's fee details"""
         headers = {"Authorization": f"Bearer {admin_token}"}
         
-        # Get all admissions
+        # Get all admissions (paginated response)
         response = requests.get(f"{BASE_URL}/api/admin/stats/admissions-list", headers=headers)
         assert response.status_code == 200
-        admissions = response.json()
+        
+        data = response.json()
+        admissions = data.get("admissions", [])
         
         if not admissions:
             pytest.skip("No admissions to edit")
@@ -350,13 +352,13 @@ class TestFeePaymentEditPermissions:
         
         # Get all admissions (as admin to see all)
         admissions_resp = requests.get(f"{BASE_URL}/api/admin/stats/admissions-list", headers=admin_headers)
-        admissions = admissions_resp.json()
+        data = admissions_resp.json()
+        admissions = data.get("admissions", [])
         
         if not admissions:
             pytest.skip("No admissions available")
         
         # Find an admission that team lead should be able to edit
-        # Team lead can edit admissions from their team members
         admission = admissions[0]
         admission_id = admission["id"]
         
@@ -385,7 +387,6 @@ class TestFeePaymentEditPermissions:
     def test_counselor_can_only_edit_own_admission(self, counselor_token, admin_token):
         """Counselor can only edit their own admissions"""
         counselor_headers = {"Authorization": f"Bearer {counselor_token}"}
-        admin_headers = {"Authorization": f"Bearer {admin_token}"}
         
         # Get counselor's own admissions
         own_admissions_resp = requests.get(f"{BASE_URL}/api/admissions", headers=counselor_headers)
@@ -415,9 +416,10 @@ class TestFeePaymentEditPermissions:
         """Admin can add fee instalment to any admission"""
         headers = {"Authorization": f"Bearer {admin_token}"}
         
-        # Get admissions
+        # Get admissions (paginated response)
         response = requests.get(f"{BASE_URL}/api/admin/stats/admissions-list", headers=headers)
-        admissions = response.json()
+        data = response.json()
+        admissions = data.get("admissions", [])
         
         if not admissions:
             pytest.skip("No admissions available")
@@ -464,17 +466,22 @@ class TestPerformanceDashboardAdmissions:
         response = requests.get(f"{BASE_URL}/api/admin/stats/admissions-list", headers=headers)
         assert response.status_code == 200
         
-        admissions = response.json()
+        data = response.json()
+        # Response is paginated: {"total": N, "skip": 0, "limit": 100, "admissions": [...]}
+        assert "admissions" in data
+        assert "total" in data
+        
+        admissions = data["admissions"]
         assert isinstance(admissions, list)
         
         # Verify structure
         if admissions:
             admission = admissions[0]
-            required_fields = ["id", "candidate_name", "college_name", "course_name", "admission_date", "total_fees", "fees_paid", "balance"]
+            required_fields = ["id", "candidate_name", "college_name", "course_name", "admission_date", "total_fees", "fees_paid", "balance", "remark"]
             for field in required_fields:
                 assert field in admission, f"Missing field: {field}"
         
-        print(f"✓ Admin can see {len(admissions)} admissions in performance dashboard")
+        print(f"✓ Admin can see {len(admissions)} admissions in performance dashboard (total: {data['total']})")
     
     def test_performance_stats(self, admin_token):
         """Admin can see performance statistics"""
@@ -484,10 +491,26 @@ class TestPerformanceDashboardAdmissions:
         
         stats = response.json()
         assert "total_admissions" in stats
-        assert "total_fees_collected" in stats
-        assert "total_pending" in stats
+        assert "fees_stats" in stats
+        assert "fees_collected" in stats["fees_stats"]
+        assert "fees_pending" in stats["fees_stats"]
         
-        print(f"✓ Performance stats: {stats['total_admissions']} admissions, ₹{stats['total_fees_collected']} collected")
+        print(f"✓ Performance stats: {stats['total_admissions']} admissions, ₹{stats['fees_stats']['fees_collected']} collected")
+    
+    def test_performance_stats_by_counselor(self, admin_token):
+        """Admin can see stats grouped by counselor"""
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        response = requests.get(f"{BASE_URL}/api/admin/stats/performance", headers=headers)
+        assert response.status_code == 200
+        
+        stats = response.json()
+        assert "by_counselor" in stats
+        
+        for counselor_stat in stats["by_counselor"]:
+            assert "counselor_name" in counselor_stat
+            assert "count" in counselor_stat
+        
+        print(f"✓ Stats by counselor: {len(stats['by_counselor'])} counselors")
 
 
 if __name__ == "__main__":
