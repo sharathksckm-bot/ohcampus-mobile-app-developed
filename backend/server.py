@@ -273,10 +273,21 @@ async def login(login_data: LoginRequest):
     if not user or not verify_password(login_data.password, user.get("password_hash", "")):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    # Check if user is active
+    if not user.get("is_active", True):
+        raise HTTPException(status_code=401, detail="Account is deactivated")
+    
     token = create_token(user["id"], user["email"], user["role"])
     return TokenResponse(
         access_token=token,
-        user={"id": user["id"], "email": user["email"], "name": user["name"], "role": user["role"]}
+        user={
+            "id": user["id"], 
+            "email": user["email"], 
+            "name": user["name"], 
+            "role": user["role"],
+            "designation": user.get("designation"),
+            "team_lead_id": user.get("team_lead_id")
+        }
     )
 
 @api_router.get("/auth/me")
