@@ -70,6 +70,14 @@ export const feesAPI = {
   create: (data) => api.post('/fees', data),
   update: (id, data) => api.put(`/fees/${id}`, data),
   delete: (id) => api.delete(`/fees/${id}`),
+  importCSV: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/fees/import-csv', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  getCSVTemplate: () => api.get('/fees/csv-template'),
 };
 
 // Admission Charges API
