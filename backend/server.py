@@ -343,6 +343,9 @@ async def login(login_data: LoginRequest):
     if not user.get("is_active", True):
         raise HTTPException(status_code=401, detail="Account is deactivated")
     
+    # Log activity
+    await log_activity(user["id"], user["name"], user["email"], "login", "user", user["id"], "User logged in")
+    
     token = create_token(user["id"], user["email"], user["role"])
     return TokenResponse(
         access_token=token,
@@ -352,7 +355,8 @@ async def login(login_data: LoginRequest):
             "name": user["name"], 
             "role": user["role"],
             "designation": user.get("designation"),
-            "team_lead_id": user.get("team_lead_id")
+            "team_lead_id": user.get("team_lead_id"),
+            "phone": user.get("phone")
         }
     )
 
