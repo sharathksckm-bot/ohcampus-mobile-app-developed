@@ -464,10 +464,21 @@ export default function PerformanceDashboard() {
 
         {/* Tabs */}
         <Tabs defaultValue="targets">
-          <TabsList>
+          <TabsList className="flex-wrap">
             <TabsTrigger value="targets" className="font-body">
               <Target className="h-4 w-4 mr-2" />
               Targets
+            </TabsTrigger>
+            <TabsTrigger value="alerts" className="font-body" onClick={fetchTargetAlerts}>
+              <Bell className="h-4 w-4 mr-2" />
+              Alerts
+              {alertsData?.total_alerts > 0 && (
+                <Badge className="ml-2 bg-red-500 text-white text-xs">{alertsData.total_alerts}</Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="scholarships" className="font-body" onClick={fetchScholarshipSummary}>
+              <Gift className="h-4 w-4 mr-2" />
+              Scholarships
             </TabsTrigger>
             <TabsTrigger value="overview" className="font-body">
               <BarChart3 className="h-4 w-4 mr-2" />
