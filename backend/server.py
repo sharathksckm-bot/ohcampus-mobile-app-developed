@@ -1892,6 +1892,205 @@ async def get_all_admissions_list(
         "admissions": admissions
     }
 
+# ===================== SCHOLARSHIP SUMMARY REPORT =====================
+
+@api_router.get("/admin/scholarship-summary")
+async def get_scholarship_summary(
+    current_user: dict = Depends(require_admin_or_manager),
+    view_by: str = "month"  # "month" or "college"
+):
+    """Get scholarship summary report - by month or by college"""
+    
+    # Overall scholarship stats
+    pipeline_total = [
+        {"$match": {"scholarship_amount": {"$exists": True, "$ne": None, "$gt": 0}}},
+        {
+            "$group": {
+                "_id": None,
+                "total_scholarships": {"$sum": 1},
+                "total_amount": {"$sum": "$scholarship_amount"},
+                "avg_amount": {"$avg": "$scholarship_amount"},
+                "max_amount": {"$max": "$scholarship_amount"},
+                "min_amount": {"$min": "$scholarship_amount"}
+            }
+        }
+    ]
+    total_result = await db.admissions.aggregate(pipeline_total).to_list(1)
+    total_stats = total_result[0] if total_result else {
+        "total_scholarships": 0, "total_amount": 0, "avg_amount": 0, "max_amount": 0, "min_amount": 0
+    }
+    
+    # Total admissions for percentage calculation
+    total_admissions = await db.admissions.count_documents({})
+    
+    breakdown = []
+    
+    if view_by == "month":
+        # Scholarship by month
+        pipeline_by_month = [
+            {"$match": {"scholarship_amount": {"$exists": True, "$ne": None, "$gt": 0}}},
+            {
+                "$group": {
+                    "_id": {"$substr": ["$admission_date", 0, 7]},  # YYYY-MM
+                    "count": {"$sum": 1},
+                    "total_amount": {"$sum": "$scholarship_amount"},
+                    "avg_amount": {"$avg": "$scholarship_amount"}
+                }
+            },
+            {"$sort": {"_id": -1}},
+            {"$limit": 12}
+        ]
+        by_month = await db.admissions.aggregate(pipeline_by_month).to_list(12)
+        breakdown = [
+            {
+                "period": item["_id"],
+                "label": item["_id"],
+                "count": item["count"],
+                "total_amount": item["total_amount"],
+                "avg_amount": item["avg_amount"]
+            }
+            for item in by_month
+        ]
+    else:
+        # Scholarship by college
+        pipeline_by_college = [
+            {"$match": {"scholarship_amount": {"$exists": True, "$ne": None, "$gt": 0}}},
+            {
+                "$group": {
+                    "_id": "$college_id",
+                    "college_name": {"$first": "$college_name"},
+                    "count": {"$sum": 1},
+                    "total_amount": {"$sum": "$scholarship_amount"},
+                    "avg_amount": {"$avg": "$scholarship_amount"}
+                }
+            },
+            {"$sort": {"total_amount": -1}},
+            {"$limit": 20}
+        ]
+        by_college = await db.admissions.aggregate(pipeline_by_college).to_list(20)
+        breakdown = [
+            {
+                "college_id": item["_id"],
+                "label": item["college_name"],
+                "count": item["count"],
+                "total_amount": item["total_amount"],
+                "avg_amount": item["avg_amount"]
+            }
+            for item in by_college
+        ]
+    
+    # Recent scholarship recipients
+    recent_scholarships = await db.admissions.find(
+        {"scholarship_amount": {"$exists": True, "$ne": None, "$gt": 0}},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(10).to_list(10)
+    
+    return {
+        "summary": {
+            "total_scholarships": total_stats.get("total_scholarships", 0),
+            "total_amount": total_stats.get("total_amount", 0),
+            "avg_amount": round(total_stats.get("avg_amount", 0), 2),
+            "max_amount": total_stats.get("max_amount", 0),
+            "min_amount": total_stats.get("min_amount", 0),
+            "percentage_with_scholarship": round((total_stats.get("total_scholarships", 0) / max(total_admissions, 1)) * 100, 1)
+        },
+        "view_by": view_by,
+        "breakdown": breakdown,
+        "recent_scholarships": recent_scholarships
+    }
+
+# ===================== TARGET ALERTS =====================
+
+@api_router.get("/admin/target-alerts")
+async def get_target_alerts(current_user: dict = Depends(require_admin_or_manager)):
+    """Get counselors who are falling behind on their targets (below 50% progress at mid-month or later)"""
+    
+    now = datetime.now(timezone.utc)
+    current_month = now.strftime("%Y-%m")
+    day_of_month = now.day
+    days_in_month = 30  # Approximate
+    progress_threshold = (day_of_month / days_in_month) * 0.5  # At 50% of month, should be at 50% of target
+    
+    alerts = []
+    
+    # Get all targets for current month
+    targets = await db.targets.find({"period": current_month}, {"_id": 0}).to_list(100)
+    
+    for target in targets:
+        # Get counselor info
+        counselor = await db.users.find_one({"id": target["counselor_id"]}, {"_id": 0, "id": 1, "name": 1, "email": 1, "designation": 1})
+        if not counselor:
+            continue
+        
+        # Count admissions for this counselor this month
+        admission_count = await db.admissions.count_documents({
+            "counselor_id": target["counselor_id"],
+            "admission_date": {"$regex": f"^{current_month}"}
+        })
+        
+        # Calculate fees collected this month
+        pipeline_fees = [
+            {
+                "$match": {
+                    "counselor_id": target["counselor_id"],
+                    "admission_date": {"$regex": f"^{current_month}"}
+                }
+            },
+            {
+                "$group": {
+                    "_id": None,
+                    "total_fees_collected": {"$sum": "$fees_paid"}
+                }
+            }
+        ]
+        fees_result = await db.admissions.aggregate(pipeline_fees).to_list(1)
+        fees_collected = fees_result[0]["total_fees_collected"] if fees_result else 0
+        
+        # Calculate progress
+        target_count = target.get("target_count", 0)
+        target_fees = target.get("target_fees", 0)
+        
+        admission_progress = (admission_count / max(target_count, 1)) * 100 if target_count else 0
+        fees_progress = (fees_collected / max(target_fees, 1)) * 100 if target_fees else 0
+        
+        # Expected progress at this point in month (linear)
+        expected_progress = (day_of_month / days_in_month) * 100
+        
+        # Check if behind - at least 5 days into month and below 50% of expected
+        is_behind = day_of_month >= 5 and (
+            (target_count > 0 and admission_progress < expected_progress * 0.5) or
+            (target_fees > 0 and fees_progress < expected_progress * 0.5)
+        )
+        
+        if is_behind:
+            alerts.append({
+                "counselor_id": counselor["id"],
+                "counselor_name": counselor["name"],
+                "counselor_email": counselor.get("email"),
+                "designation": counselor.get("designation"),
+                "target_count": target_count,
+                "target_fees": target_fees,
+                "current_admissions": admission_count,
+                "current_fees_collected": fees_collected,
+                "admission_progress": round(admission_progress, 1),
+                "fees_progress": round(fees_progress, 1),
+                "expected_progress": round(expected_progress, 1),
+                "days_remaining": days_in_month - day_of_month,
+                "alert_severity": "critical" if admission_progress < expected_progress * 0.25 else "warning"
+            })
+    
+    # Sort by severity (critical first) then by progress (lowest first)
+    alerts.sort(key=lambda x: (0 if x["alert_severity"] == "critical" else 1, x["admission_progress"]))
+    
+    return {
+        "current_month": current_month,
+        "day_of_month": day_of_month,
+        "total_alerts": len(alerts),
+        "critical_count": len([a for a in alerts if a["alert_severity"] == "critical"]),
+        "warning_count": len([a for a in alerts if a["alert_severity"] == "warning"]),
+        "alerts": alerts
+    }
+
 # ===================== TARGET TRACKING ENDPOINTS =====================
 
 class TargetCreate(BaseModel):
