@@ -1129,12 +1129,223 @@ async def delete_counselor(user_id: str, current_user: dict = Depends(require_ad
     
     # Soft delete - just mark as inactive
     await db.users.update_one({"id": user_id}, {"$set": {"is_active": False}})
+    
+    # Log activity
+    admin = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    await log_activity(current_user["user_id"], admin.get("name", ""), current_user["email"], "deactivate_user", "user", user_id, f"Deactivated user: {existing.get('name')}")
+    
     return {"message": "User deactivated successfully"}
+
+@api_router.put("/admin/users/{user_id}/reset-password")
+async def reset_user_password(user_id: str, current_user: dict = Depends(require_admin)):
+    """Reset a user's password (admin only) - generates a new password"""
+    existing = await db.users.find_one({"id": user_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Generate a simple reset password
+    new_password = f"Reset{user_id[:4]}!"
+    
+    await db.users.update_one({"id": user_id}, {"$set": {"password_hash": hash_password(new_password)}})
+    
+    # Log activity
+    admin = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    await log_activity(current_user["user_id"], admin.get("name", ""), current_user["email"], "reset_password", "user", user_id, f"Reset password for: {existing.get('name')}")
+    
+    return {"message": "Password reset successfully", "new_password": new_password}
+
+class PasswordResetRequest(BaseModel):
+    user_id: str
+    new_password: str
+
+@api_router.put("/admin/users/{user_id}/set-password")
+async def set_user_password(user_id: str, data: PasswordResetRequest, current_user: dict = Depends(require_admin)):
+    """Set a specific password for a user (admin only)"""
+    existing = await db.users.find_one({"id": user_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+    
+    await db.users.update_one({"id": user_id}, {"$set": {"password_hash": hash_password(data.new_password)}})
+    
+    # Log activity
+    admin = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    await log_activity(current_user["user_id"], admin.get("name", ""), current_user["email"], "set_password", "user", user_id, f"Set password for: {existing.get('name')}")
+    
+    return {"message": "Password set successfully"}
 
 @api_router.get("/admin/designations")
 async def get_designations():
     """Get list of available designations"""
     return {"designations": DESIGNATIONS}
+
+# ===================== USER PROFILE ENDPOINTS =====================
+
+class ProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    phone: Optional[str] = None
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
+
+@api_router.get("/profile")
+async def get_profile(current_user: dict = Depends(get_current_user)):
+    """Get current user's profile"""
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0, "password_hash": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+@api_router.put("/profile")
+async def update_profile(data: ProfileUpdate, current_user: dict = Depends(get_current_user)):
+    """Update current user's profile"""
+    update_data = {}
+    if data.name is not None:
+        update_data["name"] = data.name
+    if data.phone is not None:
+        update_data["phone"] = data.phone
+    
+    if update_data:
+        await db.users.update_one({"id": current_user["user_id"]}, {"$set": update_data})
+    
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0, "password_hash": 0})
+    
+    # Log activity
+    await log_activity(current_user["user_id"], user.get("name", ""), current_user["email"], "update_profile", "user", current_user["user_id"], "Updated profile")
+    
+    return user
+
+@api_router.put("/profile/password")
+async def change_password(data: PasswordChange, current_user: dict = Depends(get_current_user)):
+    """Change current user's password"""
+    user = await db.users.find_one({"id": current_user["user_id"]})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Verify current password
+    if not verify_password(data.current_password, user.get("password_hash", "")):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="New password must be at least 6 characters")
+    
+    await db.users.update_one({"id": current_user["user_id"]}, {"$set": {"password_hash": hash_password(data.new_password)}})
+    
+    # Log activity
+    await log_activity(current_user["user_id"], user.get("name", ""), current_user["email"], "change_password", "user", current_user["user_id"], "Changed own password")
+    
+    return {"message": "Password changed successfully"}
+
+# ===================== ACTIVITY LOG ENDPOINTS =====================
+
+@api_router.get("/admin/activity-logs")
+async def get_activity_logs(
+    current_user: dict = Depends(require_admin),
+    user_id: Optional[str] = None,
+    action: Optional[str] = None,
+    entity_type: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 50
+):
+    """Get activity logs (admin only)"""
+    query = {}
+    if user_id:
+        query["user_id"] = user_id
+    if action:
+        query["action"] = action
+    if entity_type:
+        query["entity_type"] = entity_type
+    
+    total = await db.activity_logs.count_documents(query)
+    logs = await db.activity_logs.find(query, {"_id": 0}).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    return {
+        "total": total,
+        "skip": skip,
+        "limit": limit,
+        "logs": logs
+    }
+
+@api_router.get("/admin/activity-logs/actions")
+async def get_activity_actions():
+    """Get list of available activity actions"""
+    return {
+        "actions": [
+            "login", "create_admission", "update_admission", "delete_admission",
+            "update_fee", "create_user", "update_user", "deactivate_user",
+            "reset_password", "set_password", "update_profile", "change_password",
+            "create_target", "update_target", "delete_target"
+        ]
+    }
+
+# ===================== TARGET ALERTS ENDPOINTS =====================
+
+@api_router.get("/targets/alerts")
+async def get_target_alerts(current_user: dict = Depends(get_current_user)):
+    """Get target alerts for the current user (shows if behind on targets)"""
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    current_month = datetime.now(timezone.utc).strftime("%Y-%m")
+    current_day = datetime.now(timezone.utc).day
+    days_in_month = 30  # Simplified
+    month_progress = (current_day / days_in_month) * 100
+    
+    alerts = []
+    
+    # Get targets for this user
+    if current_user.get("role") == "admin" or user.get("designation") in ["Team Lead", "Admission Manager"]:
+        # Get team targets
+        query = {"period": current_month}
+        if user.get("designation") == "Team Lead":
+            team_ids = await db.users.distinct("id", {"team_lead_id": current_user["user_id"]})
+            team_ids.append(current_user["user_id"])
+            query["counselor_id"] = {"$in": team_ids}
+        
+        targets = await db.targets.find(query, {"_id": 0}).to_list(100)
+    else:
+        # Regular counselor - get their own target
+        targets = await db.targets.find({"counselor_id": current_user["user_id"], "period": current_month}, {"_id": 0}).to_list(10)
+    
+    for target in targets:
+        # Calculate actual progress
+        start_date = f"{current_month}-01"
+        next_month = int(current_month.split("-")[1]) + 1
+        year = current_month.split("-")[0]
+        if next_month > 12:
+            end_date = f"{int(year)+1}-01-01"
+        else:
+            end_date = f"{year}-{next_month:02d}-01"
+        
+        admission_count = await db.admissions.count_documents({
+            "counselor_id": target["counselor_id"],
+            "admission_date": {"$gte": start_date, "$lt": end_date}
+        })
+        
+        target_progress = (admission_count / target["target_count"] * 100) if target["target_count"] > 0 else 0
+        
+        # Check if behind (at 50% of month but less than 50% progress)
+        if month_progress >= 50 and target_progress < 50:
+            counselor = await db.users.find_one({"id": target["counselor_id"]}, {"_id": 0, "name": 1})
+            alerts.append({
+                "type": "behind_target",
+                "severity": "warning",
+                "counselor_id": target["counselor_id"],
+                "counselor_name": counselor.get("name") if counselor else target.get("counselor_name"),
+                "target_count": target["target_count"],
+                "actual_count": admission_count,
+                "target_progress": round(target_progress, 1),
+                "month_progress": round(month_progress, 1),
+                "message": f"Only {admission_count}/{target['target_count']} admissions ({round(target_progress, 1)}%) with {round(month_progress, 1)}% of month passed"
+            })
+    
+    return {
+        "alerts": alerts,
+        "month_progress": round(month_progress, 1),
+        "current_month": current_month
+    }
 
 # ===================== ADMISSIONS ENDPOINTS =====================
 
