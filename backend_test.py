@@ -216,7 +216,102 @@ class OhCampusAPITester:
             print(f"   Found {len(global_faqs)} global FAQs, {len(college_faqs)} college-specific FAQs")
         return success
 
-    def test_admin_create_fee(self, college_id, course_id):
+    def test_colleges_with_course_filter(self):
+        """Test colleges endpoint with course filter"""
+        success, response = self.run_test(
+            "Get Colleges with Course Filter",
+            "GET",
+            "colleges",
+            200,
+            params={"course": "MBA"}
+        )
+        if success and isinstance(response, list):
+            print(f"   Found {len(response)} colleges offering MBA courses")
+        return success
+
+    def test_compare_colleges(self, college_ids):
+        """Test college comparison endpoint"""
+        if not college_ids or len(college_ids) < 2:
+            return False
+        
+        ids_str = ",".join(college_ids[:4])  # Max 4 colleges
+        success, response = self.run_test(
+            "Compare Colleges",
+            "GET",
+            "colleges/compare",
+            200,
+            params={"college_ids": ids_str}
+        )
+        if success and isinstance(response, list):
+            print(f"   Comparing {len(response)} colleges")
+            for college_data in response:
+                college = college_data.get('college', {})
+                courses = college_data.get('courses', [])
+                fees = college_data.get('fees', [])
+                print(f"   - {college.get('name', 'Unknown')}: {len(courses)} courses, {len(fees)} fees")
+        return success
+
+    def test_fee_summary(self, college_id):
+        """Test fee summary endpoint"""
+        if not college_id:
+            return False
+        success, response = self.run_test(
+            "Get Fee Summary",
+            "GET",
+            f"colleges/{college_id}/fee-summary",
+            200
+        )
+        if success and isinstance(response, list):
+            print(f"   Found fee summary for {len(response)} courses")
+            for course_summary in response:
+                course = course_summary.get('course', {})
+                totals = course_summary.get('totals', {})
+                print(f"   - {course.get('name', 'Unknown')}: Total ₹{totals.get('grand_total_without_hostel', 0):,}")
+        return success
+
+    def test_admission_charges(self, college_id):
+        """Test admission charges endpoint"""
+        if not college_id:
+            return False
+        success, response = self.run_test(
+            "Get Admission Charges",
+            "GET",
+            f"colleges/{college_id}/admission-charges",
+            200
+        )
+        if success and isinstance(response, list):
+            print(f"   Found {len(response)} admission charge records")
+        return success
+
+    def test_admin_create_admission_charges(self, college_id, course_id):
+        """Test admin admission charges creation"""
+        if not college_id or not course_id or not self.admin_token:
+            return False
+        
+        charges_data = {
+            "college_id": college_id,
+            "course_id": course_id,
+            "registration_fee": 5000,
+            "admission_fee": 25000,
+            "caution_deposit": 10000,
+            "uniform_fee": 8000,
+            "library_fee": 5000,
+            "lab_fee": 12000,
+            "other_charges": 2000,
+            "other_charges_description": "ID Card & Documentation"
+        }
+        
+        success, response = self.run_test(
+            "Admin Create Admission Charges",
+            "POST",
+            "admission-charges",
+            200,  # Returns 200 for create/update
+            data=charges_data,
+            token=self.admin_token
+        )
+        if success:
+            return response.get('id')
+        return None
         """Test admin fee creation"""
         if not college_id or not course_id or not self.admin_token:
             return False
