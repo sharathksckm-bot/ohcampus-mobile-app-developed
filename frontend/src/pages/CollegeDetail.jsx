@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Skeleton } from '../components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import {
   Accordion,
   AccordionContent,
@@ -37,7 +38,11 @@ import {
   BookOpen,
   Receipt,
   Calculator,
-  Download
+  Download,
+  AlertTriangle,
+  Info,
+  Clock,
+  Megaphone
 } from 'lucide-react';
 import { toast } from 'sonner';
 
