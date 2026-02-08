@@ -87,6 +87,19 @@ export default function CollegeDetail() {
     }).format(amount);
   };
 
+  const handleExportPDF = () => {
+    try {
+      setExporting(true);
+      exportFeeToPDF(college, feeSummary, courses);
+      toast.success('Fee structure exported to PDF');
+    } catch (error) {
+      console.error('PDF export failed:', error);
+      toast.error('Failed to export PDF');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F8FAFC]">
