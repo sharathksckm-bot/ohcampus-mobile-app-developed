@@ -133,6 +133,22 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/admin/users" 
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <UserManagement />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/performance" 
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <PerformanceDashboard />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Catch all - redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
