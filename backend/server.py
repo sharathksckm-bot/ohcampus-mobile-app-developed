@@ -1360,6 +1360,7 @@ class AdmissionCreate(BaseModel):
     total_fees: float
     instalments: List[FeeInstalment] = []
     remark: Optional[str] = None
+    scholarship_amount: Optional[float] = None
 
 class AdmissionUpdate(BaseModel):
     candidate_name: Optional[str] = None
@@ -1371,6 +1372,7 @@ class AdmissionUpdate(BaseModel):
     total_fees: Optional[float] = None
     instalments: Optional[List[FeeInstalment]] = None
     remark: Optional[str] = None
+    scholarship_amount: Optional[float] = None
 
 @api_router.post("/admissions", status_code=201)
 async def create_admission(admission_data: AdmissionCreate, current_user: dict = Depends(get_current_user)):
