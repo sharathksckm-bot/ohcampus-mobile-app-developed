@@ -12,10 +12,13 @@ import Dashboard from "./pages/Dashboard";
 import CollegeDetail from "./pages/CollegeDetail";
 import CompareColleges from "./pages/CompareColleges";
 import Courses from "./pages/Courses";
+import Admissions from "./pages/Admissions";
 import AdminDashboard from "./pages/AdminDashboard";
 import FeeManagement from "./pages/FeeManagement";
 import FAQManagement from "./pages/FAQManagement";
 import CollegeManagement from "./pages/CollegeManagement";
+import UserManagement from "./pages/UserManagement";
+import PerformanceDashboard from "./pages/PerformanceDashboard";
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
