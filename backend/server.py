@@ -2217,6 +2217,7 @@ async def seed_database():
         "name": "Admin User",
         "role": "admin",
         "password_hash": hash_password("admin123"),
+        "is_active": True,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
@@ -2226,7 +2227,11 @@ async def seed_database():
         "email": "counselor@ohcampus.com",
         "name": "Demo Counselor",
         "role": "counselor",
+        "designation": "Admission Counselor",
+        "team_lead_id": None,
+        "phone": None,
         "password_hash": hash_password("counselor123"),
+        "is_active": True,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
