@@ -110,6 +110,32 @@ export const faqsAPI = {
   delete: (id) => api.delete(`/faqs/${id}`),
 };
 
+// User Management API (Admin only)
+export const usersAPI = {
+  getAll: () => api.get('/admin/users'),
+  getById: (id) => api.get(`/admin/users/${id}`),
+  getTeamLeads: () => api.get('/admin/users/team-leads'),
+  getDesignations: () => api.get('/admin/designations'),
+  create: (data) => api.post('/admin/users', data),
+  update: (id, data) => api.put(`/admin/users/${id}`, data),
+  delete: (id) => api.delete(`/admin/users/${id}`),
+};
+
+// Admissions API
+export const admissionsAPI = {
+  getAll: () => api.get('/admissions'),
+  getById: (id) => api.get(`/admissions/${id}`),
+  create: (data) => api.post('/admissions', data),
+  update: (id, data) => api.put(`/admissions/${id}`, data),
+  delete: (id) => api.delete(`/admissions/${id}`),
+};
+
+// Performance Stats API (Admin and Manager)
+export const statsAPI = {
+  getPerformance: () => api.get('/admin/stats/performance'),
+  getAdmissionsList: (params) => api.get('/admin/stats/admissions-list', { params }),
+};
+
 // Seed API
 export const seedAPI = {
   seed: () => api.post('/seed'),
