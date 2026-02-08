@@ -754,6 +754,24 @@ async def seed_database():
             "is_featured": True,
             "established": "1994",
             "accreditation": "NAAC 'A' Grade",
+            "admission_alerts": [
+                {
+                    "title": "MBA Admissions Open",
+                    "message": "Apply now for MBA 2025-26 batch. Early bird discount of 10% available till March 31st.",
+                    "alert_type": "important",
+                    "start_date": "2025-01-01",
+                    "end_date": "2025-03-31",
+                    "is_active": True
+                },
+                {
+                    "title": "Scholarship Applications",
+                    "message": "Merit scholarships available for students with 80%+ in graduation. Apply before Feb 28th.",
+                    "alert_type": "info",
+                    "start_date": "2025-01-15",
+                    "end_date": "2025-02-28",
+                    "is_active": True
+                }
+            ],
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         {
@@ -778,6 +796,16 @@ async def seed_database():
             "is_featured": True,
             "established": "1973",
             "accreditation": "NAAC 'A+' Grade",
+            "admission_alerts": [
+                {
+                    "title": "PESSAT 2025 Registration",
+                    "message": "Online registration for PES Scholastic Aptitude Test (PESSAT) is now open. Register before April 15th.",
+                    "alert_type": "deadline",
+                    "start_date": "2025-02-01",
+                    "end_date": "2025-04-15",
+                    "is_active": True
+                }
+            ],
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         {
@@ -802,6 +830,7 @@ async def seed_database():
             "is_featured": True,
             "established": "2010",
             "accreditation": "NAAC 'A+' Grade",
+            "admission_alerts": [],
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         {
