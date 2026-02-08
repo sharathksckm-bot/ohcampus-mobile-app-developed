@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/layout/Navbar';
-import { collegesAPI, coursesAPI, feesAPI, faqsAPI } from '../lib/api';
+import { collegesAPI, coursesAPI, faqsAPI } from '../lib/api';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -33,7 +33,9 @@ import {
   HelpCircle,
   Calendar,
   Home,
-  BookOpen
+  BookOpen,
+  Receipt,
+  Calculator
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -42,7 +44,7 @@ export default function CollegeDetail() {
   const navigate = useNavigate();
   const [college, setCollege] = useState(null);
   const [courses, setCourses] = useState([]);
-  const [fees, setFees] = useState([]);
+  const [feeSummary, setFeeSummary] = useState([]);
   const [faqs, setFaqs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('highlights');
@@ -50,16 +52,16 @@ export default function CollegeDetail() {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const [collegeRes, coursesRes, feesRes, faqsRes] = await Promise.all([
+      const [collegeRes, coursesRes, feeSummaryRes, faqsRes] = await Promise.all([
         collegesAPI.getById(collegeId),
         coursesAPI.getByCollege(collegeId),
-        feesAPI.getByCollege(collegeId),
+        collegesAPI.getFeeSummary(collegeId),
         faqsAPI.getAll({ college_id: collegeId, include_global: true }),
       ]);
       
       setCollege(collegeRes.data);
       setCourses(coursesRes.data);
-      setFees(feesRes.data);
+      setFeeSummary(feeSummaryRes.data);
       setFaqs(faqsRes.data);
     } catch (error) {
       console.error('Failed to fetch college details:', error);
@@ -73,22 +75,8 @@ export default function CollegeDetail() {
     fetchData();
   }, [fetchData]);
 
-  // Group fees by course
-  const feesByCourse = fees.reduce((acc, fee) => {
-    const course = courses.find(c => c.id === fee.course_id);
-    if (course) {
-      if (!acc[fee.course_id]) {
-        acc[fee.course_id] = {
-          course,
-          fees: []
-        };
-      }
-      acc[fee.course_id].fees.push(fee);
-    }
-    return acc;
-  }, {});
-
   const formatCurrency = (amount) => {
+    if (!amount) return '—';
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
@@ -176,6 +164,12 @@ export default function CollegeDetail() {
                 {college.category}
               </Badge>
             </div>
+            {college.address && (
+              <div className="mt-4 flex items-start gap-2 text-blue-100 font-body text-sm">
+                <Building2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <span>{college.address}</span>
+              </div>
+            )}
             {college.accreditation && (
               <div className="mt-4 inline-flex items-center px-4 py-2 rounded-full bg-white/10 text-white font-body text-sm">
                 <Star className="h-4 w-4 mr-2 fill-current text-yellow-300" />
@@ -191,7 +185,7 @@ export default function CollegeDetail() {
       {/* Content Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="bg-white border border-slate-200 p-1 rounded-xl mb-8 w-full lg:w-auto inline-flex">
+          <TabsList className="bg-white border border-slate-200 p-1 rounded-xl mb-8 w-full lg:w-auto inline-flex flex-wrap">
             <TabsTrigger 
               value="highlights" 
               className="rounded-lg font-body data-[state=active]:bg-[#0066CC] data-[state=active]:text-white"
@@ -295,27 +289,32 @@ export default function CollegeDetail() {
           {/* Fees Tab */}
           <TabsContent value="fees" className="animate-fade-in">
             <div className="space-y-6">
-              {Object.keys(feesByCourse).length > 0 ? (
-                Object.values(feesByCourse).map(({ course, fees: courseFees }) => (
+              {feeSummary.length > 0 ? (
+                feeSummary.map(({ course, fee_type, fees, admission_charges, totals }) => (
                   <Card key={course.id} className="border-slate-200 overflow-hidden">
                     <CardHeader className="bg-slate-50 border-b border-slate-200">
-                      <CardTitle className="text-lg font-heading font-semibold text-[#0F172A] flex items-center gap-2">
-                        <BookOpen className="h-5 w-5 text-[#0066CC]" />
-                        {course.name}
-                        <Badge variant="outline" className="ml-2 font-body">
-                          {course.level} • {course.duration}
-                        </Badge>
+                      <CardTitle className="text-lg font-heading font-semibold text-[#0F172A] flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <BookOpen className="h-5 w-5 text-[#0066CC]" />
+                          {course.name}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="font-body">
+                            {course.level} • {course.duration}
+                          </Badge>
+                          <Badge className={fee_type === 'annual' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}>
+                            {fee_type === 'annual' ? 'Annual Fees' : 'Semester Fees'}
+                          </Badge>
+                        </div>
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
+                      {/* Fee Structure Table */}
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-slate-50">
                             <TableHead className="font-heading font-semibold text-[#0F172A]">
-                              Fee Type
-                            </TableHead>
-                            <TableHead className="font-heading font-semibold text-[#0F172A]">
-                              Year/Semester
+                              {fee_type === 'annual' ? 'Year' : 'Semester'}
                             </TableHead>
                             <TableHead className="font-heading font-semibold text-[#0F172A]">
                               <div className="flex items-center gap-1">
@@ -332,20 +331,10 @@ export default function CollegeDetail() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {courseFees
-                            .sort((a, b) => a.year_or_semester - b.year_or_semester)
-                            .map((fee) => (
+                          {fees.map((fee) => (
                             <TableRow key={fee.id} className="hover:bg-slate-50">
-                              <TableCell className="font-body capitalize">
-                                <Badge 
-                                  variant="secondary" 
-                                  className={fee.fee_type === 'annual' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}
-                                >
-                                  {fee.fee_type}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="font-body">
-                                {fee.fee_type === 'annual' ? `Year ${fee.year_or_semester}` : `Semester ${fee.year_or_semester}`}
+                              <TableCell className="font-body font-medium">
+                                {fee_type === 'annual' ? `Year ${fee.year_or_semester}` : `Semester ${fee.year_or_semester}`}
                               </TableCell>
                               <TableCell className="font-body font-semibold text-[#0F172A]">
                                 {formatCurrency(fee.amount)}
@@ -363,6 +352,124 @@ export default function CollegeDetail() {
                           ))}
                         </TableBody>
                       </Table>
+
+                      {/* Admission Charges Section */}
+                      {admission_charges && (
+                        <div className="border-t border-slate-200 p-4 bg-purple-50">
+                          <h4 className="font-heading font-semibold text-[#0F172A] flex items-center gap-2 mb-3">
+                            <Receipt className="h-5 w-5 text-purple-600" />
+                            Admission Charges (One-time)
+                          </h4>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {admission_charges.registration_fee > 0 && (
+                              <div className="p-3 bg-white rounded-lg">
+                                <p className="text-xs text-[#475569] font-body">Registration Fee</p>
+                                <p className="font-semibold text-[#0F172A] font-body">
+                                  {formatCurrency(admission_charges.registration_fee)}
+                                </p>
+                              </div>
+                            )}
+                            {admission_charges.admission_fee > 0 && (
+                              <div className="p-3 bg-white rounded-lg">
+                                <p className="text-xs text-[#475569] font-body">Admission Fee</p>
+                                <p className="font-semibold text-[#0F172A] font-body">
+                                  {formatCurrency(admission_charges.admission_fee)}
+                                </p>
+                              </div>
+                            )}
+                            {admission_charges.caution_deposit > 0 && (
+                              <div className="p-3 bg-white rounded-lg">
+                                <p className="text-xs text-[#475569] font-body">Caution Deposit</p>
+                                <p className="font-semibold text-[#0F172A] font-body">
+                                  {formatCurrency(admission_charges.caution_deposit)}
+                                </p>
+                              </div>
+                            )}
+                            {admission_charges.uniform_fee > 0 && (
+                              <div className="p-3 bg-white rounded-lg">
+                                <p className="text-xs text-[#475569] font-body">Uniform Fee</p>
+                                <p className="font-semibold text-[#0F172A] font-body">
+                                  {formatCurrency(admission_charges.uniform_fee)}
+                                </p>
+                              </div>
+                            )}
+                            {admission_charges.library_fee > 0 && (
+                              <div className="p-3 bg-white rounded-lg">
+                                <p className="text-xs text-[#475569] font-body">Library Fee</p>
+                                <p className="font-semibold text-[#0F172A] font-body">
+                                  {formatCurrency(admission_charges.library_fee)}
+                                </p>
+                              </div>
+                            )}
+                            {admission_charges.lab_fee > 0 && (
+                              <div className="p-3 bg-white rounded-lg">
+                                <p className="text-xs text-[#475569] font-body">Lab Fee</p>
+                                <p className="font-semibold text-[#0F172A] font-body">
+                                  {formatCurrency(admission_charges.lab_fee)}
+                                </p>
+                              </div>
+                            )}
+                            {admission_charges.other_charges > 0 && (
+                              <div className="p-3 bg-white rounded-lg">
+                                <p className="text-xs text-[#475569] font-body">
+                                  {admission_charges.other_charges_description || 'Other Charges'}
+                                </p>
+                                <p className="font-semibold text-[#0F172A] font-body">
+                                  {formatCurrency(admission_charges.other_charges)}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Total Fees Summary */}
+                      <div className="border-t border-slate-200 p-4 bg-gradient-to-r from-[#0066CC]/5 to-[#0066CC]/10">
+                        <h4 className="font-heading font-semibold text-[#0F172A] flex items-center gap-2 mb-3">
+                          <Calculator className="h-5 w-5 text-[#0066CC]" />
+                          Total Fees Summary
+                        </h4>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          <div className="p-4 bg-white rounded-lg border border-slate-200">
+                            <p className="text-xs text-[#475569] font-body mb-1">Total Tuition</p>
+                            <p className="text-xl font-bold text-[#0F172A] font-heading">
+                              {formatCurrency(totals.tuition_total)}
+                            </p>
+                            <p className="text-xs text-[#94A3B8] font-body mt-1">
+                              All {fee_type === 'annual' ? 'years' : 'semesters'} combined
+                            </p>
+                          </div>
+                          <div className="p-4 bg-white rounded-lg border border-slate-200">
+                            <p className="text-xs text-[#475569] font-body mb-1">Total Hostel</p>
+                            <p className="text-xl font-bold text-[#0066CC] font-heading">
+                              {formatCurrency(totals.hostel_total)}
+                            </p>
+                            <p className="text-xs text-[#94A3B8] font-body mt-1">
+                              All {fee_type === 'annual' ? 'years' : 'semesters'} combined
+                            </p>
+                          </div>
+                          {totals.admission_total > 0 && (
+                            <div className="p-4 bg-white rounded-lg border border-slate-200">
+                              <p className="text-xs text-[#475569] font-body mb-1">Admission Charges</p>
+                              <p className="text-xl font-bold text-purple-600 font-heading">
+                                {formatCurrency(totals.admission_total)}
+                              </p>
+                              <p className="text-xs text-[#94A3B8] font-body mt-1">
+                                One-time payment
+                              </p>
+                            </div>
+                          )}
+                          <div className="p-4 bg-[#0066CC] rounded-lg text-white">
+                            <p className="text-xs text-blue-100 font-body mb-1">Grand Total</p>
+                            <p className="text-xl font-bold font-heading">
+                              {formatCurrency(totals.grand_total_without_hostel)}
+                            </p>
+                            <p className="text-xs text-blue-200 font-body mt-1">
+                              Excluding hostel fees
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 ))
@@ -395,12 +502,12 @@ export default function CollegeDetail() {
                     {faqs.map((faq, index) => (
                       <AccordionItem key={faq.id} value={faq.id} className="border-slate-200">
                         <AccordionTrigger className="font-body font-medium text-[#0F172A] hover:text-[#0066CC] text-left">
-                          <div className="flex items-start gap-3">
+                          <div className="flex items-start gap-3 flex-1">
                             <span className="text-[#0066CC] font-semibold">{index + 1}.</span>
                             <span>{faq.question}</span>
                           </div>
                           {faq.is_global && (
-                            <Badge variant="outline" className="ml-2 text-xs">Global</Badge>
+                            <Badge variant="outline" className="ml-2 text-xs flex-shrink-0">Global</Badge>
                           )}
                         </AccordionTrigger>
                         <AccordionContent className="font-body text-[#475569] pl-8">
