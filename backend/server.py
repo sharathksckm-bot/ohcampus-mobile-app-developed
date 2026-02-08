@@ -389,6 +389,40 @@ async def get_all_courses():
     courses = await db.courses.find({}, {"_id": 0}).to_list(500)
     return courses
 
+# Seat Status Update
+class SeatStatusUpdate(BaseModel):
+    seat_status: str  # Available, Closing, Under Waiting, Closed
+
+VALID_SEAT_STATUSES = ["Available", "Closing", "Under Waiting", "Closed"]
+
+@api_router.put("/courses/{course_id}/seat-status")
+async def update_seat_status(course_id: str, status_data: SeatStatusUpdate, current_user: dict = Depends(require_admin)):
+    """Update seat availability status for a course"""
+    if status_data.seat_status not in VALID_SEAT_STATUSES:
+        raise HTTPException(status_code=400, detail=f"Invalid seat status. Must be one of: {', '.join(VALID_SEAT_STATUSES)}")
+    
+    course = await db.courses.find_one({"id": course_id})
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    await db.courses.update_one({"id": course_id}, {"$set": {"seat_status": status_data.seat_status}})
+    
+    updated = await db.courses.find_one({"id": course_id}, {"_id": 0})
+    return updated
+
+@api_router.put("/courses/{course_id}")
+async def update_course(course_id: str, course_data: CourseBase, current_user: dict = Depends(require_admin)):
+    """Update course details"""
+    existing = await db.courses.find_one({"id": course_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    update_data = course_data.model_dump()
+    await db.courses.update_one({"id": course_id}, {"$set": update_data})
+    
+    updated = await db.courses.find_one({"id": course_id}, {"_id": 0})
+    return updated
+
 # ===================== FEES ENDPOINTS =====================
 
 @api_router.get("/fees", response_model=List[Fee])
