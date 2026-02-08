@@ -405,9 +405,94 @@ async def create_course(course_data: CourseBase, current_user: dict = Depends(re
     return course
 
 @api_router.get("/courses", response_model=List[Course])
-async def get_all_courses():
-    courses = await db.courses.find({}, {"_id": 0}).to_list(500)
+async def get_all_courses(category: Optional[str] = None, search: Optional[str] = None):
+    query = {}
+    if category:
+        query["category"] = category
+    if search:
+        query["name"] = {"$regex": search, "$options": "i"}
+    courses = await db.courses.find(query, {"_id": 0}).to_list(500)
     return courses
+
+@api_router.get("/courses/with-college")
+async def get_courses_with_college(category: Optional[str] = None, search: Optional[str] = None):
+    """Get all courses with their college information"""
+    query = {}
+    if category:
+        query["category"] = category
+    if search:
+        query["name"] = {"$regex": search, "$options": "i"}
+    
+    courses = await db.courses.find(query, {"_id": 0}).to_list(500)
+    
+    # Enrich with college info
+    result = []
+    for course in courses:
+        college = await db.colleges.find_one({"id": course["college_id"]}, {"_id": 0})
+        if college:
+            course["college"] = {
+                "id": college["id"],
+                "name": college["name"],
+                "city": college["city"],
+                "state": college["state"],
+                "category": college["category"]
+            }
+            result.append(course)
+    
+    return result
+
+@api_router.get("/courses/{course_id}")
+async def get_course_detail(course_id: str):
+    """Get course details with college and fee information"""
+    course = await db.courses.find_one({"id": course_id}, {"_id": 0})
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    # Get college info
+    college = await db.colleges.find_one({"id": course["college_id"]}, {"_id": 0})
+    
+    # Get fees for this course
+    fees = await db.fees.find({"course_id": course_id}, {"_id": 0}).to_list(20)
+    
+    # Get admission charges
+    admission_charges = await db.admission_charges.find_one({"course_id": course_id}, {"_id": 0})
+    
+    return {
+        "course": course,
+        "college": college,
+        "fees": fees,
+        "admission_charges": admission_charges
+    }
+
+@api_router.get("/courses/categories/list")
+async def get_course_categories():
+    """Get list of unique course categories"""
+    categories = await db.courses.distinct("category")
+    return {"categories": [c for c in categories if c]}
+
+# Placement Endpoints
+@api_router.get("/colleges/{college_id}/placements")
+async def get_college_placements(college_id: str):
+    """Get placement data for a college"""
+    placement = await db.placements.find_one({"college_id": college_id}, {"_id": 0})
+    if not placement:
+        return {"college_id": college_id, "stats": [], "description": None}
+    return placement
+
+@api_router.put("/colleges/{college_id}/placements")
+async def update_college_placements(college_id: str, placement_data: CollegePlacement, current_user: dict = Depends(require_admin)):
+    """Update placement data for a college"""
+    college = await db.colleges.find_one({"id": college_id})
+    if not college:
+        raise HTTPException(status_code=404, detail="College not found")
+    
+    await db.placements.update_one(
+        {"college_id": college_id},
+        {"$set": placement_data.model_dump()},
+        upsert=True
+    )
+    
+    return {"message": "Placements updated successfully"}
 
 # Seat Status Update
 class SeatStatusUpdate(BaseModel):
