@@ -14,6 +14,7 @@ import CompareColleges from "./pages/CompareColleges";
 import AdminDashboard from "./pages/AdminDashboard";
 import FeeManagement from "./pages/FeeManagement";
 import FAQManagement from "./pages/FAQManagement";
+import CollegeManagement from "./pages/CollegeManagement";
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
