@@ -63,6 +63,9 @@ import {
   Loader2,
   MessageSquare,
   Gift,
+  AlertTriangle,
+  Bell,
+  Percent,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
