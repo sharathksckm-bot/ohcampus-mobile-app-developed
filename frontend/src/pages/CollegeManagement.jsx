@@ -106,6 +106,12 @@ export default function CollegeManagement() {
   const [selectedCollege, setSelectedCollege] = useState(null);
   const [courseDialogOpen, setCourseDialogOpen] = useState(false);
   const [updatingCourse, setUpdatingCourse] = useState(null);
+  
+  // Admission Alerts state
+  const [alertsDialogOpen, setAlertsDialogOpen] = useState(false);
+  const [alertsCollege, setAlertsCollege] = useState(null);
+  const [alerts, setAlerts] = useState([]);
+  const [savingAlerts, setSavingAlerts] = useState(false);
 
   // Fetch all data
   const fetchData = useCallback(async () => {
