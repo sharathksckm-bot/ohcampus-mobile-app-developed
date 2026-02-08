@@ -348,6 +348,28 @@ async def update_college(college_id: str, college_data: CollegeBase, current_use
     updated = await db.colleges.find_one({"id": college_id}, {"_id": 0})
     return updated
 
+# Admission Alerts Management
+class AdmissionAlertInput(BaseModel):
+    title: str
+    message: str
+    alert_type: str = "info"
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    is_active: bool = True
+
+@api_router.put("/colleges/{college_id}/admission-alerts")
+async def update_admission_alerts(college_id: str, alerts: List[AdmissionAlertInput], current_user: dict = Depends(require_admin)):
+    """Update admission alerts for a college"""
+    existing = await db.colleges.find_one({"id": college_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="College not found")
+    
+    alerts_data = [alert.model_dump() for alert in alerts]
+    await db.colleges.update_one({"id": college_id}, {"$set": {"admission_alerts": alerts_data}})
+    
+    updated = await db.colleges.find_one({"id": college_id}, {"_id": 0})
+    return {"message": "Admission alerts updated", "admission_alerts": updated.get("admission_alerts", [])}
+
 # ===================== COURSES ENDPOINTS =====================
 
 @api_router.get("/colleges/{college_id}/courses", response_model=List[Course])
