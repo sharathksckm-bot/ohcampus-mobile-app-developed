@@ -41,6 +41,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '../components/ui/accordion';
+import { Label } from '../components/ui/label';
+import { Textarea } from '../components/ui/textarea';
 import {
   Search,
   Building2,
@@ -57,8 +59,26 @@ import {
   Filter,
   X,
   ChevronRight,
+  Bell,
+  Plus,
+  Trash2,
+  Calendar,
+  Info,
+  AlertTriangle,
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Alert type configuration
+const ALERT_TYPES = [
+  { value: 'info', label: 'Info', color: 'bg-blue-100 text-blue-700 border-blue-200', icon: Info },
+  { value: 'warning', label: 'Warning', color: 'bg-yellow-100 text-yellow-700 border-yellow-200', icon: AlertTriangle },
+  { value: 'important', label: 'Important', color: 'bg-orange-100 text-orange-700 border-orange-200', icon: AlertCircle },
+  { value: 'deadline', label: 'Deadline', color: 'bg-red-100 text-red-700 border-red-200', icon: Calendar },
+];
+
+const getAlertTypeConfig = (type) => {
+  return ALERT_TYPES.find(t => t.value === type) || ALERT_TYPES[0];
+};
 
 // Seat status configuration
 const SEAT_STATUSES = [
