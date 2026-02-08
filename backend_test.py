@@ -312,6 +312,8 @@ class OhCampusAPITester:
         if success:
             return response.get('id')
         return None
+
+    def test_admin_create_fee(self, college_id, course_id):
         """Test admin fee creation"""
         if not college_id or not course_id or not self.admin_token:
             return False
