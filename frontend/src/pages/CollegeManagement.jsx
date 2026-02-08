@@ -366,18 +366,36 @@ export default function CollegeManagement() {
                     {closingCourses} Closing
                   </Badge>
                 )}
+                {(college.admission_alerts?.length > 0) && (
+                  <Badge className="bg-blue-100 text-blue-700 text-xs">
+                    <Bell className="h-3 w-3 mr-1" />
+                    {college.admission_alerts.filter(a => a.is_active).length} Alerts
+                  </Badge>
+                )}
               </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleManageCourses(college)}
-              className="font-body"
-              data-testid={`manage-courses-${college.id}`}
-            >
-              Manage Courses
-              <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleManageAlerts(college)}
+                className="font-body"
+                data-testid={`manage-alerts-${college.id}`}
+              >
+                <Bell className="h-4 w-4 mr-1" />
+                Alerts
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleManageCourses(college)}
+                className="font-body"
+                data-testid={`manage-courses-${college.id}`}
+              >
+                Manage Courses
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
