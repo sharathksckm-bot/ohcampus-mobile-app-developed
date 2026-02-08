@@ -125,6 +125,13 @@ export const Navbar = () => {
                         <BookOpen className="mr-2 h-4 w-4" />
                         Courses
                       </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="cursor-pointer md:hidden"
+                        onClick={() => navigate('/admissions')}
+                      >
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Admissions
+                      </DropdownMenuItem>
                     </>
                   )}
                   <DropdownMenuSeparator />
