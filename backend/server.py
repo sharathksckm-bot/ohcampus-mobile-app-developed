@@ -1520,6 +1520,8 @@ async def update_admission(admission_id: str, admission_data: AdmissionUpdate, c
         update_data["instalments"] = [inst.model_dump() for inst in admission_data.instalments]
     if admission_data.remark is not None:
         update_data["remark"] = admission_data.remark
+    if admission_data.scholarship_amount is not None:
+        update_data["scholarship_amount"] = admission_data.scholarship_amount
     
     # Recalculate fees_paid and balance
     if admission_data.instalments is not None or admission_data.fees_paid is not None or admission_data.total_fees is not None:
