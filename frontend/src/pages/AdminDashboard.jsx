@@ -10,19 +10,35 @@ import {
   IndianRupee,
   HelpCircle,
   GraduationCap,
-  TrendingUp,
   ArrowRight,
   Sparkles,
   RefreshCw,
+  AlertTriangle,
+  Clock,
+  XCircle,
+  Check,
+  ChevronRight,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+
+// Seat status configuration
+const SEAT_STATUS_CONFIG = {
+  'Available': { color: 'bg-green-100 text-green-700', icon: Check },
+  'Closing': { color: 'bg-yellow-100 text-yellow-700', icon: AlertTriangle },
+  'Under Waiting': { color: 'bg-blue-100 text-blue-700', icon: Clock },
+  'Closed': { color: 'bg-red-100 text-red-700', icon: XCircle },
+};
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [recentColleges, setRecentColleges] = useState([]);
+  const [coursesNeedingAttention, setCoursesNeedingAttention] = useState([]);
+  const [allCourses, setAllCourses] = useState([]);
+  const [allColleges, setAllColleges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
+  const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
     try {
@@ -31,14 +47,41 @@ export default function AdminDashboard() {
         collegesAPI.getAll({}),
         feesAPI.getAll({}),
         faqsAPI.getAll({}),
-        coursesAPI.getAll(),
+        coursesAPI.getAll({}),
       ]);
+      
+      const courses = coursesRes.data;
+      const colleges = collegesRes.data;
+      
+      setAllCourses(courses);
+      setAllColleges(colleges);
+      
+      // Filter courses needing attention (Closing, Under Waiting)
+      const attentionCourses = courses.filter(c => 
+        c.seat_status === 'Closing' || c.seat_status === 'Under Waiting'
+      );
+      
+      // Enrich with college info
+      const enrichedCourses = attentionCourses.map(course => {
+        const college = colleges.find(col => col.id === course.college_id);
+        return { ...course, college };
+      });
+      
+      setCoursesNeedingAttention(enrichedCourses);
+      
+      // Count by status
+      const closingCount = courses.filter(c => c.seat_status === 'Closing').length;
+      const waitingCount = courses.filter(c => c.seat_status === 'Under Waiting').length;
+      const closedCount = courses.filter(c => c.seat_status === 'Closed').length;
       
       setStats({
         colleges: collegesRes.data.length,
         fees: feesRes.data.length,
         faqs: faqsRes.data.length,
-        courses: coursesRes.data.length,
+        courses: courses.length,
+        closingCourses: closingCount,
+        waitingCourses: waitingCount,
+        closedCourses: closedCount,
       });
       setRecentColleges(collegesRes.data.slice(0, 5));
     } catch (error) {
@@ -73,7 +116,7 @@ export default function AdminDashboard() {
       icon: Building2,
       color: 'bg-blue-500',
       bgColor: 'bg-blue-50',
-      link: '/admin/fees',
+      link: '/admin/colleges',
     },
     {
       title: 'Total Courses',
@@ -81,7 +124,7 @@ export default function AdminDashboard() {
       icon: GraduationCap,
       color: 'bg-orange-500',
       bgColor: 'bg-orange-50',
-      link: '/admin/fees',
+      link: '/admin/colleges',
     },
     {
       title: 'Fee Records',
@@ -111,7 +154,7 @@ export default function AdminDashboard() {
               Dashboard
             </h1>
             <p className="text-[#475569] font-body mt-1">
-              Manage fee structures and FAQs for featured colleges
+              Manage colleges, fee structures, and seat availability
             </p>
           </div>
           {stats && stats.colleges === 0 && (
@@ -172,12 +215,87 @@ export default function AdminDashboard() {
           )}
         </div>
 
+        {/* Courses Needing Attention Widget */}
+        {!loading && coursesNeedingAttention.length > 0 && (
+          <Card className="border-yellow-200 bg-yellow-50/50" data-testid="attention-widget">
+            <CardHeader>
+              <CardTitle className="text-lg font-heading font-semibold text-[#0F172A] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                  Courses Needing Attention
+                  <Badge className="bg-yellow-600 text-white ml-2">{coursesNeedingAttention.length}</Badge>
+                </div>
+                <Link to="/admin/colleges">
+                  <Button variant="outline" size="sm" className="font-body">
+                    View All
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </Link>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {coursesNeedingAttention.slice(0, 5).map((course, index) => {
+                  const statusConfig = SEAT_STATUS_CONFIG[course.seat_status] || SEAT_STATUS_CONFIG['Available'];
+                  const StatusIcon = statusConfig.icon;
+                  
+                  return (
+                    <div 
+                      key={course.id}
+                      className="flex items-center justify-between p-3 bg-white rounded-lg border border-yellow-200 hover:shadow-sm transition-shadow animate-fade-in"
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-body font-medium text-[#0F172A] truncate">
+                          {course.name}
+                        </h4>
+                        <p className="text-sm font-body text-[#475569]">
+                          {course.college?.name || 'Unknown College'}
+                        </p>
+                      </div>
+                      <Badge className={`${statusConfig.color} font-body ml-4`}>
+                        <StatusIcon className="h-3 w-3 mr-1" />
+                        {course.seat_status}
+                      </Badge>
+                    </div>
+                  );
+                })}
+              </div>
+              {coursesNeedingAttention.length > 5 && (
+                <p className="text-sm text-center text-[#475569] font-body mt-4">
+                  +{coursesNeedingAttention.length - 5} more courses need attention
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card>
             <CardHeader>
               <CardTitle className="text-lg font-heading font-semibold text-[#0F172A] flex items-center gap-2">
-                <IndianRupee className="h-5 w-5 text-[#0066CC]" />
+                <Building2 className="h-5 w-5 text-[#0066CC]" />
+                College Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-[#475569] font-body mb-4">
+                Manage colleges, view by location/category, and update seat availability status.
+              </p>
+              <Link to="/admin/colleges">
+                <Button className="bg-[#0066CC] hover:bg-[#0052A3] text-white font-body rounded-full">
+                  Manage Colleges
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-heading font-semibold text-[#0F172A] flex items-center gap-2">
+                <IndianRupee className="h-5 w-5 text-green-600" />
                 Fee Management
               </CardTitle>
             </CardHeader>
@@ -186,7 +304,7 @@ export default function AdminDashboard() {
                 Add and manage admission fee structures for featured colleges. Configure annual, semester, and hostel fees.
               </p>
               <Link to="/admin/fees">
-                <Button className="bg-[#0066CC] hover:bg-[#0052A3] text-white font-body rounded-full">
+                <Button className="bg-green-600 hover:bg-green-700 text-white font-body rounded-full">
                   Manage Fees
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
@@ -214,6 +332,58 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Seat Status Summary */}
+        {!loading && stats && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-heading font-semibold text-[#0F172A] flex items-center gap-2">
+                <GraduationCap className="h-5 w-5 text-[#0066CC]" />
+                Seat Availability Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Check className="h-5 w-5 text-green-600" />
+                    <span className="font-body text-sm text-green-700">Available</span>
+                  </div>
+                  <p className="text-2xl font-heading font-bold text-green-700">
+                    {(stats.courses || 0) - (stats.closingCourses || 0) - (stats.waitingCourses || 0) - (stats.closedCourses || 0)}
+                  </p>
+                </div>
+                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                    <span className="font-body text-sm text-yellow-700">Closing</span>
+                  </div>
+                  <p className="text-2xl font-heading font-bold text-yellow-700">
+                    {stats.closingCourses || 0}
+                  </p>
+                </div>
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Clock className="h-5 w-5 text-blue-600" />
+                    <span className="font-body text-sm text-blue-700">Under Waiting</span>
+                  </div>
+                  <p className="text-2xl font-heading font-bold text-blue-700">
+                    {stats.waitingCourses || 0}
+                  </p>
+                </div>
+                <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <XCircle className="h-5 w-5 text-red-600" />
+                    <span className="font-body text-sm text-red-700">Closed</span>
+                  </div>
+                  <p className="text-2xl font-heading font-bold text-red-700">
+                    {stats.closedCourses || 0}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Recent Colleges */}
         <Card>
