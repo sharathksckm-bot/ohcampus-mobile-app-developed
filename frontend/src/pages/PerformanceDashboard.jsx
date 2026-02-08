@@ -863,17 +863,87 @@ export default function PerformanceDashboard() {
 
       {/* Edit Admission Dialog */}
       <Dialog open={editAdmissionOpen} onOpenChange={setEditAdmissionOpen}>
-        <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-heading flex items-center gap-2">
               <Edit className="h-5 w-5 text-[#0066CC]" />
-              Edit Fee Payment - {editingAdmission?.candidate_name}
+              Edit Admission - {editingAdmission?.candidate_name}
             </DialogTitle>
             <DialogDescription className="font-body">
-              Update fee instalments and remarks for this admission
+              Update all admission details including fees and scholarship
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
+            {/* Candidate Details */}
+            <div className="space-y-4 p-4 bg-slate-50 rounded-lg">
+              <h4 className="font-heading font-semibold text-[#0F172A] flex items-center gap-2">
+                <Users className="h-4 w-4 text-[#0066CC]" />
+                Candidate Details
+              </h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="font-body">Candidate Name *</Label>
+                  <Input
+                    value={admissionForm.candidate_name}
+                    onChange={(e) => setAdmissionForm(p => ({ ...p, candidate_name: e.target.value }))}
+                    placeholder="Enter candidate name"
+                    className="mt-1"
+                    data-testid="edit-candidate-name"
+                  />
+                </div>
+                <div>
+                  <Label className="font-body">Place</Label>
+                  <Input
+                    value={admissionForm.place}
+                    onChange={(e) => setAdmissionForm(p => ({ ...p, place: e.target.value }))}
+                    placeholder="City or Area"
+                    className="mt-1"
+                    data-testid="edit-place"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="font-body">Admission Date</Label>
+                  <Input
+                    type="date"
+                    value={admissionForm.admission_date}
+                    onChange={(e) => setAdmissionForm(p => ({ ...p, admission_date: e.target.value }))}
+                    className="mt-1"
+                    data-testid="edit-admission-date"
+                  />
+                </div>
+                <div>
+                  <Label className="font-body">Total Fees *</Label>
+                  <Input
+                    type="number"
+                    value={admissionForm.total_fees}
+                    onChange={(e) => setAdmissionForm(p => ({ ...p, total_fees: e.target.value }))}
+                    placeholder="Enter total fees"
+                    className="mt-1"
+                    data-testid="edit-total-fees"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label className="font-body flex items-center gap-2">
+                  <Gift className="h-4 w-4 text-purple-500" />
+                  Scholarship Amount (if offered)
+                </Label>
+                <Input
+                  type="number"
+                  value={admissionForm.scholarship_amount}
+                  onChange={(e) => setAdmissionForm(p => ({ ...p, scholarship_amount: e.target.value }))}
+                  placeholder="Enter scholarship amount (optional)"
+                  className="mt-1"
+                  data-testid="edit-scholarship-amount"
+                />
+                <p className="text-xs text-[#94A3B8] mt-1">
+                  One-time scholarship offered to the student
+                </p>
+              </div>
+            </div>
+
             {/* Instalments */}
             <div className="flex items-center justify-between">
               <Label className="font-body font-semibold">Fee Instalments</Label>
