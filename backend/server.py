@@ -576,6 +576,7 @@ async def seed_database():
             "state": "Karnataka",
             "city": "Bangalore",
             "category": "Management",
+            "address": "Soldevanahalli, Hesaraghatta Main Road, Bangalore - 560107, Karnataka",
             "image_url": "https://images.unsplash.com/photo-1664273891579-22f28332f3c4?crop=entropy&cs=srgb&fm=jpg&q=85",
             "highlights": [
                 "NAAC 'A' Grade Accreditation",
@@ -599,6 +600,7 @@ async def seed_database():
             "state": "Karnataka",
             "city": "Bangalore",
             "category": "Engineering",
+            "address": "100 Feet Ring Road, BSK III Stage, Bangalore - 560085, Karnataka",
             "image_url": "https://images.unsplash.com/photo-1760131556605-7f2e63d00385?crop=entropy&cs=srgb&fm=jpg&q=85",
             "highlights": [
                 "NAAC 'A+' Grade Accreditation",
@@ -622,6 +624,7 @@ async def seed_database():
             "state": "Karnataka",
             "city": "Bangalore",
             "category": "Management",
+            "address": "Chandapura - Anekal Main Road, Anekal, Bangalore - 562106, Karnataka",
             "image_url": "https://images.unsplash.com/photo-1670284768187-5cc68eada1b3?crop=entropy&cs=srgb&fm=jpg&q=85",
             "highlights": [
                 "NAAC 'A+' Grade Accreditation",
@@ -645,6 +648,7 @@ async def seed_database():
             "state": "Tamil Nadu",
             "city": "Chennai",
             "category": "Engineering",
+            "address": "SRM Nagar, Kattankulathur - 603203, Chengalpattu District, Tamil Nadu",
             "image_url": "https://images.unsplash.com/photo-1759299615947-bc798076b479?crop=entropy&cs=srgb&fm=jpg&q=85",
             "highlights": [
                 "NAAC 'A++' Grade Accreditation",
@@ -668,6 +672,7 @@ async def seed_database():
             "state": "Karnataka",
             "city": "Mangalore",
             "category": "Medicine & Health Sciences",
+            "address": "Manipal - 576104, Udupi District, Karnataka",
             "image_url": "https://images.unsplash.com/photo-1664273891579-22f28332f3c4?crop=entropy&cs=srgb&fm=jpg&q=85",
             "highlights": [
                 "Institution of Eminence status by Government of India",
