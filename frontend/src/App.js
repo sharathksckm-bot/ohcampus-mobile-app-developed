@@ -91,6 +91,14 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/admissions" 
+        element={
+          <ProtectedRoute>
+            <Admissions />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Admin Routes */}
       <Route 
