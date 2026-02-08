@@ -148,7 +148,8 @@ export default function Admissions() {
         admission_date: admission.admission_date || '',
         total_fees: admission.total_fees?.toString() || '',
         instalments: admission.instalments || [],
-        remark: admission.remark || ''
+        remark: admission.remark || '',
+        scholarship_amount: admission.scholarship_amount?.toString() || ''
       });
     } else {
       setEditingAdmission(null);
@@ -160,7 +161,8 @@ export default function Admissions() {
         admission_date: new Date().toISOString().split('T')[0],
         total_fees: '',
         instalments: [],
-        remark: ''
+        remark: '',
+        scholarship_amount: ''
       });
     }
     setDialogOpen(true);
