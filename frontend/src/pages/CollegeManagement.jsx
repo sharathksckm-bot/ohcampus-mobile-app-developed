@@ -461,9 +461,13 @@ export default function CollegeManagement() {
             <TabsTrigger value="all" className="font-body">
               All Colleges ({filteredColleges.length})
             </TabsTrigger>
-            <TabsTrigger value="by-location" className="font-body">
+            <TabsTrigger value="by-city" className="font-body" data-testid="tab-by-city">
+              <Building2 className="h-4 w-4 mr-1" />
+              By City
+            </TabsTrigger>
+            <TabsTrigger value="by-state" className="font-body" data-testid="tab-by-state">
               <MapPin className="h-4 w-4 mr-1" />
-              By Location
+              By State
             </TabsTrigger>
             <TabsTrigger value="by-category" className="font-body">
               <GraduationCap className="h-4 w-4 mr-1" />
@@ -496,8 +500,30 @@ export default function CollegeManagement() {
             )}
           </TabsContent>
 
-          {/* By Location View */}
-          <TabsContent value="by-location">
+          {/* By City View */}
+          <TabsContent value="by-city">
+            <Accordion type="multiple" className="space-y-2">
+              {Object.entries(collegesByCity).map(([city, cityColleges]) => (
+                <AccordionItem key={city} value={city} className="border rounded-lg px-4">
+                  <AccordionTrigger className="font-heading font-semibold">
+                    <div className="flex items-center gap-2">
+                      <Building2 className="h-4 w-4 text-[#0066CC]" />
+                      {city}
+                      <Badge variant="secondary" className="ml-2">{cityColleges.length} colleges</Badge>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-3 pt-2">
+                      {cityColleges.map(college => renderCollegeCard(college))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </TabsContent>
+
+          {/* By State View */}
+          <TabsContent value="by-state">
             <Accordion type="multiple" className="space-y-2">
               {Object.entries(collegesByState).map(([state, stateColleges]) => (
                 <AccordionItem key={state} value={state} className="border rounded-lg px-4">
