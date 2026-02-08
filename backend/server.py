@@ -1300,6 +1300,16 @@ async def delete_admission(admission_id: str, current_user: dict = Depends(get_c
 
 # ===================== PERFORMANCE STATS ENDPOINTS =====================
 
+# Helper function to check if user is Team Lead, Admission Manager, or Admin
+async def require_performance_access(current_user: dict = Depends(get_current_user)):
+    """Allow access to admin, Team Lead, or Admission Manager"""
+    if current_user.get("role") == "admin":
+        return current_user
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    if user and user.get("designation") in ["Team Lead", "Admission Manager"]:
+        return current_user
+    raise HTTPException(status_code=403, detail="Performance access requires Admin, Team Lead, or Admission Manager role")
+
 @api_router.get("/admin/stats/performance")
 async def get_performance_stats(current_user: dict = Depends(require_admin_or_manager)):
     """Get performance statistics (admin and admission manager only)"""
@@ -1407,6 +1417,198 @@ async def get_performance_stats(current_user: dict = Depends(require_admin_or_ma
         "by_course": by_course,
         "monthly_trends": monthly_trends,
         "daily_trends": daily_data
+    }
+
+@api_router.get("/performance/stats")
+async def get_role_based_performance_stats(
+    current_user: dict = Depends(require_performance_access),
+    counselor_id: Optional[str] = None,
+    college_id: Optional[str] = None,
+    month: Optional[str] = None  # Format: YYYY-MM
+):
+    """Get performance statistics based on user role with filters"""
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    # Determine counselor IDs to include based on role
+    counselor_ids = None
+    if current_user.get("role") != "admin":
+        if user.get("designation") == "Team Lead":
+            # Team Lead sees only their team + themselves
+            team_ids = await db.users.distinct("id", {"team_lead_id": current_user["user_id"]})
+            team_ids.append(current_user["user_id"])
+            counselor_ids = team_ids
+        elif user.get("designation") == "Admission Manager":
+            # Admission Manager sees everyone
+            counselor_ids = None
+    
+    # Build base query
+    base_query = {}
+    if counselor_ids is not None:
+        base_query["counselor_id"] = {"$in": counselor_ids}
+    
+    # Apply filters
+    if counselor_id and counselor_id != 'all':
+        base_query["counselor_id"] = counselor_id
+    if college_id and college_id != 'all':
+        base_query["college_id"] = college_id
+    if month and month != 'all':
+        base_query["admission_date"] = {"$regex": f"^{month}"}
+    
+    # Total admissions
+    total_admissions = await db.admissions.count_documents(base_query)
+    
+    # Fees stats
+    pipeline_fees = [
+        {"$match": base_query},
+        {
+            "$group": {
+                "_id": None,
+                "total_fees": {"$sum": "$total_fees"},
+                "fees_paid": {"$sum": "$fees_paid"},
+                "balance": {"$sum": "$balance"}
+            }
+        }
+    ]
+    fees_result = await db.admissions.aggregate(pipeline_fees).to_list(1)
+    fees_stats = fees_result[0] if fees_result else {"total_fees": 0, "fees_paid": 0, "balance": 0}
+    
+    # By counselor (only show team members for Team Lead)
+    counselor_match = base_query.copy()
+    if counselor_id and counselor_id != 'all':
+        del counselor_match["counselor_id"]  # Remove filter to show all team members
+        if counselor_ids is not None:
+            counselor_match["counselor_id"] = {"$in": counselor_ids}
+    
+    pipeline_by_counselor = [
+        {"$match": counselor_match},
+        {
+            "$group": {
+                "_id": "$counselor_id",
+                "counselor_name": {"$first": "$counselor_name"},
+                "count": {"$sum": 1},
+                "total_fees_collected": {"$sum": "$fees_paid"}
+            }
+        },
+        {"$sort": {"count": -1}}
+    ]
+    by_counselor = await db.admissions.aggregate(pipeline_by_counselor).to_list(100)
+    
+    # By college
+    pipeline_by_college = [
+        {"$match": base_query},
+        {
+            "$group": {
+                "_id": "$college_id",
+                "college_name": {"$first": "$college_name"},
+                "count": {"$sum": 1},
+                "total_fees_collected": {"$sum": "$fees_paid"}
+            }
+        },
+        {"$sort": {"count": -1}}
+    ]
+    by_college = await db.admissions.aggregate(pipeline_by_college).to_list(100)
+    
+    # By course
+    pipeline_by_course = [
+        {"$match": base_query},
+        {
+            "$group": {
+                "_id": "$course_id",
+                "course_name": {"$first": "$course_name"},
+                "count": {"$sum": 1}
+            }
+        },
+        {"$sort": {"count": -1}},
+        {"$limit": 10}
+    ]
+    by_course = await db.admissions.aggregate(pipeline_by_course).to_list(10)
+    
+    # Monthly trends
+    monthly_query = base_query.copy()
+    if "admission_date" in monthly_query:
+        del monthly_query["admission_date"]  # Remove month filter for trends
+    
+    six_months_ago = (datetime.now(timezone.utc) - timedelta(days=180)).isoformat()
+    pipeline_monthly = [
+        {"$match": {**monthly_query, "created_at": {"$gte": six_months_ago}}},
+        {
+            "$group": {
+                "_id": {"$substr": ["$admission_date", 0, 7]},
+                "count": {"$sum": 1},
+                "fees_collected": {"$sum": "$fees_paid"}
+            }
+        },
+        {"$sort": {"_id": 1}}
+    ]
+    monthly_trends = await db.admissions.aggregate(pipeline_monthly).to_list(12)
+    
+    # Get available team members for filter dropdown
+    team_members = []
+    if current_user.get("role") == "admin" or user.get("designation") == "Admission Manager":
+        team_members = await db.users.find(
+            {"role": "counselor", "is_active": {"$ne": False}},
+            {"_id": 0, "id": 1, "name": 1, "designation": 1}
+        ).to_list(100)
+    elif user.get("designation") == "Team Lead":
+        team_members = await db.users.find(
+            {"$or": [{"team_lead_id": current_user["user_id"]}, {"id": current_user["user_id"]}], "is_active": {"$ne": False}},
+            {"_id": 0, "id": 1, "name": 1, "designation": 1}
+        ).to_list(100)
+    
+    return {
+        "total_admissions": total_admissions,
+        "fees_stats": {
+            "total_fees": fees_stats.get("total_fees", 0),
+            "fees_collected": fees_stats.get("fees_paid", 0),
+            "fees_pending": fees_stats.get("balance", 0)
+        },
+        "by_counselor": by_counselor,
+        "by_college": by_college,
+        "by_course": by_course,
+        "monthly_trends": monthly_trends,
+        "team_members": team_members,
+        "user_role": current_user.get("role"),
+        "user_designation": user.get("designation") if user else None
+    }
+
+@api_router.get("/performance/admissions")
+async def get_role_based_admissions_list(
+    current_user: dict = Depends(require_performance_access),
+    skip: int = 0,
+    limit: int = 100,
+    counselor_id: Optional[str] = None,
+    college_id: Optional[str] = None,
+    month: Optional[str] = None
+):
+    """Get admissions list based on user role with filters"""
+    user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
+    
+    query = {}
+    
+    # Role-based filtering
+    if current_user.get("role") != "admin":
+        if user.get("designation") == "Team Lead":
+            team_ids = await db.users.distinct("id", {"team_lead_id": current_user["user_id"]})
+            team_ids.append(current_user["user_id"])
+            query["counselor_id"] = {"$in": team_ids}
+        # Admission Manager sees all
+    
+    # Apply filters
+    if counselor_id and counselor_id != 'all':
+        query["counselor_id"] = counselor_id
+    if college_id and college_id != 'all':
+        query["college_id"] = college_id
+    if month and month != 'all':
+        query["admission_date"] = {"$regex": f"^{month}"}
+    
+    total = await db.admissions.count_documents(query)
+    admissions = await db.admissions.find(query, {"_id": 0}).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    return {
+        "total": total,
+        "skip": skip,
+        "limit": limit,
+        "admissions": admissions
     }
 
 @api_router.get("/admin/stats/admissions-list")
