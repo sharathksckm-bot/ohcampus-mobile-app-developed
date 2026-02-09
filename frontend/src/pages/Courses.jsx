@@ -220,6 +220,32 @@ export default function Courses() {
 
   const hasActiveFilters = searchQuery || selectedCategory !== 'all' || selectedLevel !== 'all' || selectedState !== 'all' || selectedCity !== 'all' || selectedFeeRange !== 'all';
 
+  // Compare mode functions
+  const toggleCompareSelection = (course) => {
+    if (selectedForCompare.find(c => c.id === course.id)) {
+      setSelectedForCompare(prev => prev.filter(c => c.id !== course.id));
+    } else {
+      if (selectedForCompare.length >= 4) {
+        toast.error('You can compare maximum 4 courses');
+        return;
+      }
+      setSelectedForCompare(prev => [...prev, course]);
+    }
+  };
+
+  const handleCompare = () => {
+    if (selectedForCompare.length < 2) {
+      toast.error('Select at least 2 courses to compare');
+      return;
+    }
+    setCompareDialogOpen(true);
+  };
+
+  const exitCompareMode = () => {
+    setCompareMode(false);
+    setSelectedForCompare([]);
+  };
+
   // Fetch course detail
   const handleViewCourse = async (course) => {
     setSelectedCourse(course);
