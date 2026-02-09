@@ -394,7 +394,9 @@ async def get_colleges(
     city: Optional[str] = None,
     category: Optional[str] = None,
     course: Optional[str] = None,
-    search: Optional[str] = None
+    search: Optional[str] = None,
+    level: Optional[str] = None,
+    fee_range: Optional[str] = None  # "below_100000", "100000_to_200000", "above_200000"
 ):
     query = {"is_featured": True}
     if state:
@@ -406,21 +408,75 @@ async def get_colleges(
     if search:
         query["name"] = {"$regex": search, "$options": "i"}
     
-    # If course filter is applied, get college IDs that have this course
+    # Build course filter query
+    course_query = {}
     if course:
-        course_docs = await db.courses.find({"name": {"$regex": course, "$options": "i"}}, {"college_id": 1}).to_list(500)
+        course_query["name"] = {"$regex": course, "$options": "i"}
+    if level:
+        course_query["level"] = level
+    
+    # If course or level filter is applied, get college IDs that have matching courses
+    if course_query:
+        course_docs = await db.courses.find(course_query, {"college_id": 1}).to_list(500)
         college_ids = list(set([c["college_id"] for c in course_docs]))
         if college_ids:
-            query["id"] = {"$in": college_ids}
+            if "id" in query:
+                # Combine with existing filter
+                query["id"] = {"$in": list(set(query["id"]["$in"]) & set(college_ids))}
+            else:
+                query["id"] = {"$in": college_ids}
         else:
             return []
     
+    # If fee range filter is applied, get college IDs with courses in that range
+    if fee_range:
+        fee_query = {}
+        if fee_range == "below_100000":
+            fee_query["amount"] = {"$lt": 100000}
+        elif fee_range == "100000_to_200000":
+            fee_query["amount"] = {"$gte": 100000, "$lte": 200000}
+        elif fee_range == "above_200000":
+            fee_query["amount"] = {"$gt": 200000}
+        
+        if fee_query:
+            fee_docs = await db.fees.find(fee_query, {"college_id": 1}).to_list(500)
+            fee_college_ids = list(set([f["college_id"] for f in fee_docs]))
+            if fee_college_ids:
+                if "id" in query:
+                    # Combine with existing filter
+                    existing_ids = query["id"]["$in"] if isinstance(query["id"], dict) else [query["id"]]
+                    query["id"] = {"$in": list(set(existing_ids) & set(fee_college_ids))}
+                else:
+                    query["id"] = {"$in": fee_college_ids}
+            else:
+                return []
+    
     colleges = await db.colleges.find(query, {"_id": 0}).to_list(100)
     
-    # Fetch courses for each college
+    # Fetch courses for each college (optionally filtered by level)
     result = []
     for college in colleges:
-        courses = await db.courses.find({"college_id": college["id"]}, {"_id": 0}).to_list(100)
+        course_filter = {"college_id": college["id"]}
+        if level:
+            course_filter["level"] = level
+        courses = await db.courses.find(course_filter, {"_id": 0}).to_list(100)
+        
+        # If fee_range filter, also get min/max fees for display
+        if fee_range:
+            fee_filter = {"college_id": college["id"]}
+            if fee_range == "below_100000":
+                fee_filter["amount"] = {"$lt": 100000}
+            elif fee_range == "100000_to_200000":
+                fee_filter["amount"] = {"$gte": 100000, "$lte": 200000}
+            elif fee_range == "above_200000":
+                fee_filter["amount"] = {"$gt": 200000}
+            
+            fees = await db.fees.find(fee_filter, {"_id": 0, "amount": 1}).to_list(100)
+            if fees:
+                amounts = [f["amount"] for f in fees]
+                college["min_fee"] = min(amounts)
+                college["max_fee"] = max(amounts)
+        
         college["courses"] = courses
         result.append(college)
     
