@@ -287,6 +287,50 @@ export default function Courses() {
         </div>
       </div>
 
+      {/* Compare Mode Banner */}
+      {compareMode && (
+        <div className="bg-[#FF6B35] text-white py-3 px-4 relative z-20">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <GitCompare className="h-5 w-5 flex-shrink-0" />
+              <span className="font-body font-medium">
+                Comparison Mode: {selectedForCompare.length}/4 courses selected
+              </span>
+              {selectedForCompare.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  {selectedForCompare.map(c => (
+                    <Badge key={c.id} className="bg-white/20 text-white border-white/30">
+                      {c.name.length > 20 ? c.name.substring(0, 20) + '...' : c.name}
+                      <button onClick={() => toggleCompareSelection(c)} className="ml-1">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleCompare}
+                disabled={selectedForCompare.length < 2}
+                className="bg-white text-[#FF6B35] hover:bg-white/90 font-body"
+                data-testid="compare-courses-btn"
+              >
+                <GitCompare className="h-4 w-4 mr-2" />
+                Compare ({selectedForCompare.length})
+              </Button>
+              <Button
+                onClick={exitCompareMode}
+                variant="outline"
+                className="border-white text-white hover:bg-white/10 font-body"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Search and Filters */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
         <Card className="shadow-lg border-0">
