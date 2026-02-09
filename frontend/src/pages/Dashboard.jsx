@@ -489,8 +489,8 @@ export default function Dashboard() {
 
                 {/* Course Level Filter */}
                 <Select 
-                  value={selectedFilters.level} 
-                  onValueChange={(level) => setSelectedFilters(prev => ({ ...prev, level }))}
+                  value={selectedFilters.level || "all"} 
+                  onValueChange={(level) => setSelectedFilters(prev => ({ ...prev, level: level === "all" ? "" : level }))}
                 >
                   <SelectTrigger className="w-full lg:w-[180px] h-12 font-body bg-white" data-testid="level-filter">
                     <Layers className="h-4 w-4 mr-2 text-[#94A3B8]" />
@@ -498,7 +498,7 @@ export default function Dashboard() {
                   </SelectTrigger>
                   <SelectContent>
                     {levelOptions.map(opt => (
-                      <SelectItem key={opt.value} value={opt.value || "all"}>
+                      <SelectItem key={opt.value || "all"} value={opt.value || "all"}>
                         {opt.label}
                       </SelectItem>
                     ))}
@@ -507,8 +507,8 @@ export default function Dashboard() {
 
                 {/* Fee Range Filter */}
                 <Select 
-                  value={selectedFilters.feeRange} 
-                  onValueChange={(feeRange) => setSelectedFilters(prev => ({ ...prev, feeRange }))}
+                  value={selectedFilters.feeRange || "all"} 
+                  onValueChange={(feeRange) => setSelectedFilters(prev => ({ ...prev, feeRange: feeRange === "all" ? "" : feeRange }))}
                 >
                   <SelectTrigger className="w-full lg:w-[180px] h-12 font-body bg-white" data-testid="fee-range-filter">
                     <IndianRupee className="h-4 w-4 mr-2 text-[#94A3B8]" />
@@ -516,7 +516,7 @@ export default function Dashboard() {
                   </SelectTrigger>
                   <SelectContent>
                     {feeRangeOptions.map(opt => (
-                      <SelectItem key={opt.value} value={opt.value || "all"}>
+                      <SelectItem key={opt.value || "all"} value={opt.value || "all"}>
                         {opt.label}
                       </SelectItem>
                     ))}
