@@ -893,11 +893,45 @@ export default function Courses() {
                     ))}
                   </TableRow>
 
-                  {/* Eligibility */}
+                  {/* Description */}
+                  <TableRow>
+                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-[#0066CC]" />
+                        Description
+                      </div>
+                    </TableCell>
+                    {selectedForCompare.map(course => (
+                      <TableCell key={course.id} className="text-center font-body text-sm">
+                        {course.description ? (
+                          <span className="line-clamp-4">{course.description}</span>
+                        ) : '—'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+
+                  {/* Scope */}
                   <TableRow>
                     <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
                       <div className="flex items-center gap-2">
                         <Target className="h-4 w-4 text-[#0066CC]" />
+                        Scope & Career
+                      </div>
+                    </TableCell>
+                    {selectedForCompare.map(course => (
+                      <TableCell key={course.id} className="text-center font-body text-sm">
+                        {course.scope ? (
+                          <span className="line-clamp-4">{course.scope}</span>
+                        ) : '—'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+
+                  {/* Eligibility */}
+                  <TableRow>
+                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-[#0066CC]" />
                         Eligibility
                       </div>
                     </TableCell>
