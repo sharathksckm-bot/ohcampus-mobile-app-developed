@@ -577,6 +577,24 @@ export default function Dashboard() {
                       </button>
                     </Badge>
                   ))}
+                  {selectedFilters.level && (
+                    <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">
+                      <Layers className="h-3 w-3 mr-1" />
+                      {levelOptions.find(o => o.value === selectedFilters.level)?.label || selectedFilters.level}
+                      <button onClick={() => setSelectedFilters(prev => ({ ...prev, level: '' }))} className="ml-1">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  )}
+                  {selectedFilters.feeRange && (
+                    <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
+                      <IndianRupee className="h-3 w-3 mr-1" />
+                      {feeRangeOptions.find(o => o.value === selectedFilters.feeRange)?.label || selectedFilters.feeRange}
+                      <button onClick={() => setSelectedFilters(prev => ({ ...prev, feeRange: '' }))} className="ml-1">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  )}
                   {searchQuery && (
                     <Badge variant="secondary" className="bg-slate-100 text-slate-700">
                       <Search className="h-3 w-3 mr-1" />
