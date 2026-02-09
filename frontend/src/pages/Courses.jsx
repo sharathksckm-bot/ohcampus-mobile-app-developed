@@ -93,6 +93,12 @@ export default function Courses() {
     { value: 'above_200000', label: 'Above ₹2 Lakh' }
   ];
 
+  // Calculate total fees (moved before filteredCourses)
+  const getTotalFees = (fees) => {
+    if (!fees || fees.length === 0) return 0;
+    return fees.reduce((sum, f) => sum + (f.amount || 0), 0);
+  };
+
   // Fetch courses and categories
   const fetchData = useCallback(async () => {
     try {
