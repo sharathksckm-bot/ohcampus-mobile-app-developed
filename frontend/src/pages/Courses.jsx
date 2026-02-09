@@ -93,10 +93,22 @@ export default function Courses() {
     { value: 'above_200000', label: 'Above ₹2 Lakh' }
   ];
 
-  // Calculate total fees (moved before filteredCourses)
-  const getTotalFees = (fees) => {
+  // Calculate first year fees only (1st year annual OR 1st+2nd semester)
+  const getFirstYearFees = (fees) => {
     if (!fees || fees.length === 0) return 0;
-    return fees.reduce((sum, f) => sum + (f.amount || 0), 0);
+    
+    // Get first year annual fees
+    const firstYearAnnual = fees
+      .filter(f => f.fee_type === 'annual' && f.year_or_semester === 1)
+      .reduce((sum, f) => sum + (f.amount || 0), 0);
+    
+    // Get 1st and 2nd semester fees
+    const firstTwoSemesters = fees
+      .filter(f => f.fee_type === 'semester' && (f.year_or_semester === 1 || f.year_or_semester === 2))
+      .reduce((sum, f) => sum + (f.amount || 0), 0);
+    
+    // Return whichever is available (prefer annual if both exist)
+    return firstYearAnnual > 0 ? firstYearAnnual : firstTwoSemesters;
   };
 
   // Fetch courses and categories
