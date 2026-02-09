@@ -598,7 +598,7 @@ async def get_all_courses(category: Optional[str] = None, search: Optional[str] 
 
 @api_router.get("/courses/with-college")
 async def get_courses_with_college(category: Optional[str] = None, search: Optional[str] = None):
-    """Get all courses with their college information"""
+    """Get all courses with their college information and fees"""
     query = {}
     if category:
         query["category"] = category
@@ -607,7 +607,7 @@ async def get_courses_with_college(category: Optional[str] = None, search: Optio
     
     courses = await db.courses.find(query, {"_id": 0}).to_list(500)
     
-    # Enrich with college info
+    # Enrich with college info and fees
     result = []
     for course in courses:
         college = await db.colleges.find_one({"id": course["college_id"]}, {"_id": 0})
@@ -619,6 +619,9 @@ async def get_courses_with_college(category: Optional[str] = None, search: Optio
                 "state": college["state"],
                 "category": college["category"]
             }
+            # Get fees for this course
+            fees = await db.fees.find({"course_id": course["id"]}, {"_id": 0}).to_list(20)
+            course["fees"] = fees
             result.append(course)
     
     return result
