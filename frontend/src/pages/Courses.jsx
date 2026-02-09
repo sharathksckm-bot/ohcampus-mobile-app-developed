@@ -79,10 +79,19 @@ export default function Courses() {
   const [selectedLevel, setSelectedLevel] = useState('all');
   const [selectedState, setSelectedState] = useState('all');
   const [selectedCity, setSelectedCity] = useState('all');
+  const [selectedFeeRange, setSelectedFeeRange] = useState('all');
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [courseDetail, setCourseDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Fee range options
+  const feeRangeOptions = [
+    { value: 'all', label: 'All Fee Ranges' },
+    { value: 'below_100000', label: 'Below ₹1 Lakh' },
+    { value: '100000_to_200000', label: '₹1 Lakh - ₹2 Lakh' },
+    { value: 'above_200000', label: 'Above ₹2 Lakh' }
+  ];
 
   // Fetch courses and categories
   const fetchData = useCallback(async () => {
