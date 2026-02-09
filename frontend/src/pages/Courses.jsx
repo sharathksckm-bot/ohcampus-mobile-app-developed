@@ -311,6 +311,19 @@ export default function Courses() {
                 </SelectContent>
               </Select>
 
+              {/* Fee Range Filter */}
+              <Select value={selectedFeeRange} onValueChange={setSelectedFeeRange}>
+                <SelectTrigger className="w-full lg:w-44 h-12" data-testid="fee-range-filter">
+                  <IndianRupee className="h-4 w-4 mr-2 text-[#94A3B8]" />
+                  <SelectValue placeholder="Fee Range" />
+                </SelectTrigger>
+                <SelectContent>
+                  {feeRangeOptions.map(opt => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
               {/* Clear */}
               {hasActiveFilters && (
                 <Button
