@@ -466,9 +466,15 @@ async def get_colleges(
             course_filter["level"] = level
         courses = await db.courses.find(course_filter, {"_id": 0}).to_list(100)
         
-        # If fee_range filter, also get min/max fees for display
+        # If fee_range filter, also get min/max first year fees for display
         if fee_range:
-            fee_filter = {"college_id": college["id"]}
+            fee_filter = {
+                "college_id": college["id"],
+                "$or": [
+                    {"fee_type": "annual", "year_or_semester": 1},
+                    {"fee_type": "semester", "year_or_semester": {"$in": [1, 2]}}
+                ]
+            }
             if fee_range == "below_100000":
                 fee_filter["amount"] = {"$lt": 100000}
             elif fee_range == "100000_to_200000":
