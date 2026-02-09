@@ -223,6 +223,13 @@ export default function Dashboard() {
       if (searchQuery) {
         params.search = searchQuery;
       }
+      // New filters
+      if (selectedFilters.level) {
+        params.level = selectedFilters.level;
+      }
+      if (selectedFilters.feeRange) {
+        params.fee_range = selectedFilters.feeRange;
+      }
       
       const response = await collegesAPI.getAll(params);
       let filteredColleges = response.data;
