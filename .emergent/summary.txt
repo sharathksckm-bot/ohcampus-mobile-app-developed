@@ -1,6 +1,4 @@
-<analysis>Analyse the user's request and the project's current state to provide a concise handover summary.
-
-original_problem_statement:
+<analysis>original_problem_statement:
 **Initial Request:**
 Create a web-based counseling platform for OhCampus counselors.
 - **Counselor Features:** Filter colleges, view featured colleges, and see detailed college information including fees, highlights, and news.
@@ -8,17 +6,16 @@ Create a web-based counseling platform for OhCampus counselors.
 - **Technical Guidelines:** Use existing OhCampus database, ensure fast filtering, mobile-friendly UI, and secure admin authentication.
 
 **Subsequent Feature Requests:**
-1.  **Comparison Feature:** Allow counselors to select and compare multiple colleges.
+1.  **Comparison Feature:** Allow counselors to select and compare multiple colleges and courses.
 2.  **PDF Export:** Export fee structures to PDF.
 3.  **CSV Import:** Bulk import fee details via CSV.
-4.  **UI/UX:** Fix UI overlaps, add various search bars and filters, and remove registration flows.
+4.  **UI/UX:** Fix UI overlaps, add various search bars and filters (including by fee range and course level), remove registration flows, and make the college listing page attractive without images.
 5.  **Admissions & Performance:**
-    -   Counselors can add/edit admitted candidate details (name, college, course, fees, dynamic installments with dates, remarks).
+    -   Counselors can add/edit admitted candidate details (name, college, course, fees, dynamic installments with dates, remarks, and scholarship amount).
+    -   Admins/Team Leads/Managers can edit complete details of admitted candidates.
     -   Admins can create counselor accounts with specific designations (Counselor, Team Lead, Manager) and assign Team Leads.
-    -   Role-based performance dashboards:
-        -   Admins/Managers see complete stats.
-        -   Team Leads see stats for their team only.
-    -   Track admission and revenue targets for counselors.
+    -   Role-based performance dashboards with admission/revenue targets.
+    -   Scholarship summary reports (per month/college).
 6.  **User & Security:**
     -   Admin-driven password reset.
     -   User profile management (name, phone, password change).
@@ -28,114 +25,69 @@ Create a web-based counseling platform for OhCampus counselors.
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application (FastAPI, React, MongoDB) with a comprehensive feature set for OhCampus counselors and admins.
--   **Counselor Platform:**
-    -   A dashboard to filter and compare colleges.
-    -   A dedicated Courses page with multi-faceted filtering.
-    -   An Admissions page to manage admitted students, including installments and remarks.
-    -   A role-based Performance page for Team Leads and Admission Managers to track team stats and targets.
--   **Admin Panel:**
+A full-stack application (FastAPI, React, MongoDB) for OhCampus counselors and admins. The platform includes:
+-   **Counselor Platform:** A dashboard to filter colleges (by fee range, level, location, etc.), compare colleges, and view detailed college/course information. A Compare Courses feature has just been added.
+-   **Admissions Management:** Counselors can manage admitted students, including dynamic fee installments, remarks, and scholarship amounts. Admins, Team Leads, and Managers have full edit permissions.
+-   **Admin & Manager Features:**
     -   Secure login with management pages for Fees, FAQs, and Colleges.
-    -   A User Management page to create/manage counselor accounts, designations, and team assignments.
-    -   A Performance Dashboard to view platform-wide admission/revenue stats, and to set and track counselor targets.
--   **Backend:**
-    -   The  model now includes , , and .
-    -   New data models and endpoints exist for , , and .
-    -   Role-based access control is implemented for performance and management endpoints.
-    -   Backend logic for password reset, profile updates, activity logging, and target alerts has been added but is not fully wired to the frontend.
--   The registration flow (Create Account) has been removed from the UI.
+    -   A User Management page with role creation and admin-driven password resets.
+    -   A Performance Dashboard with platform-wide stats, target tracking, automated alerts for underperforming counselors, and a scholarship summary report.
+    -   An Activity Log page to monitor key user actions.
+-   **User Features:** A dedicated  page for users to update their name, phone, and password.
 
 **Last working item**:
-- Last item agent was working: The agent was implementing a batch of features requested by the user, focusing on security, user management, and activity tracking. It had just added the backend models (), helper functions (), and API endpoints for password reset, user profile updates, and fetching activity logs. It also added logging hooks into existing endpoints like  and .
-- Status: IN PROGRESS
-- Agent Testing Done: N
-- Which testing method agent to use? both
+- Last item agent was working: Implementing the Compare Courses feature on the Courses page (). The agent added the UI for entering compare mode, selecting courses, and a dialog to display the comparison table. The final step was to take a screenshot of the comparison dialog to verify its contents.
+- Status: USER VERIFICATION PENDING
+- Agent Testing Done: Y
+- Which testing method agent to use? frontend testing agent
 - User Testing Done: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1 (P0):** Complete the implementation of Password Reset, User Profile, Activity Logging, and Target Alert features.
--   **Issue 2 (P1):** A bug reported by the testing agent () where the Save Changes button is missing from the admission edit dialog.
--   **Issue 3 (P2):** A bug reported by the testing agent () where target progress bars do not update correctly.
--   **Issue 4 (P3):** Incorrect HTTP status codes are returned by some backend endpoints (e.g.,  instead of ).
-
-Issues Detail:
--   **Issue 1: Complete new feature implementation**
-    -   **Attempted fixes:** Backend models, endpoints, and logging hooks have been created in .
+-   **Issue 1 (P1): Incorrect HTTP Status Codes**
+    -   **Attempted fixes:** None.
     -   **Next debug checklist:**
-        1.  **Password Reset:** In , add a button to trigger an admin-driven password reset dialog.
-        2.  **User Profile:** Create a new  page and link it from the user dropdown in . The page should allow users to update their name, phone, and password.
-        3.  **Activity Logging:** Create a new  page to display logs fetched from the new backend endpoint.
-        4.  **Target Alerts:** Implement frontend logic in  or  to display an alert if a counselor's progress is below 50% halfway through the month, using the new  endpoint.
-    -   **Why fix this issue and what will be achieved with the fix?** To fulfill direct user requirements for enhanced security, usability, and management oversight.
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Both.
-    -   **Blocked on other issue:** None.
-
--   **Issue 2: Missing Save Changes button in admission edit dialog**
-    -   **Attempted fixes:** None. This was identified by the testing agent but not addressed.
-    -   **Next debug checklist:**
-        1.  Review  for details.
-        2.  Inspect  and the add/edit dialog logic.
-        3.  Ensure the Save Changes button is rendered correctly when the dialog is in edit mode.
-    -   **Why fix this issue and what will be achieved with the fix?** Admins and authorized users are currently unable to edit admission fee details, which is a critical bug.
+        1.  Review  and  endpoints in .
+        2.  In the FastAPI route decorators, set  for resource creation () and  for updates (). For example, change  to .
+    -   **Why fix this issue and what will be achieved with the fix?** To adhere to REST API best practices and provide more meaningful status codes to clients.
     -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Frontend.
-    -   **Blocked on other issue:** None.
-
--   **Issue 3: Incorrect target progress bar updates**
-    -   **Attempted fixes:** None. This was identified by the testing agent but not addressed.
-    -   **Next debug checklist:**
-        1.  Review  for details.
-        2.  Examine the state management and data flow in  and .
-        3.  Verify that the progress calculation logic correctly reflects the data from the  endpoint.
-    -   **Why fix this issue and what will be achieved with the fix?** The core purpose of the target tracking feature is defeated if the progress visualization is inaccurate.
-    -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Frontend.
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Backend.
     -   **Blocked on other issue:** None.
 
 **In progress Task List**:
--   **Task 1: Complete frontend for new features.**
-    -   **Where to resume:** Start by creating the UI for the features outlined in Issue 1: Password Reset, User Profile, Activity Logging, and Target Alerts.
-    -   **What will be achieved with this?** A fully functional user management, security, and tracking system as per the user's latest request.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** Both.
-    -   **Blocked on something:** None.
+- None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
     -   **P1: Email notifications for admission deadlines.**
 -   **Future Tasks:**
     -   **P2: Advanced analytics dashboard.**
-    -   **P3: Refactor  into a modular structure (e.g., , , ).**
+    -   **P3: Refactor  into a modular structure** (e.g., break into , ,  directories) to improve maintainability.
 
 **Completed work in this session**
--   **Admission Alerts UI:** Completed the CRUD interface for managing admission alerts.
--   **Admin College Management Rework:** Replaced By Location tab with By City and By State tabs.
--   **User Management System:** Implemented a page for admins to create/manage users with designations and team assignments.
--   **Admissions Management System:** Created a page for counselors to manage admitted students with dynamic fee installments and remarks.
--   **Role-Based Performance Dashboards:** Created separate dashboards for Admins/Managers and Team Leads with filtered data access.
--   **Target Tracking System:** Implemented backend and frontend for assigning and tracking admission/revenue targets.
--   **Registration Flow Removal:** Removed Create Account links from the  and .
+-   **User Profile & Security Features:**
+    -   Implemented a  page for users to update their name, phone, and password.
+    -   Created an  page to display user actions.
+    -   Added an admin-driven password reset feature in .
+-   **Scholarship Feature:**
+    -   Added a  field to the  model and related endpoints.
+    -   Enabled adding and editing scholarships in the admission dialog on , , and .
+    -   Implemented role-based permissions allowing Admins, Team Leads, and Managers to edit all admission details.
+-   **Dashboard & Performance Enhancements:**
+    -   Implemented a **Scholarship Summary Report** and **Target Alerts** tabs in .
+    -   Redesigned college cards on  to be more attractive without images.
+-   **Filtering & Comparison:**
+    -   Added **Fee Range (First Year)** and **Course Level (UG/PG)** filters to the college .
+    -   Added a **Fee Range (First Year)** filter to .
+    -   Implemented a **Compare Courses** feature on , including selection UI and a comparison dialog.
+-   **Bug Fixes:**
+    -   Fixed a bug causing a  course count on college cards by updating the  endpoint.
+    -   Resolved a  error in the course details modal on .
+    -   Fixed an issue preventing the user's name in the navbar from updating after a profile change by exporting  from .
+    -   Fixed an error on the Activity Log page where  was called on an object instead of an array.
 
 **Earlier issues found/mentioned but not fixed**
--   **Issue 1: Missing Save Changes button in admission edit dialog**
-    -   **Debug checklist:** See All Pending/In progress Issue list - Issue 2.
-    -   **Why to solve this issue and what will be achieved with this?** To restore critical functionality allowing authorized users to edit admission details.
-    -   **Should Test frontend/backend/both after fix:** Frontend.
-    -   **Is recurring issue?** N
--   **Issue 2: Incorrect target progress bar updates**
-    -   **Debug checklist:** See All Pending/In progress Issue list - Issue 3.
-    -   **Why to solve this issue and what will be achieved with this?** To ensure the performance dashboard provides accurate, trustworthy data.
-    -   **Should Test frontend/backend/both after fix:** Frontend.
-    -   **Is recurring issue?** N
--   **Issue 3: Incorrect HTTP Status Codes**
-    -   **Debug checklist:** Review ,  endpoints in  and set the correct  in the FastAPI route decorators.
-    -   **Why to solve this issue and what will be achieved with this?** Adherence to REST API best practices.
-    -   **Should Test frontend/backend/both after fix:** Backend.
-    -   **Is recurring issue?** Y
+-   **Note:** The previous handoff summary mentioned bugs regarding a missing Save Changes button and incorrect progress bars. Investigation revealed that the corresponding test reports (, ) actually showed a 100% pass rate, indicating these were not active issues.
 
 **Known issue recurrence from previous fork**
 -   None.
@@ -144,97 +96,94 @@ Issues Detail:
 
 
 **Key Technical Concepts**
--   **Backend:** FastAPI, Pydantic, Motor, JWT for auth.
+-   **Backend:** FastAPI, Pydantic, Motor (async MongoDB), JWT for auth.
 -   **Frontend:** React, React Router, Tailwind CSS, Shadcn/UI, Axios, Context API for auth.
--   **Architecture:** Decoupled monorepo with role-based access control (RBAC) driven by user designation in the JWT.
+-   **Architecture:** Decoupled monorepo with role-based access control (RBAC) driven by user  in the JWT.
 
 **key DB schema**
--   **users:** added , , .
--   **admissions:** (new collection) .
--   **targets:** (new collection) .
--   **activities:** (new collection) .
+-   **users:** , , .
+-   **admissions:**  added.
+-   **targets:** .
+-   **activities:** .
 
 **changes in tech stack**
 -   None.
 
 **All files of reference**
--   : Heavily modified with new models, endpoints, and logic for User Management, Admissions, Performance Stats, Targets, and Activity Logging.
--   : New page for admin to manage users.
--   : New page for counselors to manage admissions.
--   : New page for admins to track overall performance and targets.
--   : New page for managers/team leads to track team performance.
--   : Updated with all new API functions.
--   : Updated with new routes for the created pages.
--   : Updated with role-based links to Performance.
--   : Updated with links to User Management and Performance.
--   : Logic now implicitly handles  from the user object.
--   , : Modified to remove registration links.
+-   : Heavily modified with new endpoints for scholarships, target alerts, and filtering logic.
+-   : New file for user profile management.
+-   : New file for viewing admin logs.
+-   : Major UI redesign of college cards and addition of fee/level filters.
+-   : Added fee filter and a new Compare Courses feature.
+-   : Updated to include scholarship field and edit permissions.
+-   : Added new tabs for Scholarship Summary and Target Alerts.
+-   : Added password reset button.
+-   : Updated to export .
+-   : Added functions for new endpoints.
+-   : Updated with completed tasks.
 
 **Areas that need refactoring**:
--    has become very large and monolithic. It should be broken down into separate files for models, routes, and services to improve maintainability.
+-    is monolithic and should be broken down into separate files for models, routes, and services for better maintainability.
 
 **key api endpoints**
--   , : CRUD for users.
--   : Get users with 'Team Lead' designation.
--   , : CRUD for admissions.
--   , : Role-based performance stats.
--   , : CRUD for targets.
--   : Get target progress for counselors.
--   : Admin endpoint to reset a user's password.
--   : Endpoint for users to update their own profile.
--   : Get all activity logs.
--   : Get a list of counselors underperforming on their targets.
+-   : (New) GET scholarship statistics.
+-   : (New) GET a list of counselors underperforming on their targets.
+-   : (Updated) Now includes course counts and filters by fee range and course level.
+-   : (Updated) Now includes fee information for each course.
+-   , : (Updated) Now supports creating/updating .
+-   , : (New) GET/PUT for user profile and password changes.
+-   : (New) GET all activity logs.
 
 **Critical Info for New Agent**
--   **Database Seeding:** The database schema has changed significantly. After any backend model modifications, you MUST drop the database ({ ok: 1, dropped: 'test_database' }) and re-run the  endpoint.
--   **Unfixed Bugs:** There are two known frontend bugs from test agent reports ( and ) related to the admission edit dialog and target progress bars. These should be addressed with priority.
--   **Role-Based Access (RBAC):** The frontend heavily relies on the  property from the  to render different UI components and control access. Be mindful of this when adding or modifying features.
+-   **Fee Filtering Logic:** The fee range filters on both the Dashboard and Courses pages have been specifically implemented to only consider **First Year fees** (1st annual fee or sum of 1st and 2nd semester fees).
+-   **Database Seeding:** The database must be seeded after a fresh start or significant model changes using the  endpoint. Use the provided credentials to log in.
+-   **Role-Based Access (RBAC):** Frontend rendering and API access are heavily dependent on the  property from the . Keep this in mind when modifying UI or API calls.
 
 **documents and test reports created in this job**
 -    (updated)
 -   
 -   
 -   
--   
--   
--   
--   
--   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User (Msg #325):** Requested several new features: Password Reset, User Profile Management, Email Notifications, removing registration, and automated target alerts.
-2.  **Agent (Msg #327):** Asked for priority on the backlog items.
-3.  **User (Msg #328):** Confirmed that Advanced analytics and automated target alerts can be done later.
-4.  **Agent (Msg #330):** Asked for confirmation on the implementation plan.
-5.  **User (Msg #331):** Approved the plan.
-6.  **Agent (Msg #332-372):** Started implementing the approved plan. Removed registration links from the UI and added backend models, endpoints, and logging hooks for password reset, user profiles, and activity tracking. The work is in progress.
+1.  **User:** Don't display college images; make the list attractive. Add a scholarship summary report and target alerts.
+2.  **Agent:** Implemented all three features.
+3.  **User:** The course count is showing 0 on the college listing page.
+4.  **Agent:** Fixed the bug by updating the backend API to include course counts.
+5.  **User:** Add filters for college fees (by range) and course level (UG/PG).
+6.  **Agent:** Implemented the filters on the Dashboard page.
+7.  **User:** In the course page also, add the fee range filter.
+8.  **Agent:** Implemented the fee range filter on the Courses page.
+9.  **User:** The fee filter should only consider First Year fees.
+10. **Agent:** Updated the backend and frontend logic to filter based on first-year fees only.
+11. **User:** An error message appears when clicking a course after filtering.
+12. **Agent:** Fixed the bug in .
+13. **User:** Add a Compare Courses feature.
+14. **Agent:** Implemented the Compare Courses feature, which is the last completed action.
 
 **Project Health Check:**
--   **Broken:**
-    -   The application is in a mid-development state. New backend features (password reset, profile, activity log) have been added but lack corresponding frontend implementation.
-    -   The admission edit dialog is non-functional due to a missing Save button.
-    -   Target tracking progress bars are not displaying correct data.
+-   **Broken:** None. The application is stable and the latest features have been implemented and tested by the agent.
 -   **Mocked:** None.
 
 **3rd Party Integrations**
 -    / : For generating PDF documents on the frontend.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES, multiple times.
+-   **Testing agent used after significant changes:** YES, three times in this session.
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** Yes, for iterations 5, 6, 7, and 8.
--   **Known regressions:**
-    -   The admission edit modal is broken (from ).
-    -   Target progress bars are inaccurate (from ).
+-   **Test files created:**
+    -   
+    -   
+    -   
+-   **Known regressions:** None.
 
 **Credentials to test flow:**
--   **Counselor:**
+-   **Admin:**
     -   Email: 
     -   Password: 
--   **Admin:**
+-   **Counselor:**
     -   Email: 
     -   Password: 
 
 **What agent forgot to execute**
--   The agent did not fix the bugs reported by the testing agent in  (missing save button in admission edit dialog) and  (incorrect target progress bars). It proceeded to implement new features instead.
--   The frontend implementation for the latest set of user requests (Password Reset, User Profile, Activity Log, Target Alerts) has not been started.</analysis>
+-   The agent did not address the issue of incorrect HTTP status codes mentioned in the initial handoff summary.  endpoints are still returning  instead of the more appropriate .</analysis>
