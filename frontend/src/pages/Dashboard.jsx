@@ -309,7 +309,7 @@ export default function Dashboard() {
   };
 
   const clearFilters = () => {
-    setSelectedFilters({ states: [], cities: [], categories: [], courses: [] });
+    setSelectedFilters({ states: [], cities: [], categories: [], courses: [], level: '', feeRange: '' });
     setSearchQuery('');
   };
 
@@ -318,6 +318,8 @@ export default function Dashboard() {
     selectedFilters.cities.length > 0 || 
     selectedFilters.categories.length > 0 || 
     selectedFilters.courses.length > 0 ||
+    selectedFilters.level ||
+    selectedFilters.feeRange ||
     searchQuery;
 
   const toggleCompareSelection = (college) => {
