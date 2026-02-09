@@ -388,7 +388,7 @@ async def get_cities_by_state(state: Optional[str] = None):
 
 # ===================== COLLEGES ENDPOINTS =====================
 
-@api_router.get("/colleges", response_model=List[College])
+@api_router.get("/colleges")
 async def get_colleges(
     state: Optional[str] = None,
     city: Optional[str] = None,
@@ -416,7 +416,15 @@ async def get_colleges(
             return []
     
     colleges = await db.colleges.find(query, {"_id": 0}).to_list(100)
-    return colleges
+    
+    # Fetch courses for each college
+    result = []
+    for college in colleges:
+        courses = await db.courses.find({"college_id": college["id"]}, {"_id": 0}).to_list(100)
+        college["courses"] = courses
+        result.append(college)
+    
+    return result
 
 @api_router.get("/colleges/compare")
 async def compare_colleges(college_ids: str):
