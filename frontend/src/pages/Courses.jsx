@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/layout/Navbar';
 import { coursesAPI } from '../lib/api';
 import { Button } from '../components/ui/button';
@@ -45,6 +46,7 @@ import {
   ChevronRight,
   IndianRupee,
   X,
+  GitCompare,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
