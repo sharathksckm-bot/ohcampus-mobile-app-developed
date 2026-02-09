@@ -171,16 +171,16 @@ export default function Courses() {
       result = result.filter(c => c.college?.city === selectedCity);
     }
 
-    // Fee range filter
+    // Fee range filter - considers only First Year fees
     if (selectedFeeRange !== 'all') {
       result = result.filter(c => {
-        const totalFees = getTotalFees(c.fees);
+        const firstYearFees = getFirstYearFees(c.fees);
         if (selectedFeeRange === 'below_100000') {
-          return totalFees > 0 && totalFees < 100000;
+          return firstYearFees > 0 && firstYearFees < 100000;
         } else if (selectedFeeRange === '100000_to_200000') {
-          return totalFees >= 100000 && totalFees <= 200000;
+          return firstYearFees >= 100000 && firstYearFees <= 200000;
         } else if (selectedFeeRange === 'above_200000') {
-          return totalFees > 200000;
+          return firstYearFees > 200000;
         }
         return true;
       });
