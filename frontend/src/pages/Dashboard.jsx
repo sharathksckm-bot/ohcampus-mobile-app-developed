@@ -9,6 +9,13 @@ import { Badge } from '../components/ui/badge';
 import { Skeleton } from '../components/ui/skeleton';
 import { Checkbox } from '../components/ui/checkbox';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
+import {
   Command,
   CommandEmpty,
   CommandGroup,
@@ -35,7 +42,9 @@ import {
   BookOpen,
   X,
   ChevronDown,
-  Check
+  Check,
+  IndianRupee,
+  Layers
 } from 'lucide-react';
 import { toast } from 'sonner';
 
