@@ -111,6 +111,12 @@ export default function Courses() {
     return firstYearAnnual > 0 ? firstYearAnnual : firstTwoSemesters;
   };
 
+  // Calculate total fees (all years/semesters combined)
+  const getTotalFees = (fees) => {
+    if (!fees || fees.length === 0) return 0;
+    return fees.reduce((sum, f) => sum + (f.amount || 0), 0);
+  };
+
   // Fetch courses and categories
   const fetchData = useCallback(async () => {
     try {
