@@ -180,12 +180,12 @@ export default function Dashboard() {
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const navigate = useNavigate();
 
-  // Fee range and level options
+  // Fee range and level options (First Year fees only)
   const feeRangeOptions = [
     { value: '', label: 'All Fee Ranges' },
-    { value: 'below_100000', label: 'Below ₹1 Lakh' },
-    { value: '100000_to_200000', label: '₹1 Lakh - ₹2 Lakh' },
-    { value: 'above_200000', label: 'Above ₹2 Lakh' }
+    { value: 'below_100000', label: '1st Year < ₹1L' },
+    { value: '100000_to_200000', label: '1st Year ₹1L-₹2L' },
+    { value: 'above_200000', label: '1st Year > ₹2L' }
   ];
 
   const levelOptions = [
