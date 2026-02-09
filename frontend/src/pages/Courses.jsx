@@ -337,13 +337,13 @@ export default function Courses() {
           <CardContent className="p-6">
             <div className="flex flex-col lg:flex-row gap-4">
               {/* Search */}
-              <div className="relative flex-1">
+              <div className="relative w-full lg:flex-1 lg:min-w-[280px]">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#94A3B8]" />
                 <Input
                   placeholder="Search courses or colleges..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-12 font-body border-slate-300"
+                  className="pl-10 h-12 font-body border-slate-300 w-full"
                   data-testid="course-search"
                 />
               </div>
