@@ -492,9 +492,11 @@ export default function Courses() {
             {filteredCourses.map((course, index) => (
               <Card
                 key={course.id}
-                className="hover:shadow-lg transition-all duration-300 cursor-pointer animate-fade-in group"
+                className={`hover:shadow-lg transition-all duration-300 cursor-pointer animate-fade-in group ${
+                  selectedForCompare.find(c => c.id === course.id) ? 'ring-2 ring-[#FF6B35]' : ''
+                }`}
                 style={{ animationDelay: `${index * 30}ms` }}
-                onClick={() => handleViewCourse(course)}
+                onClick={() => compareMode ? toggleCompareSelection(course) : handleViewCourse(course)}
                 data-testid={`course-card-${course.id}`}
               >
                 <CardContent className="p-6">
@@ -502,7 +504,20 @@ export default function Courses() {
                     <Badge variant="secondary" className="font-body">
                       {course.category || course.level}
                     </Badge>
-                    {getSeatStatusBadge(course.seat_status || 'Available')}
+                    <div className="flex items-center gap-2">
+                      {getSeatStatusBadge(course.seat_status || 'Available')}
+                      {compareMode && (
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                          selectedForCompare.find(c => c.id === course.id) 
+                            ? 'bg-[#FF6B35] border-[#FF6B35]' 
+                            : 'bg-white border-slate-300'
+                        }`}>
+                          {selectedForCompare.find(c => c.id === course.id) && (
+                            <Check className="w-4 h-4 text-white" />
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <h3 className="text-lg font-heading font-semibold text-[#0F172A] mb-2 line-clamp-2 group-hover:text-[#0066CC] transition-colors">
@@ -523,6 +538,14 @@ export default function Courses() {
                     </div>
                   )}
 
+                  {/* Show First Year Fee */}
+                  {course.fees && course.fees.length > 0 && (
+                    <div className="flex items-center gap-2 text-sm text-[#475569] font-body mb-3">
+                      <IndianRupee className="h-4 w-4 flex-shrink-0" />
+                      <span className="font-medium">{formatCurrency(getFirstYearFees(course.fees))} (1st Year)</span>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                     <div className="flex items-center gap-1 text-sm text-[#475569] font-body">
                       <Clock className="h-4 w-4" />
@@ -533,10 +556,12 @@ export default function Courses() {
                     </Badge>
                   </div>
 
-                  <div className="mt-4 flex items-center text-[#0066CC] font-body text-sm font-semibold group-hover:gap-2 transition-all">
-                    View Details
-                    <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </div>
+                  {!compareMode && (
+                    <div className="mt-4 flex items-center text-[#0066CC] font-body text-sm font-semibold group-hover:gap-2 transition-all">
+                      View Details
+                      <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
