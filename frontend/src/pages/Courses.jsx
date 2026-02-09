@@ -218,12 +218,6 @@ export default function Courses() {
     }).format(amount);
   };
 
-  // Calculate total fees
-  const getTotalFees = (fees) => {
-    if (!fees || fees.length === 0) return 0;
-    return fees.reduce((sum, f) => sum + (f.amount || 0), 0);
-  };
-
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <Navbar />
