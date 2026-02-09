@@ -429,8 +429,13 @@ async def get_colleges(
             return []
     
     # If fee range filter is applied, get college IDs with courses in that range
+    # Only considers First Year fees (annual year_or_semester=1 OR semester year_or_semester=1,2)
     if fee_range:
-        fee_query = {}
+        fee_query = {"$or": [
+            {"fee_type": "annual", "year_or_semester": 1},
+            {"fee_type": "semester", "year_or_semester": {"$in": [1, 2]}}
+        ]}
+        
         if fee_range == "below_100000":
             fee_query["amount"] = {"$lt": 100000}
         elif fee_range == "100000_to_200000":
@@ -438,7 +443,7 @@ async def get_colleges(
         elif fee_range == "above_200000":
             fee_query["amount"] = {"$gt": 200000}
         
-        if fee_query:
+        if fee_query.get("amount"):
             fee_docs = await db.fees.find(fee_query, {"college_id": 1}).to_list(500)
             fee_college_ids = list(set([f["college_id"] for f in fee_docs]))
             if fee_college_ids:
