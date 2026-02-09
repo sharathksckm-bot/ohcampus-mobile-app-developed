@@ -153,8 +153,23 @@ export default function Courses() {
       result = result.filter(c => c.college?.city === selectedCity);
     }
 
+    // Fee range filter
+    if (selectedFeeRange !== 'all') {
+      result = result.filter(c => {
+        const totalFees = getTotalFees(c.fees);
+        if (selectedFeeRange === 'below_100000') {
+          return totalFees > 0 && totalFees < 100000;
+        } else if (selectedFeeRange === '100000_to_200000') {
+          return totalFees >= 100000 && totalFees <= 200000;
+        } else if (selectedFeeRange === 'above_200000') {
+          return totalFees > 200000;
+        }
+        return true;
+      });
+    }
+
     return result;
-  }, [courses, searchQuery, selectedCategory, selectedLevel, selectedState, selectedCity]);
+  }, [courses, searchQuery, selectedCategory, selectedLevel, selectedState, selectedCity, selectedFeeRange]);
 
   // Get filtered cities based on selected state
   const filteredCities = useMemo(() => {
