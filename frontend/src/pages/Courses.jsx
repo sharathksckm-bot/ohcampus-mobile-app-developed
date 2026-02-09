@@ -431,6 +431,19 @@ export default function Courses() {
                   Clear
                 </Button>
               )}
+
+              {/* Compare Courses Button */}
+              {!compareMode && (
+                <Button
+                  onClick={() => setCompareMode(true)}
+                  variant="outline"
+                  className="h-12 border-[#FF6B35] text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white"
+                  data-testid="enable-compare-mode-btn"
+                >
+                  <GitCompare className="h-4 w-4 mr-2" />
+                  Compare Courses
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
