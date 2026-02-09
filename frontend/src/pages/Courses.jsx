@@ -189,9 +189,10 @@ export default function Courses() {
     setSelectedLevel('all');
     setSelectedState('all');
     setSelectedCity('all');
+    setSelectedFeeRange('all');
   };
 
-  const hasActiveFilters = searchQuery || selectedCategory !== 'all' || selectedLevel !== 'all' || selectedState !== 'all' || selectedCity !== 'all';
+  const hasActiveFilters = searchQuery || selectedCategory !== 'all' || selectedLevel !== 'all' || selectedState !== 'all' || selectedCity !== 'all' || selectedFeeRange !== 'all';
 
   // Fetch course detail
   const handleViewCourse = async (course) => {
