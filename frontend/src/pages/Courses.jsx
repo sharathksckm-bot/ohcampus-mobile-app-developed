@@ -70,6 +70,7 @@ const getSeatStatusBadge = (status) => {
 };
 
 export default function Courses() {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
   const [levels, setLevels] = useState([]);
@@ -86,6 +87,11 @@ export default function Courses() {
   const [courseDetail, setCourseDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  
+  // Compare mode state
+  const [compareMode, setCompareMode] = useState(false);
+  const [selectedForCompare, setSelectedForCompare] = useState([]);
+  const [compareDialogOpen, setCompareDialogOpen] = useState(false);
 
   // Fee range options (First Year fees only)
   const feeRangeOptions = [
