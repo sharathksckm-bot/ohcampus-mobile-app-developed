@@ -85,12 +85,12 @@ export default function Courses() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  // Fee range options
+  // Fee range options (First Year fees only)
   const feeRangeOptions = [
     { value: 'all', label: 'All Fee Ranges' },
-    { value: 'below_100000', label: 'Below ₹1 Lakh' },
-    { value: '100000_to_200000', label: '₹1 Lakh - ₹2 Lakh' },
-    { value: 'above_200000', label: 'Above ₹2 Lakh' }
+    { value: 'below_100000', label: '1st Year < ₹1L' },
+    { value: '100000_to_200000', label: '1st Year ₹1L-₹2L' },
+    { value: 'above_200000', label: '1st Year > ₹2L' }
   ];
 
   // Calculate first year fees only (1st year annual OR 1st+2nd semester)
