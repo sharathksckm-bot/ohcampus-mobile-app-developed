@@ -757,6 +757,198 @@ export default function Courses() {
           ) : null}
         </DialogContent>
       </Dialog>
+
+      {/* Compare Courses Dialog */}
+      <Dialog open={compareDialogOpen} onOpenChange={setCompareDialogOpen}>
+        <DialogContent className="sm:max-w-[95vw] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-heading text-xl flex items-center gap-2">
+              <GitCompare className="h-5 w-5 text-[#FF6B35]" />
+              Compare Courses ({selectedForCompare.length})
+            </DialogTitle>
+            <DialogDescription className="font-body">
+              Side-by-side comparison of selected courses
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedForCompare.length > 0 && (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-slate-50">
+                    <TableHead className="font-heading min-w-[150px] sticky left-0 bg-slate-50">Criteria</TableHead>
+                    {selectedForCompare.map(course => (
+                      <TableHead key={course.id} className="font-heading min-w-[200px] text-center">
+                        <div className="space-y-1">
+                          <p className="text-[#0066CC]">{course.name}</p>
+                          <p className="text-xs text-[#94A3B8] font-normal">{course.college?.name}</p>
+                        </div>
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {/* Level */}
+                  <TableRow>
+                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
+                      <div className="flex items-center gap-2">
+                        <GraduationCap className="h-4 w-4 text-[#0066CC]" />
+                        Level
+                      </div>
+                    </TableCell>
+                    {selectedForCompare.map(course => (
+                      <TableCell key={course.id} className="text-center">
+                        <Badge variant="secondary">{course.level}</Badge>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+
+                  {/* Duration */}
+                  <TableRow>
+                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-[#0066CC]" />
+                        Duration
+                      </div>
+                    </TableCell>
+                    {selectedForCompare.map(course => (
+                      <TableCell key={course.id} className="text-center font-body">
+                        {course.duration || '—'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+
+                  {/* Category */}
+                  <TableRow>
+                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-[#0066CC]" />
+                        Category
+                      </div>
+                    </TableCell>
+                    {selectedForCompare.map(course => (
+                      <TableCell key={course.id} className="text-center font-body">
+                        {course.category || '—'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+
+                  {/* Location */}
+                  <TableRow>
+                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-[#0066CC]" />
+                        Location
+                      </div>
+                    </TableCell>
+                    {selectedForCompare.map(course => (
+                      <TableCell key={course.id} className="text-center font-body text-sm">
+                        {course.college ? `${course.college.city}, ${course.college.state}` : '—'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+
+                  {/* First Year Fees */}
+                  <TableRow>
+                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
+                      <div className="flex items-center gap-2">
+                        <IndianRupee className="h-4 w-4 text-[#0066CC]" />
+                        1st Year Fees
+                      </div>
+                    </TableCell>
+                    {selectedForCompare.map(course => (
+                      <TableCell key={course.id} className="text-center font-body font-semibold text-green-600">
+                        {course.fees && course.fees.length > 0 ? formatCurrency(getFirstYearFees(course.fees)) : '—'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+
+                  {/* Total Fees */}
+                  <TableRow>
+                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
+                      <div className="flex items-center gap-2">
+                        <IndianRupee className="h-4 w-4 text-[#0066CC]" />
+                        Total Fees
+                      </div>
+                    </TableCell>
+                    {selectedForCompare.map(course => (
+                      <TableCell key={course.id} className="text-center font-body font-semibold">
+                        {course.fees && course.fees.length > 0 ? formatCurrency(getTotalFees(course.fees)) : '—'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+
+                  {/* Seat Status */}
+                  <TableRow>
+                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-[#0066CC]" />
+                        Seat Status
+                      </div>
+                    </TableCell>
+                    {selectedForCompare.map(course => (
+                      <TableCell key={course.id} className="text-center">
+                        {getSeatStatusBadge(course.seat_status || 'Available')}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+
+                  {/* Eligibility */}
+                  <TableRow>
+                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
+                      <div className="flex items-center gap-2">
+                        <Target className="h-4 w-4 text-[#0066CC]" />
+                        Eligibility
+                      </div>
+                    </TableCell>
+                    {selectedForCompare.map(course => (
+                      <TableCell key={course.id} className="text-center font-body text-sm">
+                        {course.eligibility ? (
+                          <span className="line-clamp-3">{course.eligibility}</span>
+                        ) : '—'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+
+                  {/* College */}
+                  <TableRow>
+                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
+                      <div className="flex items-center gap-2">
+                        <Building2 className="h-4 w-4 text-[#0066CC]" />
+                        College
+                      </div>
+                    </TableCell>
+                    {selectedForCompare.map(course => (
+                      <TableCell key={course.id} className="text-center font-body text-sm">
+                        <p className="font-medium">{course.college?.name || '—'}</p>
+                        <p className="text-xs text-[#94A3B8]">{course.college?.category}</p>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-2 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setCompareDialogOpen(false)}
+            >
+              Close
+            </Button>
+            <Button
+              onClick={() => {
+                setCompareDialogOpen(false);
+                exitCompareMode();
+              }}
+              className="bg-[#0066CC] hover:bg-[#0052A3]"
+            >
+              Done Comparing
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
