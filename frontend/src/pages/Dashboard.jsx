@@ -485,6 +485,42 @@ export default function Dashboard() {
                   testId="course-filter"
                 />
 
+                {/* Course Level Filter */}
+                <Select 
+                  value={selectedFilters.level} 
+                  onValueChange={(level) => setSelectedFilters(prev => ({ ...prev, level }))}
+                >
+                  <SelectTrigger className="w-full lg:w-[180px] h-12 font-body bg-white" data-testid="level-filter">
+                    <Layers className="h-4 w-4 mr-2 text-[#94A3B8]" />
+                    <SelectValue placeholder="Course Level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {levelOptions.map(opt => (
+                      <SelectItem key={opt.value} value={opt.value || "all"}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Fee Range Filter */}
+                <Select 
+                  value={selectedFilters.feeRange} 
+                  onValueChange={(feeRange) => setSelectedFilters(prev => ({ ...prev, feeRange }))}
+                >
+                  <SelectTrigger className="w-full lg:w-[180px] h-12 font-body bg-white" data-testid="fee-range-filter">
+                    <IndianRupee className="h-4 w-4 mr-2 text-[#94A3B8]" />
+                    <SelectValue placeholder="Fee Range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {feeRangeOptions.map(opt => (
+                      <SelectItem key={opt.value} value={opt.value || "all"}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
                 {/* Clear Filters */}
                 {hasActiveFilters && (
                   <Button
