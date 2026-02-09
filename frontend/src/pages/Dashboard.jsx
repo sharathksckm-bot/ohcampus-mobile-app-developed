@@ -158,7 +158,9 @@ export default function Dashboard() {
     states: [], 
     cities: [], 
     categories: [], 
-    courses: [] 
+    courses: [],
+    level: '',
+    feeRange: ''
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [colleges, setColleges] = useState([]);
@@ -168,6 +170,22 @@ export default function Dashboard() {
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const navigate = useNavigate();
+
+  // Fee range and level options
+  const feeRangeOptions = [
+    { value: '', label: 'All Fee Ranges' },
+    { value: 'below_100000', label: 'Below ₹1 Lakh' },
+    { value: '100000_to_200000', label: '₹1 Lakh - ₹2 Lakh' },
+    { value: 'above_200000', label: 'Above ₹2 Lakh' }
+  ];
+
+  const levelOptions = [
+    { value: '', label: 'All Levels' },
+    { value: 'UG', label: 'Undergraduate (UG)' },
+    { value: 'PG', label: 'Postgraduate (PG)' },
+    { value: 'Diploma', label: 'Diploma' },
+    { value: 'Certificate', label: 'Certificate' }
+  ];
 
   // Fetch filters
   const fetchFilters = useCallback(async () => {
