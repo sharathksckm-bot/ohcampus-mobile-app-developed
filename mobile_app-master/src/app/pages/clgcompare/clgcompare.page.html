@@ -1,0 +1,749 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="1">
+          <ion-icon name="chevron-back-outline" routerLink="/tabs/tabs/tab1"></ion-icon>
+        </ion-col>
+        <ion-col size="8">
+
+          <ion-buttons>
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="3" class="text-right selfcenter flex just-right">
+          <!-- <div class="notification" (click)="notification()"><ion-icon name="notifications-outline"></ion-icon>
+            <ion-badge color="danger"></ion-badge>
+          </div> -->
+          <ion-icon routerLink="/editprofile" class="notification" name="person-outline"></ion-icon>
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="maindiv">
+
+    <div class="firstsection">
+      <h5>Compare Colleges</h5>
+      <p>Compare Colleges on the basis of their Fees, Placement, Cut off, Reviews, Seats, Courses and Other details.
+        Download fee details, Placement report, Eligibility criteria etc.</p>
+    </div>
+
+    <div class="secdiv">
+
+
+      <div class="cmprsection">
+        <table>
+
+
+          <tr style="height: 110px;">
+
+            <td>
+              <div *ngIf="hidediv===false">
+                <div *ngFor="let item of clgid1; let i = index">
+                  <div class="vss">VS</div>
+                  <ion-icon name="close-outline" class="closecard" (click)="removeCollege1(i)"></ion-icon>
+                  <img class="setimg" [src]="item.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+                </div>
+              </div>
+
+              <div>
+                <ion-card class="setcard" (click)="openModal('open-modal')" *ngIf="hidediv===true">
+                  <ion-icon id="open-modal" name="add-outline"></ion-icon>
+                  <ion-label>Add College</ion-label>
+                </ion-card>
+              </div>
+            </td>
+
+
+            <td>
+
+              <div *ngIf="hidediv1===false">
+                <div *ngFor="let item of clgid2; let i = index">
+                  <ion-icon name="close-outline" class="closecard" (click)="removeCollege2(i)"></ion-icon>
+                  <img class="setimg" [src]="item.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+                </div>
+              </div>
+
+              <div>
+                <ion-card class="setcard" (click)="openModal('open-modal1')" *ngIf="hidediv1===true">
+                  <ion-icon id="open-modal" name="add-outline"></ion-icon>
+                  <ion-label>Add College</ion-label>
+                </ion-card>
+              </div>
+
+
+            </td>
+          </tr>
+
+          <ng-container *ngIf="(clgid1 && clgid1.length > 0) || (clgid2 && clgid2.length > 0)">
+
+            <tr style="height: 110px;">
+              <td>
+                <div *ngFor="let item of clgid1">
+                  <div>
+                    <h6> {{item.title}}</h6>
+                    <span><ion-icon name="location-outline"></ion-icon>{{item.city}}</span>
+                    <p>{{item.courseName}}</p>
+                    <!-- <ion-button fill="outline">Modify Selection</ion-button> -->
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div *ngFor="let item of clgid2">
+                  <div>
+                    <h6>{{item.title}}</h6>
+                    <span><ion-icon name="location-outline"></ion-icon> {{item.city}}</span>
+                    <p>{{item.courseName}}</p>
+                    <!-- <ion-button fill="outline">Modify Selection</ion-button> -->
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </table>
+
+        <ng-container *ngIf="(clgid1 && clgid1.length > 0) || (clgid2 && clgid2.length > 0)">
+          <ion-accordion-group [multiple]="true"
+            [value]="['first', 'second', 'third', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']">
+            <ion-accordion value="first">
+              <ion-item slot="header">
+                <h5 class="settitlcolor">Institute Information</h5>
+              </ion-item>
+              <div slot="content">
+                <table>
+                  <tr>
+                    <td>
+                      <div *ngFor="let item of clgid1">
+                        <span class="gray"> Established Year </span>
+                        <p>{{item.estd}}</p>
+                        <span class="gray">Ownership</span>
+                        <p>{{item.Collage_category}}</p>
+                        <h6>Total Courses <span class="blue">({{item.Courses_Count}})</span></h6>
+                        <!-- <span class="gray">B.Tech.</span>
+                <p>27 Courses</p> -->
+                      </div>
+                    </td>
+                    <td>
+                      <div *ngFor="let item of clgid2">
+                        <span class="gray"> Established Year </span>
+                        <p>{{item.estd}}</p>
+                        <span class="gray">Ownership</span>
+                        <p>{{item.Collage_category}}</p>
+                        <h6>Total Courses <span class="blue">({{item.Courses_Count}})</span></h6>
+                        <!-- <span class="gray">B.Tech.</span>
+              <p>27 Courses</p> -->
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </ion-accordion>
+            <ion-accordion value="second">
+              <ion-item slot="header">
+                <h5>Course Details</h5>
+              </ion-item>
+              <div slot="content">
+                <table>
+                  <tr>
+                    <td>
+                      <div *ngFor="let item of clgid1">
+                        <div *ngFor="let item of Courseslist">
+                          <span class="gray"> Course Credential </span>
+                          <p>Degree</p>
+                          <span class="gray">Course Level</span>
+                          <p>{{item.level}}</p>
+                          <span class="gray">Duration</span>
+                          <p>{{item.duration}} Years</p>
+                          <span class="gray">Mode</span>
+                          <p>Full Time</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div *ngFor="let item of clgid2">
+                        <div *ngFor="let dtls of Courseslist2">
+                          <span class="gray"> Course Credential </span>
+                          <p>Degree</p>
+                          <span class="gray">Course Level</span>
+                          <p>{{dtls.level}}</p>
+                          <span class="gray">Duration</span>
+                          <p>{{dtls.duration}} Years</p>
+                          <span class="gray">Mode</span>
+                          <p>Full Time</p>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </ion-accordion>
+            <ion-accordion value="third">
+              <ion-item slot="header">
+                <h5>Student Rating & Reviews </h5>
+              </ion-item>
+              <div slot="content">
+                <table>
+                  <tr>
+                    <td class="reviewSec">
+                      <div *ngFor="let item of clgid1">
+                        <p class="bold">Overall Rating</p>
+                        <h1>{{Rating}}</h1>
+                        <ion-icon class="seticons" name="star"></ion-icon>
+                        <ion-icon class="seticons" name="star"></ion-icon>
+                        <ion-icon class="seticons" name="star"></ion-icon>
+                        <ion-icon class="seticons" name="star"></ion-icon>
+                        <ion-icon class="seticons" name="star"></ion-icon>
+
+                        <p>Based on {{totalReview}} verified review</p>
+                        <p>Placements <ion-icon class="seticons" name="star"></ion-icon></p>
+                        <p>Infrastructure <ion-icon class="seticons" name="star"></ion-icon></p>
+                        <p>Faculty <ion-icon class="seticons" name="star"></ion-icon></p>
+                        <p>Crowed & Campus <ion-icon class="seticons" name="star"></ion-icon></p>
+                        <p>Value for Money <ion-icon class="seticons" name="star"></ion-icon></p>
+
+                      </div>
+                    </td>
+                    <td class="reviewSec">
+                      <div *ngFor="let item of clgid2">
+                        <p class="bold">Overall Rating</p>
+                        <h1>{{Rating2}}</h1>
+                        <ion-icon class="seticons" name="star"></ion-icon>
+                        <ion-icon class="seticons" name="star"></ion-icon>
+                        <ion-icon class="seticons" name="star"></ion-icon>
+                        <ion-icon class="seticons" name="star"></ion-icon>
+                        <ion-icon class="seticons" name="star"></ion-icon>
+
+                        <p>Based on {{totalReview2}} verified review</p>
+                        <p>Placements <ion-icon class="seticons" name="star"></ion-icon></p>
+                        <p>Infrastructure <ion-icon class="seticons" name="star"></ion-icon></p>
+                        <p>Faculty <ion-icon class="seticons" name="star"></ion-icon></p>
+                        <p>Crowed & Campus <ion-icon class="seticons" name="star"></ion-icon></p>
+                        <p>Value for Money <ion-icon class="seticons" name="star"></ion-icon></p>
+
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </ion-accordion>
+
+
+            <ion-accordion value="four">
+              <ion-item slot="header">
+                <h5>Ranking</h5>
+              </ion-item>
+              <div slot="content">
+                <table>
+                  <tr>
+                    <td>
+                      <div *ngFor="let item of clgid1">
+                        <div *ngFor="let ranking of RankArr">
+
+                          <span class="gray">{{ ranking.title }}</span>
+                          <p class="value">{{ ranking.rank || 'Not Ranked' }}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div *ngFor="let item of clgid2">
+                        <div *ngFor="let ranking of RankArr2">
+
+                          <span class="gray">{{ ranking.title }}</span>
+                          <p class="value">{{ ranking.rank || 'Not Ranked' }}</p>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </ion-accordion>
+
+
+
+            <ion-accordion value="five">
+              <ion-item slot="header">
+                <h5>Placement </h5>
+              </ion-item>
+              <div slot="content">
+
+                <table>
+                  <tr>
+                    <!-- <td>
+                      <div *ngFor="let item of clgid1">
+                        <span class="gray"> Median Salary </span>
+                        
+                        <p>{{ median_salary ? median_salary : 'N/A' }}</p>
+                        <span class="gray"> No of companies visited </span>
+                      
+                        <p>{{ no_of_companies_visited ? no_of_companies_visited : 'N/A' }}</p>
+                        <span class="gray"> No of student selected </span>
+                       
+                        <p>{{ no_of_student_selected ? no_of_student_selected : 'N/A' }}</p>
+                        <span class="gray"> No of student placed </span>
+                       
+                        <p>{{ no_of_students_placed ? no_of_students_placed : 'N/A' }}</p>
+                        <span class="gray"> Year </span>
+                       
+                        <p>{{ year ? year : 'N/A' }}</p>
+                      </div>
+                    </td> -->
+
+                    <!-- <td>
+                      <div *ngFor="let item of clgid2">
+                        <span class="gray"> Median Salary </span>
+                        <p>{{ median_salary2 ? median_salary2 : 'N/A' }}</p>
+                        <span class="gray"> No of companies visited </span>
+                        <p>{{ no_of_companies_visited2 ? no_of_companies_visited2 : 'N/A' }}</p>
+                        <span class="gray"> No of student selected </span>
+                        <p>{{ no_of_student_selected2 ? no_of_student_selected2 : 'N/A' }}</p>
+                        <span class="gray"> No of student placed </span>
+                        <p>{{ no_of_students_placed2 ? no_of_students_placed2 : 'N/A' }}</p>
+                        <span class="gray"> Year </span>
+                        <p>{{ year2 ? year2 : 'N/A' }}</p>
+                      </div>
+                    </td> -->
+
+
+
+                    <td>
+                      <div *ngFor="let item of clgid1">
+
+                        <span class="gray">Academic year </span>
+                        <p>{{ (year && year !== '0') ? year : 'N/A' }}</p>
+
+                        <span class="gray"> No. of companies visited </span>
+                        <p>{{ (no_of_companies_visited && no_of_companies_visited !== '0') ? no_of_companies_visited
+                          : 'N/A' }}</p>
+
+                        <span class="gray"> No. of students placed </span>
+                        <p>{{ (no_of_students_placed && no_of_students_placed !== '0') ? no_of_students_placed :
+                          'N/A' }}</p>
+
+                        <span class="gray"> Median salary (INR) </span>
+                        <p>{{ (median_salary && median_salary !== '0') ? median_salary : 'N/A' }}</p>
+
+
+
+                        <span class="gray"> No. of students selected for higher education</span>
+                        <p>{{ (no_of_student_selected && no_of_student_selected !== '0') ? no_of_student_selected :
+                          'N/A' }}</p>
+
+                      </div>
+                    </td>
+
+
+
+                    <td>
+                      <div *ngFor="let item of clgid2">
+
+                        <span class="gray"> Academic year </span>
+                        <p>{{ (year2 && year2 !== '0') ? year2 : 'N/A' }}</p>
+
+                        <span class="gray"> No. of companies visited </span>
+                        <p>{{ (no_of_companies_visited2 && no_of_companies_visited2 !== '0') ? no_of_companies_visited2
+                          : 'N/A' }}</p>
+
+
+                        <span class="gray"> No. of students placed </span>
+                        <p>{{ (no_of_students_placed2 && no_of_students_placed2 !== '0') ? no_of_students_placed2 :
+                          'N/A' }}</p>
+
+
+                        <span class="gray"> Median salary (INR) </span>
+                        <p>{{ (median_salary2 && median_salary2 !== '0') ? median_salary2 : 'N/A' }}</p>
+
+
+
+                        <span class="gray"> No. of students selected for higher education </span>
+                        <p>{{ (no_of_student_selected2 && no_of_student_selected2 !== '0') ? no_of_student_selected2 :
+                          'N/A' }}</p>
+
+                      </div>
+                    </td>
+
+
+                  </tr>
+                </table>
+
+
+
+
+
+
+              </div>
+            </ion-accordion>
+
+            <ion-accordion value="six">
+              <ion-item slot="header">
+                <h5>Course Fees </h5>
+              </ion-item>
+              <div slot="content">
+                <table>
+                  <tr>
+                    <td>
+                      <div *ngFor="let item of clgid1">
+                        <div *ngFor="let item of coursesandfeesArr">
+                          <span class="gray"> Course Name</span>
+                          <p>{{item.name}}</p>
+                          <span class="gray"> Subcategory </span>
+                          <p>{{item.subCategoryName }}</p>
+                          <span class="gray"> Category </span>
+                          <p>{{item.courseCategoryName}}</p>
+                          <span class="gray">Annual Fees </span>
+                          <p>{{ item.total_fees ? item.total_fees : 'N/A' }}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div *ngFor="let item of clgid2">
+                        <div *ngFor="let item of coursesandfeesArr2">
+                          <span class="gray"> course name</span>
+                          <p>{{item.name}}</p>
+                          <span class="gray"> Subcategory </span>
+                          <p>{{item.subCategoryName }}</p>
+                          <span class="gray"> Category </span>
+                          <p>{{item.courseCategoryName}}</p>
+                          <span class="gray"> Annual Fees </span>
+                          <p>{{ item.total_fees ? item.total_fees : 'N/A' }}</p>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </ion-accordion>
+
+
+
+            <ion-accordion value="seven">
+              <ion-item slot="header">
+                <h5>Admission Info </h5>
+              </ion-item>
+              <div slot="content">
+                <table>
+                  <tr>
+                    <td>
+                      <div *ngFor="let item of clgid1">
+                        <div *ngFor="let item of AdminssionprocessArr">
+                          <span class="gray"> Accepted Exams </span>
+
+                          <p>{{ item.Accepting_Exams ? item.Accepting_Exams : 'N/A' }}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div *ngFor="let item of clgid2">
+                        <div *ngFor="let item of AdminssionprocessArr2">
+                          <span class="gray"> Accepted Exams </span>
+                          <p>{{ item.Accepting_Exams ? item.Accepting_Exams : 'N/A' }}</p>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </ion-accordion>
+
+
+
+
+
+            <ion-accordion value="ten">
+              <ion-item slot="header">
+                <h5>Infrastructure & Facilities</h5>
+              </ion-item>
+              <div slot="content">
+                <table>
+                  <tr>
+                    <td class="facility">
+
+
+                      <div *ngFor="let clgItem of clgid1">
+                        <div class="facelityarr" *ngFor="let facility of facilitiesArr">
+                          <ng-container *ngIf="isSupportedIcon(facility.icon)">
+                            <p style="display: flex; align-items: center; gap: 8px;">
+                              <ng-container *ngIf="facility.icon.startsWith('fa-'); else materialIcon">
+                                <!-- Font Awesome Icon -->
+                                <i [ngClass]="getFontAwesomeIconClass(facility.icon)"
+                                  style="color: blue; font-size: 10px;"></i>
+                              </ng-container>
+                              <ng-template #materialIcon>
+                                <!-- Material Icon -->
+                                <mat-icon style="color: blue; font-size: 10px;">{{ facility.icon }}</mat-icon>
+                              </ng-template>
+                              <span>{{ facility.name }}</span>
+                            </p>
+                          </ng-container>
+                        </div>
+                      </div>
+
+                    </td>
+
+                    <td class="facility">
+
+
+                      <div *ngFor="let clgItem of clgid2">
+                        <div class="facelityarr" *ngFor="let facility of facilitiesArr2">
+                          <ng-container *ngIf="isSupportedIcon(facility.icon)">
+                            <p style="display: flex; align-items: center; gap: 8px;">
+                              <ng-container *ngIf="facility.icon.startsWith('fa-'); else materialIcon">
+                                <!-- Font Awesome Icon -->
+                                <i [ngClass]="getFontAwesomeIconClass(facility.icon)"
+                                  style="color: blue; font-size: 10px;"></i>
+                              </ng-container>
+                              <ng-template #materialIcon>
+                                <!-- Material Icon -->
+                                <mat-icon style="color: blue; font-size: 10px;">{{ facility.icon }}</mat-icon>
+                              </ng-template>
+                              <span>{{ facility.name }}</span>
+                            </p>
+                          </ng-container>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </ion-accordion>
+
+
+
+
+          </ion-accordion-group>
+        </ng-container>
+      </div>
+    </div>
+
+
+    <div class="shearesec1">
+      <ion-row>
+        <ion-col size="3">
+          <ion-label class="labelset">Share this :</ion-label>
+        </ion-col>
+        <ion-col size="9">
+          <img class="setimg" (click)=" shareOnFacebook()" src="../../../assets/icon/facebook.png">
+          <img class="setimg" (click)=" shareOnWhatsApp()" src="../../../assets/icon/whatsapp.png">
+          <img class="setimg" (click)="  shareOnTwitter()" src="../../../assets/icon/twitter.png">
+          <img class="setimg" (click)="  shareOnLinkedIn()" src="../../../assets/icon/linkedin.png">
+          <!-- <img class="setimg set" src="../../../assets/icon/email.png"> -->
+        </ion-col>
+      </ion-row>
+    </div>
+
+
+    <!-- 4th section -->
+    <!-- <div class="cardsection" >
+      <h4>Popular comparisons </h4>
+
+      <ion-slides [options]="slideOpts">
+
+        <ion-slide >
+          <ion-card class="setcrd">
+            <div class="vs">VS</div>
+            <ion-row>
+              <div *ngFor="let item of clgid1;" >
+              <ion-col size="6">
+                <div class="vsimg"> <img class="setimg" [src]="item[0].logo"
+                    onerror="this.src='../../assets/clg_img/no_image2.jpg';"></div>
+                <p class="title">{{item[0].title}}</p>
+                <p class="setclgN">{{item[0].branch}} </p>
+
+                <p class="setrating">
+                  {{item[0].rating}}
+                  <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
+                    <ion-icon class="seticons" [name]="i < item[0].rating ? 'star' : 'star-outline'"></ion-icon>
+                  </ng-container>
+                  ({{item[0].totalRatings}})
+                  {{item[0].reviews}}
+                </p>
+
+              </ion-col>
+            </div>
+              <ion-col size="6" *ngFor="let item of cmprclgArr">
+                <div class="vsimg"> <img class="setimg" [src]="item.logo"
+                    onerror="this.src='../../assets/clg_img/no_image2.jpg';"></div>
+                <p class="title">{{item[1].title}}</p>
+                <p class="setclgN">{{item[1].branch}}</p>
+                <p class="setrating">
+                  {{item[0].rating}}
+                  <ng-container *ngFor="let star of [1, 2, 3, 4, 5]; let i = index">
+                    <ion-icon class="seticons" [name]="i < item[1].rating ? 'star' : 'star-outline'"></ion-icon>
+                  </ng-container>
+                  ({{item[1].totalRatings}})
+                  {{item[1].reviews}}
+                </p>
+              </ion-col>
+            </ion-row>
+            <div class="setbtn" (click)="compr2clg(item[0].id,item[1].id)">
+              <ion-button>Compare</ion-button>
+            </div>
+
+          </ion-card>
+        </ion-slide>
+      </ion-slides>
+
+    </div> -->
+
+
+    <!-- 4th section -->
+    <!-- <div class="cardsection" *ngIf="clgid1 && clgid1.length > 0 && cmprclgArr && cmprclgArr.length > 0">
+  <h4>Popular comparisons</h4>
+  <ion-slides [options]="slideOpts">
+    <ion-slide *ngFor="let cmpClg of cmprclgArr; let i = index">
+      <ion-card class="setcrd">
+        <div class="vs">VS</div>
+        <ion-row>
+          <ion-col size="6">
+            <div class="vsimg">
+              <img class="setimg" [src]="clgid1[0].logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+            </div>
+            <p class="title">{{ clgid1[0].title }}</p>
+            <p class="setclgN">{{ clgid1[0].branch }}</p>
+          </ion-col>
+          <ion-col size="6">
+            <div class="vsimg">
+              <img class="setimg" [src]="cmpClg.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+            </div>
+            <p class="title">{{ cmpClg.title }}</p>
+            <p class="setclgN">{{ cmpClg.branch }}</p>
+          </ion-col>
+        </ion-row>
+        <div class="setbtn" (click)="compr2clg(clgidclg1,cmprclgid)">
+          <ion-button>Compare</ion-button>
+        </div>
+      </ion-card>
+    </ion-slide>
+  </ion-slides>
+</div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- ion model 1 -->
+
+    <ion-modal [isOpen]="isModalOpen" (willDismiss)="onWillDismiss($event)">
+      <ng-template>
+
+        <ion-content>
+
+          <ion-card class="collegecard">
+
+            <ion-card-header>
+              <ion-row>
+                <ion-col size="11">
+                  <ion-card-title>Select Degree and Course </ion-card-title>
+                </ion-col>
+                <ion-col size="1">
+                  <ion-icon (click)="cancel()" name="close-outline" class="setclose"></ion-icon>
+                </ion-col>
+              </ion-row>
+
+
+            </ion-card-header>
+            <ion-card-content>
+              <ion-searchbar [(ngModel)]="searchTerm" (ionChange)="search()" (ionBlur)="closeResults()"
+                placeholder="Search college" class="searchbar"></ion-searchbar>
+
+              <div *ngIf="!hide" class="setlist">
+                <ul *ngIf="showResults">
+                  <li *ngFor="let result of searchResults">
+                    <div (click)="selectResult(result)" style="color:black !important">{{ result.title }}</div>
+                  </li>
+                </ul>
+              </div>
+
+
+              <!-- <ion-item>
+                <ion-label>Select Course Level</ion-label>
+                <ion-select [(ngModel)]="courselevel" (ionChange)="getcourselts()">
+                  <ion-select-option *ngFor="let item of locationArry" [value]="item.id"
+                    style="color:black !important; --color:black;">
+                    {{ item.name}}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item> -->
+              <ion-item>
+                <ion-label>Select Course Level</ion-label>
+                <ion-select [(ngModel)]="courselevel" (ionChange)="getcollgelevel(courselevel)">
+                  <ion-select-option *ngFor="let item of locationArry" [value]="item">
+                    {{ item.name }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-label>Select Course</ion-label>
+                <!-- 
+                <ion-select [(ngModel)]="selectcourseId"  >
+                  <ion-select-option class="select-text ionselect" style="height: 100px;" *ngFor="let item of courseArry" [value]="item.id"
+                    style="color:black !important; --color:black; white-space: normal !important;">
+                    {{item.name}}
+                  </ion-select-option>
+                </ion-select> -->
+                <ion-select [(ngModel)]="selectcourseId" interface="alert">
+                  <ion-select-option *ngFor="let item of courseArry" [value]="item.id" class="multi-line-option">
+                    {{ item.name }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+              <div>
+                <ion-button (click)="clgcomapr(collegeId,selectcourseId,courselevel)" expand="block">Apply</ion-button>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+    <!-- ion model close -->
+
+
+
+  </div>
+</ion-content>
+
+
+
+
+
+<ion-footer>
+  <ion-row>
+    <ion-tab-button class="botmtabset" routerLink="/tabs/tabs/tab1">
+      <ion-icon name="home" style="font-size:20px; color:black !important"></ion-icon>
+      <ion-label style="color:black !important">Home</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button class="botmtabset" tab="tab2" routerLink="/tabs/tabs/tab2">
+      <ion-icon name="search-outline" style="font-size:20px; color:black !important"></ion-icon>
+      <ion-label style="color:black !important">Search</ion-label>
+    </ion-tab-button>
+
+
+    <ion-tab-button class="botmtabset" routerLink="/tabs/tabs/tab3">
+      <ion-icon name="albums-outline" style="font-size:20px; color:black !important"></ion-icon>
+      <ion-label style="color:black !important">Recommended</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button class="botmtabset" routerLink="/tabs/tabs/tab4">
+      <ion-icon name="bookmark-outline" style="font-size:20px; color:black !important"></ion-icon>
+      <ion-label style="color:black !important">Shortlist</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button class="botmtabset" routerLink="/tabs/tabs/tab5">
+      <ion-icon name="chatbox-outline" style="font-size:20px; color:black !important"></ion-icon>
+      <ion-label style="color:black !important">Assistant</ion-label>
+    </ion-tab-button>
+
+  </ion-row>
+</ion-footer>

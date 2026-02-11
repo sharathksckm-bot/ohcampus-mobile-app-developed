@@ -1,0 +1,107 @@
+
+<ion-content>
+    <div class="matfield">
+      <ion-row>
+        <ion-col size="10">
+          <h4 class="sethedding">PREDICT ADMISSION</h4>
+        </ion-col>
+        <ion-col size="2">
+          <ion-icon class="iconclose" name="close-outline" (click)="close()"></ion-icon>
+        </ion-col>
+      </ion-row>
+  
+      <form [formGroup]="predictaddmi">
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Student Name</mat-label>
+          <input matInput placeholder="Enter your name" formControlName="student_name" (input)="checkValidInputDat($event, 'student_name')" type="text" >
+          <ion-icon name="person-outline" class="icon" matSuffix></ion-icon>
+        </mat-form-field>
+  
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="Enter your email" formControlName="email" type="text">
+          <ion-icon name="mail-outline" class="icon" matSuffix></ion-icon>
+        </mat-form-field>
+  
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Mobile Number</mat-label>
+          <input 
+              matInput 
+              placeholder="Enter your mobile number" 
+              formControlName="mobile_no" 
+              (input)="checkValidInputData($event, 'mobile_no')" 
+              maxlength="10" 
+              type="tel" 
+              pattern="[0-9]*">
+          <ion-icon name="call-outline" class="icon" matSuffix></ion-icon>
+      </mat-form-field>
+
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Course Category</mat-label>
+          <mat-select formControlName="category" (selectionChange)="getCourseByCategoryClg($event.value)">
+            <mat-option *ngFor="let category of CourseCategoryArr" [value]="category.category_id">
+              {{category.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        
+  
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Course</mat-label>
+          <mat-select formControlName="course">
+            <mat-option *ngFor="let course of CoursesByCatArr" [value]="course.id">
+              {{course.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>College</mat-label>
+          <input matInput [(ngModel)]="collegename" readonly  formControlName="college">
+        </mat-form-field>
+        
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Entrance Exam</mat-label>
+          <input type="text"
+                 placeholder="Pick an exam"
+                 aria-label="Entrance Exam"
+                 matInput
+                 formControlName="entrance_exam"
+                 [formControl]="entranceExamControl"
+                 [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let exam of filteredExams | async" [value]="exam.title">
+              {{ exam.title }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Expected/Secured Rank</mat-label>
+          <input matInput placeholder="Enter your rank" formControlName="rank" type="number">
+          <ion-icon class="icon" matSuffix></ion-icon>
+      </mat-form-field>
+      
+      <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Expected/Secured Score</mat-label>
+          <input matInput placeholder="Enter your score" formControlName="score" type="number">
+          <ion-icon class="icon" matSuffix></ion-icon>
+      </mat-form-field>
+        <button mat-raised-button color="primary" class="px-12 justify-center mt-4 mb-10" type="submit" (click)="savpredictApplication()" >Submit</button>
+      </form>
+
+
+    </div>
+  </ion-content>  
+
+
+
+
+  
+
+
+
+
+
+   

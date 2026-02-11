@@ -1,0 +1,988 @@
+<ion-header [translucent]="true" class="headerBg">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="9">
+          <ion-buttons class="primaryhead">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="3" class="text-right selfcenter flex just-right">
+          <div class="notification" (click)="notification()"><ion-icon name="notifications-outline"></ion-icon>
+            <ion-badge color="danger"></ion-badge>
+          </div>
+          <ion-icon class="notification" routerLink="/editprofile" name="person-outline"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <div>
+    <div>
+      <ion-item lines="none" style="--padding-start: 6px;">
+        <ion-segment [scrollable]="true" (ionChange)="segmentChangede($event,2)" [(ngModel)]="segmentBtn">
+          <ion-segment-button *ngFor="let item of coursesArray" value="{{item.id}}"
+            (click)="onclick(item.id,item.name)">
+
+            <ion-label>{{item.name}}</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-item>
+    </div>
+    <h5 *ngIf="getCollegeList" style="margin: 10px 10px 2px;">Top 20 {{crsname}} colleges you might like</h5>
+
+    <p style="margin: 0px 10px 12px;">Based on your preferences<span class="seteditspan"
+        (click)="editpreferance()">Edit</span>
+    </p>
+
+    
+<div *ngIf="getCollegeList">
+    <div *ngIf="getCollegeListBy && getCollegeListBy.length > 0">
+      <ion-slides [options]="slideOptspage" class="ml-10">
+        <ion-slide class="slide_set" *ngFor="let getCollegeListBy of getCollegeListBy; let i = index">
+          <ion-card class="size_set">
+
+            <img class="img_align" [src]="getCollegeListBy.logo"
+              onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+
+
+
+         
+
+            <div class="img_alignn" 
+            [ngClass]="{'shortlisted': isShortlisted(getCollegeListBy.collegeid)}"
+            (click)="toggleShortlist(getCollegeListBy.collegeid)">
+         <ion-icon [name]="isShortlisted(getCollegeListBy.collegeid) ? 'bookmark' : 'bookmark-outline'"
+                   [class.active]="isShortlisted(getCollegeListBy.collegeid)">
+         </ion-icon>
+       </div>
+
+
+            <p class="tit_set" (click)="getclgid(getCollegeListBy.collegeid)">{{getCollegeListBy.title}}</p>
+            <p class="set_botm">
+              <ion-icon name="location-outline"></ion-icon>{{getCollegeListBy.city}}, {{getCollegeListBy.statename}}
+            </p>
+
+            <div class="text-secondary text-md mt-3" >
+              {{getCollegeListBy.rankcategory }}: {{ getCollegeListBy.rank}}
+            </div>
+            <div class="text-secondary text-md mt-3" style="height: 10px;">
+              {{ getCollegeListBy.accreditation?.length > 25
+              ? (getCollegeListBy.accreditation | slice: 0:25) + '...'
+              : getCollegeListBy.accreditation }}
+            </div>
+
+
+            <div>
+              <p style="color:green">{{getCollegeListBy.CourseCount}} Courses</p> 
+             <p class="spnn" *ngIf="getCollegeListBy.rating > 0"> |<ion-icon name="star-outline" class="staricon"></ion-icon> {{getCollegeListBy.rating}}</p>
+            </div>
+
+            <div style="height: 14px;">
+              <p *ngIf="getCollegeListBy?.total_fees" class="fees"> Annual Fees (INR): {{ getCollegeListBy.total_fees }}
+              </p>
+            </div>
+
+            <ion-button (click)="brochure(getCollegeListBy.collegeid)">Brochure</ion-button>
+            <ion-button
+              (click)="clgpredict(getCollegeListBy.collegeid, getCollegeListBy.CatId, getCollegeListBy.subCatName)">
+              Predict Admission
+            </ion-button>
+
+          </ion-card>
+        </ion-slide>
+      </ion-slides>
+    </div>
+</div>
+<div *ngIf="!getCollegeList">
+ 
+    <p >College not found</p>
+ 
+</div>
+
+<!-- section 7 -->
+    <div>
+      <h5 style="margin: 16px 10px;">Daily Articles and Featured Events</h5>
+
+      <ion-segment [scrollable]="true" value="segmentarticles" class="mx10 " (ionChange)="segmentChangedc($event)">
+        <ion-segment-button class="seg-btn" value="segmentarticles">
+          <ion-label> Articles</ion-label>
+        </ion-segment-button>
+        <ion-segment-button class="seg-btn" value="segmentevent">
+          <ion-label> Events</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <!-- articles segment btn -->
+      <div *ngIf="selectedSegmentc === 'segmentarticles'" class="ion-margin-vertical">
+
+
+
+
+        <ion-slides [options]="slideOptssevena" class="ml-10c">
+          <ion-slide class="slideset" *ngFor="let article of allArticles">
+            <ion-card class="newscard" (click)="getarticledetails(article.id)">
+              <img class="nimgsetting" [src]="article.image">
+              <div class="artfooter" >
+              <h6>{{article.title }}</h6>
+              <p>{{article.subtitle }}</p>
+            
+            </div>
+              <!-- <div class="m10"> <p class="description"  [innerHTML]="article.description"></p></div> -->
+            </ion-card>
+          </ion-slide>
+        
+          <ion-slide *ngIf="isViewMoreButtonVisible">
+            <div class="setviewmorecrs">
+              <ion-button (click)="articlelist()">
+                <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwardicon">
+              </ion-button>
+            </div>
+          </ion-slide>
+        </ion-slides>
+
+      </div>
+      <h6 (click)="getarticledetailsview()"  *ngIf="selectedSegmentc === 'segmentarticles'"class="viewtxt">View all</h6>
+    
+
+      <!-- news segment btn -->
+      <div *ngIf="selectedSegmentc === 'segmentevent'" class="ion-margin-vertical">
+
+        <ion-slides [options]="slideOptsseven" class="ml-10c">
+          <!-- Loop through displayedEvents to show them -->
+          <ion-slide class="slideset" *ngFor="let event of eventArry">
+            <ion-card class="newscard" (click)="geteventdetails(event.event_id)">
+              <img class="nimgsetting" [src]="event.image">
+              <p class="newstitset"></p>
+              <div class="artfooter" >
+                <h6>{{event.event_name}}</h6>
+                <!-- <span><u>View all</u></span> -->
+              </div>
+            </ion-card>
+          </ion-slide>
+
+
+          <ion-slide>
+            <div class="setviewmorecrs">
+              <ion-button (click)="eventlist()">
+                <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwardicon">
+              </ion-button>
+            </div>
+          </ion-slide>
+        </ion-slides>
+
+
+      </div>
+    </div>
+
+
+    <!-- 2nd section -->
+
+   
+    <div style="margin-top: -10px;">
+      <!-- Check if ctyArry has data -->
+      <div *ngIf="ctyArry && ctyArry.length > 0; else noDataOnly">
+        <div class="mx10">
+          <h5 style="padding-top: 6px; margin:0;">{{crsname}} colleges by location</h5>
+          <p style="margin: 6px 0 16px;">Choose your preferred locations to explore colleges</p>
+        </div>
+
+        <div class="slidebox">
+          <ion-slides pager="true" [options]="slideOpts2" class="ml-10">
+            <ion-slide class="slid" *ngFor="let cty of ctyArry ">
+              <ion-card class="fcard" (click)="getclgctyl(cty.id)">
+                <img [src]="cty.image" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+              
+                <div class="t">
+                  <p style="margin-right: 10px;">{{cty.city}}</p>
+             
+                  <p>{{cty.collegeCount}}</p>
+                </div>
+              
+              </ion-card>
+            </ion-slide>
+
+            <ion-slide>
+              <div class="setviewmorecrs">
+                <ion-button routerLink="/citylist">
+                  <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwardicon">
+                </ion-button>
+              </div>
+            </ion-slide>
+          </ion-slides>
+          <ion-item class="lacselect" lines="none" routerLink="/citylist">
+            <ion-icon class="locate" name="location"></ion-icon>
+            <ion-label>Choose location</ion-label>
+            <ion-icon name="chevron-forward" slot="end"></ion-icon>
+          </ion-item>
+        </div>
+      </div>
+
+      <!-- Only ion-item to display when data is not available -->
+      <ng-template #noDataOnly>
+        <ion-item class="lacselect" lines="none" routerLink="/citylist">
+          <ion-icon class="locate" name="location"></ion-icon>
+          <ion-label>Choose College by location</ion-label>
+          <ion-icon name="chevron-forward" slot="end"></ion-icon>
+        </ion-item>
+      </ng-template>
+    </div>
+
+
+    <!-- 3rd section -->
+
+    <div class="thirdsection">
+      <div>
+        <h5 class="mb0" style="margin-top:3px; padding-bottom: 10px;"> {{crsname}}
+          colleges based on fees</h5>
+      </div>
+      <div class="sementspace">
+        <ion-segment [scrollable]="true" [(ngModel)]="selectedSegmentAB" class="segmentspace-y"
+          (ionChange)="segmentChanged($event.detail.value)">
+          <ion-segment-button value="10000-100000" (click)="onclickfess()">
+            <ion-label> < 1 Lakh</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="100000-200000" (click)="onclickfess()">
+            <ion-label>1-2 Lakh</ion-label>
+          </ion-segment-button>       
+          <ion-segment-button value="200000-300000" (click)="onclickfess()">
+            <ion-label>2-3 Lakh</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="300000-500000" (click)="onclickfess()">
+            <ion-label>3-5 Lakh</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="500000-800000" (click)="onclickfess()">
+            <ion-label>> 5 Lakh</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <!-- segment 1 -->
+
+   
+
+      <div *ngIf="selectedSegmentAB === '10000-100000'">
+        <ion-slides *ngIf="colleges && colleges.length > 0; else noData" [options]="slideOptspage">
+          <ion-slide class="slide_set" *ngFor="let fees of displayColleges; index as i">
+            <ion-card class="size_set">
+              <img class="img_align" [src]="fees.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+             
+
+
+            <div class="img_alignn" 
+            [ngClass]="{'shortlisted': isShortlisted(fees.collegeid)}"
+            (click)="toggleShortlist(fees.collegeid)">
+         <ion-icon [name]="isShortlisted(fees.collegeid) ? 'bookmark' : 'bookmark-outline'"
+                   [class.active]="isShortlisted(fees.collegeid)">
+         </ion-icon>
+         </div>
+
+              <p class="tit_set" (click)="getclgesid(fees.collegeid)">{{fees.title}}</p>
+              <p class="set_botm"><ion-icon name="location-outline"></ion-icon>{{fees.city}}</p>
+              <div style="height: 10px;">
+                {{ fees.accreditation?.length > 15 ? (fees.accreditation | slice: 0:15) + '...' : fees.accreditation }}
+              </div>
+              <p><span class="spn">{{fees.coursesCount}} courses</span>
+                <span class="spnn" *ngIf="fees.rating> 0"><ion-icon name="star-outline" class="staricon"></ion-icon> {{fees.rating}}</span></p>
+              <div style="height: 14px;">
+                <p class="fees">Annual Fees (INR): {{fees.total_fees}} </p>
+              </div>
+              <a><ion-button (click)="brochure(fees.collegeid)">Brochure</ion-button></a>
+              <a><ion-button (click)="clgpredict(fees.collegeid, fees.CatId, fees.subCatName)">Predict
+                  Admission</ion-button></a>
+            </ion-card>
+          </ion-slide>
+          <ion-slide *ngIf="showViewMoreButtonclg">
+            <div class="showmorefessbtn">
+              <ion-button (click)="viewMoreColleges()">
+                <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwordicon">
+              </ion-button>
+            </div>
+          </ion-slide>
+        </ion-slides>
+        <ng-template #noData>
+          <p>Data not found</p>
+        </ng-template>
+      </div>
+
+
+
+
+      <!-- Content for Segment 2 -->
+
+      <div *ngIf="selectedSegmentAB === '100000-200000'">
+        <ion-slides *ngIf="colleges && colleges.length > 0; else noData" [options]="slideOptspage">
+          <ion-slide *ngFor="let fees of colleges ">
+            <ion-card class="size_set">
+              <img class="img_align" [src]="fees.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+              
+             
+              <div class="img_alignn" 
+              [ngClass]="{'shortlisted': isShortlisted(fees.collegeid)}"
+              (click)="toggleShortlist(fees.collegeid)">
+           <ion-icon [name]="isShortlisted(fees.collegeid) ? 'bookmark' : 'bookmark-outline'"
+                     [class.active]="isShortlisted(fees.collegeid)">
+           </ion-icon>
+           </div>
+
+              <p class="tit_set" (click)="getclgesid(fees.collegeid)">{{fees.title}}</p>
+              <p class="set_botm"><ion-icon name="location-outline"></ion-icon>{{fees.city}}
+
+              <div class="text-secondary text-md mt-3" style="height: 10px;">
+                <!-- Display the accreditation text, truncated to 15 characters if longer -->
+                {{ fees.accreditation?.length > 25
+                ? (fees.accreditation | slice: 0:25) + '...'
+                : fees.accreditation }}
+              </div>
+              <p> <span class="spn">{{fees.coursesCount}} courses</span> <span
+                  class="spnn"  *ngIf="fees.rating> 0"> <ion-icon name="star-outline" class="staricon"></ion-icon> {{fees.rating}}</span></p>
+              <div style="height: 14px;">
+                <p class="fees">Annual Fees (INR): {{fees.total_fees}} </p>
+              </div> <a>
+                <ion-button (click)="brochure(fees.collegeid)">
+                  Brochure
+                </ion-button></a>
+              <a>
+                <ion-button style="font-size: 9px;" (click)="clgpredict(fees.collegeid,fees.CatId,fees.subCatName)">
+                  Predict Admission
+                </ion-button></a>
+            </ion-card>
+          </ion-slide>
+          <ion-slide *ngIf="showViewMoreButtonclg">
+            <div class="showmorefessbtn">
+              <ion-button (click)="viewMoreColleges()">
+                <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwordicon">
+              </ion-button>
+            </div>
+          </ion-slide>
+        </ion-slides>
+        <ng-template #noData>
+          <p>Data not found</p>
+        </ng-template>
+      </div>
+
+      <!-- Content for Segment 3 -->
+      <div *ngIf="selectedSegmentAB === '200000-300000'">
+        <ion-slides *ngIf="colleges && colleges.length > 0; else noData" [options]="slideOpts">
+          <ion-slide class="slide_set" *ngFor="let fees of colleges;  index let i=index">
+            <ion-card class="size_set">
+              <img class="img_align" [src]="fees.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+             
+              
+
+              <div class="img_alignn" 
+              [ngClass]="{'shortlisted': isShortlisted(fees.collegeid)}"
+              (click)="toggleShortlist(fees.collegeid)">
+           <ion-icon [name]="isShortlisted(fees.collegeid) ? 'bookmark' : 'bookmark-outline'"
+                     [class.active]="isShortlisted(fees.collegeid)">
+           </ion-icon>
+           </div>
+
+              <p class="tit_set" (click)="getclgesid(fees.collegeid)">{{fees.title}}</p>
+              <p class="set_botm"><ion-icon name="location-outline"></ion-icon>{{fees.city}}
+              <div class="text-secondary text-md mt-3" style="height: 10px;">
+                <!-- Display the accreditation text, truncated to 15 characters if longer -->
+                {{ fees.accreditation?.length > 15
+                ? (fees.accreditation | slice: 0:15) + '...'
+                : fees.accreditation }}
+              </div>
+              <p> <span class="spn">{{fees.coursesCount}} courses</span> <span
+                  class="spnn" *ngIf="fees.rating> 0"> <ion-icon name="star-outline" class="staricon"></ion-icon> {{fees.rating}}</span></p>
+              <div style="height: 14px;">
+                <p class="fees">Annual Fees (INR): {{fees.total_fees}} </p>
+              </div> <a>
+                <ion-button (click)="brochure(fees.collegeid)">
+                  Brochure
+                </ion-button></a>
+              <a>
+                <ion-button style="font-size: 9px;" (click)="clgpredict(fees.collegeid,fees.CatId,fees.subCatName)">
+                  Predict Admission
+                </ion-button></a>
+            </ion-card>
+          </ion-slide>
+        </ion-slides>
+        <ng-template #noData>
+          <p>Data not found</p>
+        </ng-template>
+      </div>
+      <!-- Content for Segment 4 -->
+      <div *ngIf="selectedSegmentAB === '300000-500000'" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+        <ion-slides *ngIf="colleges && colleges.length > 0; else noData" [options]="slideOpts">
+          <ion-slide class="slide_set" *ngFor="let fees of colleges;  index let i=index">
+            <ion-card class="size_set">
+              <img class="img_align" [src]="fees.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+             
+             
+             
+              <div class="img_alignn" 
+              [ngClass]="{'shortlisted': isShortlisted(fees.collegeid)}"
+              (click)="toggleShortlist(fees.collegeid)">
+           <ion-icon [name]="isShortlisted(fees.collegeid) ? 'bookmark' : 'bookmark-outline'"
+                     [class.active]="isShortlisted(fees.collegeid)">
+           </ion-icon>
+           </div>
+
+              <p class="tit_set" (click)="getclgesid(fees.collegeid)">{{fees.title}}</p>
+              <p class="set_botm"><ion-icon name="location-outline"></ion-icon>{{fees.city}}.#
+              <div class="text-secondary text-md mt-3" style="height: 10px;">
+                <!-- Display the accreditation text, truncated to 15 characters if longer -->
+                {{ fees.accreditation?.length > 15
+                ? (fees.accreditation | slice: 0:15) + '...'
+                : fees.accreditation }}
+              </div>
+              <p> <span class="spn">{{fees.coursesCount}} courses</span> 
+                <span class="spnn" *ngIf="fees.rating> 0"> <ion-icon name="star-outline" class="staricon"></ion-icon> {{fees.rating}}</span></p>
+              <div style="height: 14px;">
+                <p class="fees">Annual Fees (INR): {{fees.total_fees}} </p>
+              </div>
+              <a>
+                <ion-button (click)="brochure(fees.collegeid)">
+                  Brochure
+                </ion-button></a>
+
+              <a>
+                <ion-button style="font-size: 9px;" (click)="clgpredict(fees.collegeid,fees.CatId,fees.subCatName)">
+                  Predict Admission
+                </ion-button></a>
+            </ion-card>
+          </ion-slide>
+        </ion-slides>
+        <ng-template #noData>
+          <p>Data not found</p>
+        </ng-template>
+      </div>
+      <!-- Content for Segment 5 -->
+      <div *ngIf="selectedSegmentAB === '500000-800000'">
+
+        <ion-slides *ngIf="colleges && colleges.length > 0; else noData" [options]="slideOpts">
+          <ion-slide class="slide_set" *ngFor="let fees of colleges;  index let i=index">
+            <ion-card class="size_set">
+              <img class="img_align" [src]="fees.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+
+            
+              <div class="img_alignn" 
+              [ngClass]="{'shortlisted': isShortlisted(fees.collegeid)}"
+              (click)="toggleShortlist(fees.collegeid)">
+           <ion-icon [name]="isShortlisted(fees.collegeid) ? 'bookmark' : 'bookmark-outline'"
+                     [class.active]="isShortlisted(fees.collegeid)">
+           </ion-icon>
+           </div>
+
+              <p class="tit_set" (click)="getclgesid(fees.collegeid)">{{fees.title}}</p>
+              <p class="set_botm"><ion-icon name="location-outline"></ion-icon>{{fees.city}}.#
+              <div class="text-secondary text-md mt-3" style="height: 10px;">
+                <!-- Display the accreditation text, truncated to 15 characters if longer -->
+                {{ fees.accreditation?.length > 15
+                ? (fees.accreditation | slice: 0:15) + '...'
+                : fees.accreditation }}
+              </div>
+              <p> <span class="spn">{{fees.coursesCount}} courses</span> 
+                <span class="spnn" *ngIf="fees.rating> 0"> <ion-icon name="star-outline" class="staricon"></ion-icon> {{fees.rating}}</span>
+                 </p>
+              <div style="height: 14px;">
+                <p class="fees">Annual Fees (INR): {{fees.total_fees}} </p>
+              </div> <a>
+                <ion-button (click)="brochure(fees.collegeid)">
+                  Brochure
+                </ion-button></a>
+
+              <a>
+                <ion-button style="font-size: 9px;" (click)="clgpredict(fees.collegeid,fees.CatId,fees.subCatName)">
+                  Predict Admission
+                </ion-button></a>
+            </ion-card>
+          </ion-slide>
+        </ion-slides>
+
+        <ng-template #noData>
+          <p>Data not found</p>
+        </ng-template>
+      </div>
+
+    </div>
+
+    <!-- 4th section -->
+
+
+
+
+    <div  *ngIf="examArry?.length > 0">
+      <div class="mx10">
+        <h5 class="m0">Explore your {{cId}} exam options</h5>
+        <p style="margin:6px 0px;">Find the previous year question papers, exam pattern, syllabus, process, and
+          important dates.</p>
+      </div>
+
+      <ion-slides [options]="slideOpts">
+        <ion-slide *ngFor="let exam of examArry; index as i">
+          <ion-card class="setcard">
+            <img [src]="exam.image" alt="{{ exam.title }}" class="exam-image" (click)="examdetails(exam.id)">
+            <p class="titleset" (click)="examdetails(exam.id)">{{ exam.title }} </p>
+
+            <ion-list class="align_list">
+              
+              <ion-item class="itemset" lines="none" (click)="handleQuestionPaperClick( exam)">
+                <ion-label style="color:#5d5deee3"> <a class="setatg">Question Paper</a></ion-label>
+              </ion-item>
+              <!-- $event, -->
+              <ion-item class="itemset" lines="none">
+                <ion-label style="color:#5d5deee3" (click)="examprocess(exam.id)"> <a
+                    class="setatg">Process</a></ion-label>
+              </ion-item>
+              <ion-item class="itemset" lines="none">
+                <ion-label style="color:#5d5deee3"> <a class="setatg"
+                    (click)="examsyllabus(exam.id)">Syllabus</a></ion-label>
+              </ion-item>
+              
+            </ion-list>
+          </ion-card>
+        </ion-slide>
+        <ion-slide *ngIf="showViewMoreButton">
+          <div class="setviewmore">
+            <ion-button (click)="viewMore()"> <img src="../../assets/icon/right-arrow.png" alt="arrow icon"
+                class="forwordicon"> </ion-button>
+          </div>
+        </ion-slide>
+      </ion-slides>
+    </div>
+
+
+    <!-- 5th section -->
+
+    <!-- <div> -->
+      <div *ngIf="displayTendingcrses?.length > 0 || displayCertificates?.length > 0 || displayPlacements?.length > 0 || studentAchievers?.length > 0">
+
+      <div class="mx10">
+        <h5 class="mt0">Know Before You Choose</h5>
+        <p style="margin:6px 0px;">Discover the trending courses, colleges, placement insights and student achievers</p>
+      </div>
+
+      <ion-segment [scrollable]="true" value="Trending Courses" class="ml10 segmentspace-y"
+        (ionChange)="segmentChangeda($event)">
+        <ion-segment-button class="seg-btnn" value="Trending Courses" *ngIf="displayTendingcrses?.length > 0">
+
+          <ion-label>Trending Courses</ion-label>
+        </ion-segment-button>
+
+        <ion-segment-button class="seg-btnn" value="Trending Certifications" *ngIf="displayCertificates?.length > 0">
+          <ion-label>Trending Certifications</ion-label>
+        </ion-segment-button>
+        <ion-segment-button class="seg-btnn" value="Placements" *ngIf="displayPlacements?.length > 0">
+          <ion-label>Placements</ion-label>
+        </ion-segment-button>
+        <ion-segment-button class="seg-btnn" value="Student Achievers" *ngIf="studentAchievers?.length > 0">
+          <ion-label>Student Achievers</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <div *ngIf="selectedSegmenta === 'Trending Courses'">
+        <ion-row class="mt10">
+          <ion-slides [options]="slideOpts" class="ml-10">
+            <ion-slide class="slidealign" *ngFor="let item of displayTendingcrses">
+              <ion-card class="custom-card" (click)="crsid(item.id)">
+                <img [src]="item.image ? item.image : '../../assets/clg_img/no_image2.jpg'" 
+     [alt]="item.name || 'No Image Available'" 
+     loading="lazy">
+
+                <!-- <img [src]="item.image ? item.image:'../../assets/clg_img/no_image2.jpg' "> -->
+                <p class="setbotm">{{ item.name }}</p>
+              </ion-card>
+            </ion-slide>
+            <ion-slide *ngIf="showViewMoreButtoncrs">
+              <div class="setviewmorecrs">
+                <ion-button (click)="viewMorecrse()">
+                  <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwordicon">
+                </ion-button>
+              </div>
+            </ion-slide>
+          </ion-slides>
+        </ion-row>
+      </div>
+
+      <!-- Content for Segment 2 -->
+      <div *ngIf="selectedSegmenta === 'Trending Certifications'">
+
+        <ion-row>
+          <ion-slides [options]="slideOpts">
+            <ion-slide class="slidealign" *ngFor="let item of displayCertificates">
+              <ion-card class="custom-card" (click)="certificatedtl(item.id)">
+                <img [src]="item.image">
+                <p class="setbotm">{{ item.name }}</p>
+              </ion-card>
+            </ion-slide>
+            <ion-slide *ngIf="showViewMoreButtonCert">
+              <div class="setviewmorecrs">
+                <ion-button (click)="viewMoreCert()">
+                  <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwardicon">
+                </ion-button>
+              </div>
+            </ion-slide>
+          </ion-slides>
+        </ion-row>
+
+      </div>
+
+      <!-- Content for Segment 3 -->
+      <div *ngIf="selectedSegmenta === 'Placements'">
+
+        <ion-row>
+          <ion-slides [options]="slideOpts">
+            <ion-slide class="slidealign" *ngFor="let item of displayPlacements">
+              <ion-card class="custom-card" (click)="plcedtails(item.collegeid)">
+                <img [src]="item.image">
+                <p class="setbotm">{{ item.title }}</p>
+              </ion-card>
+            </ion-slide>
+            <ion-slide *ngIf="showViewMoreButtonPlacement">
+              <div class="setviewmorecrs">
+                <ion-button (click)="viewMorePlacement()">
+                  <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwardicon">
+                </ion-button>
+              </div>
+            </ion-slide>
+          </ion-slides>
+        </ion-row>
+
+      </div>
+
+      <!-- Content for Segment 4 -->
+
+
+      <div *ngIf="selectedSegmenta === 'Student Achievers'">
+
+        <ion-row>
+          <ion-slides [options]="slideOpts">
+            <ion-slide class="slidealign" *ngFor="let item of displayArticles">
+              <ion-card class="custom-card" (click)="getarticledetails(item.id)">
+                <img [src]="item.image">
+                <p class="setbotm">{{ item.description }}</p>
+              </ion-card>
+            </ion-slide>
+            <ion-slide *ngIf="showViewMoreButtonArticle">
+              <div class="setviewmorearticle">
+                <ion-button (click)="viewMoreArticle()">
+                  <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwardicon">
+                </ion-button>
+              </div>
+            </ion-slide>
+          </ion-slides>
+        </ion-row>
+      </div>
+    </div>
+
+    <!-- 6th section -->
+    <div class="">
+      <div class="HeadTxt">
+        <h5>Beyond the basics</h5>
+        <p>Discover the leading colleges, essential exams, and career options tailored to your preferences.</p>
+      </div>
+
+      <ion-segment [scrollable]="true" value="Colleges" class="mx10 segmentspace-y"
+        (ionChange)="segmentChangedb($event)">
+        <ion-segment-button class="seg-btn" value="Colleges" *ngIf="displayFewClgArr?.length > 0">
+          <ion-label>Colleges</ion-label>
+        </ion-segment-button>
+        <ion-segment-button class="seg-btn" value="Exames" routerLink="/exames" *ngIf="examArry?.length > 0">
+          <ion-label>Exams</ion-label>
+        </ion-segment-button>
+        <ion-segment-button class="seg-btn" value="Career" *ngIf="displayCareerArr?.length > 0">
+          <ion-label>Career</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <div *ngIf="selectedSegmentb === 'Colleges'">
+
+
+        <ion-row class="mt10">
+          <ion-slides [options]="slideOpts" class="ml-10">
+            <!-- Loop through displayed featured colleges -->
+            <ion-slide class="slidealign" *ngFor="let item of displayFewClgArr">
+              <ion-card class="custom-card" (click)="getclgesid(item.id)">
+                <img [src]="item.image">
+                <p class="setbotm">{{ item.title }}</p>
+              </ion-card>
+            </ion-slide>
+
+            <!-- Show 'Show More' button if there are more colleges -->
+            <ion-slide *ngIf="showViewMoreButtonFewClg">
+              <div class="setviewmorecrs">
+                <ion-button (click)="viewMoreFewClg()">
+                  <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwardicon">
+                </ion-button>
+              </div>
+            </ion-slide>
+          </ion-slides>
+        </ion-row>
+      </div>
+
+      <!-- Content for Segment 2 -->
+      <div *ngIf="selectedSegmentb === 'Exames'">
+
+        <ion-row>
+          <ion-slides [options]="slideOpts">
+            <ion-slide class="slidealign" *ngFor="let exam of examArry">
+              <ion-card class="card_align" (click)="examdetails(exam.id)">
+                <div class="examimg">
+                  <img [src]="exam.image">
+                </div>
+                <p class="setbotm">{{exam.title}}</p>
+              </ion-card>
+            </ion-slide>
+            <ion-slide *ngIf="showViewMoreButton">
+              <div class="setviewmorecrs">
+                <ion-button (click)="viewMore()">
+                  <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwardicon">
+                </ion-button>
+              </div>
+            </ion-slide>
+          </ion-slides>
+        </ion-row>
+      </div>
+
+      <!-- Content for Segment 3 -->
+      <div *ngIf="selectedSegmentb === 'Career'">
+
+        <ion-row>
+          <ion-slides [options]="slideOpts">
+            <!-- Loop through displayCareerArr to display career items -->
+            <ion-slide class="slidealign" *ngFor="let item of displayCareerArr">
+              <ion-card class="card_align" (click)="creerdetails(item.id)">
+                <div class="examimg">
+                  <img [src]="item.image">
+                </div>
+                <p class="setbotm">{{ item.title }}</p>
+              </ion-card>
+            </ion-slide>
+
+            <!-- Show the "View More" button if more items are available -->
+            <ion-slide *ngIf="showViewMoreButtonCareer">
+              <div class="setviewmorecrs">
+                <ion-button (click)="viewMoreCareers()">
+                  <img src="../../assets/icon/right-arrow.png" alt="arrow icon" class="forwardicon">
+                </ion-button>
+              </div>
+            </ion-slide>
+          </ion-slides>
+        </ion-row>
+      </div>
+    </div>
+
+    <!-- 7th section -->
+   
+
+    <!-- 8th  setion -->
+    <div class="sixthsection">
+
+      <h5 class="mx10"> Discover more features</h5>
+      <ion-list class="no-bottom-padding">
+        <ion-item lines="full" style="--padding-start: 6px;">
+          <ion-row>
+            <ion-col size="2">
+              <div class="iconsset1">
+                <ion-icon name="git-compare-outline"></ion-icon>
+              </div>
+            </ion-col>
+            <ion-col size="10" style="padding-left: 10px">
+              <a class="setheading" routerLink="/clgcompare">Compare College<ion-icon
+                  name="arrow-forward"></ion-icon></a>
+              <p class="setprg">Confused between colleges? Compare fees, Cut off, Reviews & more.
+              </p>
+              <!-- <p class="setprg" style="color:#0083dc; font-size: 15px;" >KCET 2025 College Predictor Link </p> -->
+          
+            </ion-col>
+          </ion-row>
+        </ion-item>
+      </ion-list>
+    </div>
+      <div class="sixthsection" >
+      <div class="set_atag" style="border-bottom: 1px solid 1px solid #e5e0e0; padding-bottom: 9px; padding-top: 9px; background-color: #0083dc;" *ngFor="let getfooter of getfooter">
+       
+            <a class="man_seat"
+    [href]="getfooter.link"
+    target="_blank"
+    rel="noopener noreferrer" >{{getfooter.notification_text}}</a>
+      </div>
+
+    </div>
+    <div>
+      <div class="set_atag">
+        <a style="color: black;" (click)="openModal()">Looking for Management Seat?</a>
+      </div>
+
+    </div>
+  </div>
+
+  <ion-modal [isOpen]="isModalOpen">
+    <ng-template>
+      <ion-content>
+        <div class="matfield">
+          <div class="modelhead">
+            <ion-icon class="iconclose" name="close-outline" (click)="setOpen(false)"></ion-icon>
+            <h2>Management Seat Admission Form</h2>
+          </div>
+          <div class="modal-content">
+
+            <form [formGroup]="admissionForm">
+
+              <mat-form-field class="w-75" appearance="outline">
+                <mat-label>Student Name</mat-label>
+                <input matInput formControlName="studentName" placeholder="Enter student name"
+                  (input)="checkValidInputData($event, 'studentName')">
+                <mat-error
+                  *ngIf="admissionForm.controls.studentName.touched && admissionForm.controls.studentName.invalid">
+                  Student Name is required.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="w-75" appearance="outline">
+                <mat-label>State</mat-label>
+
+                <input type="text" placeholder="State name" aria-label="State name" matInput
+                  [formControl]="stateControl" [matAutocomplete]="auto" (input)="onStateInput($event.target.value)">
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let state of filteredstate | async" [value]="state.statename"
+                    (onSelectionChange)="onStateSelected(state)">
+                    {{ state.statename }}
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="stateControl.invalid">State name is required.</mat-error>
+
+              </mat-form-field>
+
+
+
+              <mat-form-field class="w-75" appearance="outline">
+                <mat-label>City</mat-label>
+                <input type="text" placeholder="City name" aria-label="State name" matInput [formControl]="cityControl"
+                  [matAutocomplete]="auto12" (input)="onCityInput($event.target.value)">
+                <mat-autocomplete #auto12="matAutocomplete">
+                  <mat-option *ngFor="let state of filteredCity | async" [value]="state.city"
+                    (onSelectionChange)="onCitySelected(state.id)">
+                    {{ state.city }}
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf=" cityControl.invalid">City name is required.</mat-error>
+              </mat-form-field>
+
+
+              <mat-form-field class="w-75" appearance="outline">
+                <mat-label>Category</mat-label>
+                <mat-select formControlName="category" (selectionChange)="onCategoryChange($event.value)">
+                  <mat-option *ngFor="let item of Category" [value]="item.id">{{ item.catname }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="admissionForm.controls.category.touched && admissionForm.controls.category.invalid">
+                  Category is required.
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="w-75" appearance="outline">
+                <mat-label>Course Level</mat-label>
+                <mat-select formControlName="courseLevel" (selectionChange)="onCourseLevelChange($event.value)">
+                  <mat-option *ngFor="let item of clevel" [value]="item.category_id">{{ item.name }}</mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="admissionForm.controls.courseLevel.touched && admissionForm.controls.courseLevel.invalid">
+                  Course Level is required.
+                </mat-error>
+              </mat-form-field>
+              <!-- Interested Courses -->
+
+              <ion-list class="multy-select">
+                
+                  <ion-select style="--color: red;" class="custom-select"  placeholder="Select  Interested Course" formControlName="interestedCourses" [multiple]="true" (ionChange)="getpreferdclglts()">
+                    <ion-select-option *ngFor="let item of courselist" [value]="item.id">{{ item.name }}</ion-select-option>
+                    
+                  </ion-select>
+              </ion-list>
+              <div class="err" *ngIf="admissionForm.controls.interestedCourses.touched && admissionForm.controls.interestedCourses.invalid">
+    
+                Interested Course is required.
+              </div>
+
+              <!-- <mat-form-field class="w-75" appearance="outline">
+                <mat-label>Interested Courses</mat-label>
+                <mat-select formControlName="interestedCourses" multiple (selectionChange)="getpreferdclglts()">
+                  <mat-option *ngFor="let item of courselist" [value]="item.id">{{ item.name }}</mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="admissionForm.controls.interestedCourses.touched && admissionForm.controls.interestedCourses.invalid">
+                  Interested Course is required.
+                </mat-error>
+              </mat-form-field> -->
+
+              <!-- Interested Courses -->
+
+              <!-- <mat-form-field class="w-75" appearance="outline"> -->
+                <!-- <mat-label>Preferred Location</mat-label> -->
+                <!-- <mat-select formControlName="preferredLocation" multiple (selectionChange)="getpreferdclglts()">
+                  <mat-option *ngFor="let city of getprecityltsarr" [value]="city.id">{{ city.city }}</mat-option>
+                </mat-select> -->
+              
+                <ion-list class="multy-select">
+                 
+                    <ion-select placeholder="Select Preferred Location"formControlName="preferredLocation" [multiple]="true" (ionChange)="getpreferdclglts()">
+                      <ion-select-option *ngFor="let city of getprecityltsarr" [value]="city.id">{{ city.city }}</ion-select-option>
+                      <!-- <ion-select-option value="oranges">Oranges</ion-select-option>
+                      <ion-select-option value="bananas">Bananas</ion-select-option> -->
+                    </ion-select>
+                </ion-list>
+                <div class="err" *ngIf="admissionForm.controls.preferredLocation.touched && admissionForm.controls.preferredLocation.invalid">
+      
+                  Preferred Location is required. 
+                </div>
+            
+                      <!-- Preferred College -->
+                      <ion-list class="multy-select">
+                        
+                        
+                          <ion-select class="Preferred dropdownclass" placeholder="Select Preferred College"formControlName="preferredCollege" [multiple]="true">
+                            <ion-select-option *ngFor="let clg of clgltsArry" [value]="clg.id">{{ clg.title }}</ion-select-option>
+                            <!-- <ion-select-option value="oranges">Oranges</ion-select-option>
+                            <ion-select-option value="bananas">Bananas</ion-select-option> -->
+                          </ion-select>
+                       
+                      </ion-list>
+                      <div class="err" *ngIf="admissionForm.controls.preferredCollege.touched && admissionForm.controls.preferredCollege.invalid">
+            
+                        Preferred College is required
+                      </div>
+              <!-- <mat-form-field class="w-75" appearance="outline">
+                <mat-label>Preferred College</mat-label>
+                <mat-select formControlName="preferredCollege" multiple>
+                  <mat-option *ngFor="let clg of clgltsArry" [value]="clg.id">{{ clg.title }}</mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="admissionForm.controls.preferredCollege.touched && admissionForm.controls.preferredCollege.invalid">
+                  Preferred College is required.
+                </mat-error>
+              </mat-form-field> -->
+
+              <mat-form-field class="w-75" appearance="outline">
+                <mat-label>Mobile Number</mat-label>
+                <input matInput formControlName="mobileNumber" placeholder="Enter Mobile Number"
+                  (input)="checkValidInputData($event, 'mobileNumber')">
+                <mat-error
+                  *ngIf="admissionForm.get('mobileNumber')?.invalid && (admissionForm.get('mobileNumber')?.touched || admissionForm.get('mobileNumber')?.dirty)">
+                  Please enter a valid 10-digit mobile number.
+                </mat-error>
+              </mat-form-field>
+              <button mat-raised-button color="primary" class="px-12 centbtn mt-4 mb-10" 
+              
+                (click)="savmanagementform()">
+                Submit
+              </button>
+              <!-- type="submit" -->
+            </form>
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+
+
+
+
+</ion-content>

@@ -1,0 +1,55 @@
+
+
+<ion-content>
+  <div class="main-div">
+    <form [formGroup]="forgotForm" (ngSubmit)="submitForm()">
+      <div class="setimg">
+        <img src="../../../assets/icon/N_imgP.png">
+      </div>
+      <div class="forgot">
+        <img src="../../../assets/icon/logo_15.png">
+      </div>
+      <div class="matfield">
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="Enter your email address">
+          <ion-icon class="icon" matSuffix name="mail-outline"></ion-icon>
+          <mat-error *ngIf="forgotForm.get('email').hasError('required') && forgotForm.get('email').touched">
+            Email is required
+          </mat-error>
+          <mat-error *ngIf="forgotForm.get('email').hasError('email') && forgotForm.get('email').touched">
+            Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Please enter your password">
+          <ion-icon class="icon" matSuffix [name]="hidePassword ? 'eye-off-outline' : 'eye-outline'" (click)="togglePasswordVisibility()"></ion-icon>
+          <mat-error *ngIf="forgotForm.get('password').hasError('required') && forgotForm.get('password').touched">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="forgotForm.get('password').hasError('minlength') && forgotForm.get('password').touched">
+            Password must be at least 6 characters long
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput formControlName="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'" placeholder="Confirm your password">
+          <ion-icon class="icon" matSuffix [name]="hideConfirmPassword ? 'eye-off-outline' : 'eye-outline'" (click)="toggleConfirmPasswordVisibility()"></ion-icon>
+          <mat-error *ngIf="forgotForm.get('confirmPassword').hasError('required') && forgotForm.get('confirmPassword').touched">
+            Confirm Password is required
+          </mat-error>
+          <mat-error *ngIf="forgotForm.hasError('passwordMismatch') && forgotForm.get('confirmPassword').touched">
+            Passwords do not match
+          </mat-error>
+        </mat-form-field>
+
+        <ion-button type="submit" class="btn" color="primary">Submit</ion-button>
+        <p>Already have an account - <span class="span" routerLink="/login">Sign in</span></p>
+      </div>
+    </form>
+  </div>
+</ion-content>
+

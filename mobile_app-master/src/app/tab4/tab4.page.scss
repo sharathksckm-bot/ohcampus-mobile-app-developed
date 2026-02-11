@@ -1,0 +1,43 @@
+
+.size_set{
+  min-height: 200px;
+  border-radius: 8px;
+  word-spacing: 2px;
+  background: white;
+  text-align: left;
+  --overflow: visible !important;
+  overflow: unset !important;
+  contain: unset;
+  padding: 14px;
+  margin-top: 3rem;
+  box-shadow: rgba(205, 211, 214, 0.8) 0px 8px 25px;
+  margin-bottom: 2rem;
+  border: 1px solid #f1f1f1;
+  
+}
+
+span.spnn {
+  margin-left: 4px;
+  padding-top: 3px;
+}
+
+.navin{
+ion-button{
+  --padding-end: 10px !important;
+  --padding-start: 10px!important;
+  height: 28px!important;
+  --box-shadow: none!important;
+  font-size: 11px!important;
+}
+}
+.topfix{
+position: absolute!important;
+top: -25px;
+}
+.delete{
+  position: absolute;
+  right: 10px;
+  font-size: 24px;
+  color: red;
+  top: 10px;
+}

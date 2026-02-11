@@ -1,0 +1,191 @@
+<div class="tabbody">
+  
+  <div class="px-10">
+
+    <!--  -->
+
+    <div style="padding-bottom: 31px;">
+      <div class="courseCard" *ngFor="let item of feesbclgarray">
+        <ion-row class="headpart">
+          <ion-col size="10">
+            <h3 (click)="onCourseClicked(item.courseid,'tabsM')" *ngIf="item.name">{{item.name}}</h3>
+
+            <ion-label *ngIf="item.duration">{{item.duration}} years </ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row class="midpart style">
+        
+          <ion-col size="6" *ngIf="item.total_intake >0">
+            <span>Seats Intake</span>
+            <p>{{ item.total_intake ? item.total_intake : 'NA' }}</p>
+          </ion-col>
+          <ion-col size="6" *ngIf="item.examNames">
+            <span>Exams Accepted</span>
+          <p>{{ item.examNames }}</p>
+
+          </ion-col>
+        </ion-row>
+        <ion-row class="midpart">
+          <ion-col size="6" *ngIf="item.total_fees">
+            <span>Annual Fees (INR)</span>
+            <p>{{item.total_fees}} </p>
+          </ion-col>
+          <ion-col size="6" *ngIf="item.median_salary >0">
+            <span>Median Salary </span>
+            <p>{{item.median_salary}} </p>
+          </ion-col>
+        </ion-row>
+        <ion-row class="footerpart">
+
+
+          <ion-button fill="outline" shape="round" class="capitalize mr-6" (click)="compclg(collegeId)">
+            <ion-icon name="documents" class="mr-6"></ion-icon> Compare</ion-button>
+
+          <ion-button shape="round" class="capitalize greenbtn" (click)="brochure(collegeId)">
+            <ion-icon name="arrow-down-circle" class="mr-6"></ion-icon> Brochure</ion-button>
+        </ion-row>
+      </div>
+    </div>
+
+    <!--  -->
+
+    <!-- first section -->
+
+    <div>
+      <div>
+        <h5 class="m0">{{collegename}}</h5>
+      </div>
+
+      <div>
+        <h4>Others programs Offered</h4>
+        <div class="courseCard" *ngFor="let item of selectedclgArr">
+
+          <ion-row class="headpart">
+            <ion-col size="10">
+              <h3 (click)="onCourseClicked(item.courseid,'tabsM')" *ngIf="item.name">{{item.name}}</h3>
+
+              <ion-label *ngIf="item.duration">{{item.duration}} years </ion-label>
+            </ion-col>
+          </ion-row>
+          <ion-row class="midpart style">
+            <ion-col size="6" *ngIf="item.total_intake">
+              <span>Seats Intake</span>
+              <p>{{item.total_intake}} </p>
+            </ion-col>
+            <ion-col size="6" *ngIf="item.examNames">
+              <span>Exams Accepted</span>
+              <p>{{item.examNames}}</p>
+            </ion-col>
+          </ion-row>
+          <ion-row class="midpart">
+            <ion-col size="6" *ngIf="item.total_fees">
+              <span>Annual Fees (INR)</span>
+              <p>{{item.total_fees}} </p>
+            </ion-col>
+            <ion-col size="6" *ngIf="item.median_salary">
+              <span>Median Salary </span>
+              <p>{{item.median_salary}} </p>
+            </ion-col>
+          </ion-row>
+          <ion-row class="footerpart">
+         
+            <ion-button fill="outline" shape="round" class="capitalize mr-6" (click)="compclg(collegeId)">
+              <ion-icon name="documents" class="mr-6"></ion-icon> Compare</ion-button>
+
+            <ion-button shape="round" class="capitalize greenbtn" (click)="brochure(collegeId)">
+              <ion-icon name="arrow-down-circle" class="mr-6"></ion-icon> Brochure</ion-button>
+          </ion-row>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- second section -->
+
+
+    <div class="trending" *ngIf="cityotherclg && cityotherclg.length > 0">
+      <div>
+        <h4>Other colleges offering Same  Courses in {{cityname}} City</h4>
+        <ion-item detail="true" *ngFor="let item of cityotherclg">
+          <ion-label class="ion-text-wrap">
+            <h3 (click)="clgdetls(item.id)">{{item.title}}</h3>
+          </ion-label>
+        </ion-item>
+      </div>
+    </div>
+
+
+
+
+    <!-- clg photo & videos section -->
+    <div *ngIf="clgimgArry && clgimgArry.length > 0">
+      <ion-row>
+
+        <ion-col size="12">
+          <p style="margin: 0;">{{collegename}}</p>
+          <h5 style="margin: 0;">Take a look at Campus</h5>
+        </ion-col>
+      </ion-row>
+      <ion-slides [options]="slidepic">
+        <ion-slide *ngFor="let item of clgimgArry">
+          <ion-card class="setpic">
+            <img class="setnoimage" [src]="item.image" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+          </ion-card>
+        </ion-slide>
+
+      </ion-slides>
+    </div>
+
+
+
+    <!-- latest&popular news section -->
+    <div *ngIf="latenpopArr && popularArr.length > 0">
+      <div class="populartxt">
+        <h2> Latest & Popular Articles </h2>
+      </div>
+
+      <div style="padding-top:16px;">
+        <ion-segment [scrollable]="true" value="Latest" (ionChange)="segmentChanged($event)">
+          <ion-segment-button value="Latest">
+            <ion-label>Latest</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="Popular">
+            <ion-label>Popular</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <div *ngIf="selectedSegment === 'Latest'">
+          <div *ngFor="let latest of latenpopArr">
+
+            <ion-row class="setrw">
+              <ion-col size="8" (click)="articlesdetails(latest.id)">
+                <p class="p1">{{latest.title}}: </p>
+                <p class="p2"> {{latest.post_rate_date}}</p>
+                <p class="p3">Views : {{latest.views}} </p>
+              </ion-col>
+              <ion-col size="4">
+                <img [src]="latest.image">
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+        <div *ngIf="selectedSegment === 'Popular'">
+          <div *ngFor="let popular of popularArr">
+            <ion-row class="setrw">
+              <ion-col size="8" (click)="articlesdetails(popular.id)">
+                <p class="p1">{{popular.title}}: </p>
+                <p class="p2">{{popular.post_rate_date}}</p>
+                <p class="p3">Views : {{popular.views}} </p>
+              </ion-col>
+              <ion-col size="4">
+                <img [src]="popular.image">
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+  </div>

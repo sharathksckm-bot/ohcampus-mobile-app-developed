@@ -1,0 +1,360 @@
+
+.px-12{
+    padding: 0 10px;
+}
+.pt-12{
+    padding-top:12px;
+}
+.tabbody{
+    padding:12px 0px;
+    .bgsmockgray{
+         background-color: #f6f8fe;
+         border-radius: 12px;
+         padding:12px;
+    }
+    .headcard{
+        display: flex;
+        ion-icon{
+            font-size: 35px;
+            color: #0083dc;
+            margin-right: 8px;
+        }
+        span{
+            font-size: 14px;
+            color: #797979;
+        }
+        h2{
+            font-weight: 500;
+            color: #000;
+        }
+    }
+    .slid{
+        ion-card{
+            width: 205px;
+            padding: 10px;
+        }
+        .Whtcard{
+            text-align: left;
+            h3{
+                font-weight: 500;
+            }
+            span{
+                color: #0083dc; 
+            }
+        }
+    }
+}
+.accordians{
+    margin-top: 12px;
+    box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+    border-radius: 10px;
+    .paragraph ion-label{
+        line-height: 1.5;
+    }
+    ion-accordion{
+        border-radius: 10px;
+    }
+    ion-item{
+        border-bottom: 1px solid #f1f1f1;
+        p{
+            font-size: 14px;
+            color: #777;
+            margin: 6px 0;
+        }
+        h2{
+            font-weight: 500;
+        }
+        ion-label{   
+            font-size: 14px;
+        }
+    }
+}
+.tblcontent{
+    p{
+        margin: 8px 0;
+        color: #0083dc; 
+    }
+}
+table, th, td {
+    border: 1px solid #e9edff;
+    border-collapse: collapse;
+    padding:6px 8px;
+    text-align:left;
+  }
+  table th.dblue{
+    background: #004983;
+    font-weight: 500;
+    color: #fff;
+  }
+  .iconbtn{
+    --padding-end: 12px;
+    --padding-start: 12px;
+  }
+  .segmentStud{
+    margin: 14px 0px;
+  }
+ 
+ .serchbar{
+    --box-shadow: none!important;
+    border-bottom: 1px solid!important;
+    padding:0!important;
+    .searchbar-input.sc-ion-searchbar-md{
+        padding: 8px 10px 8px 45px!important;   
+    }
+   
+ } 
+ .caskqns{
+    margin-bottom: 14px;
+ }
+ .filter-btn{
+    border: 1px solid;
+    border-radius: 50px;
+    margin: 0 4px;
+    ion-icon{
+        vertical-align: middle
+    }
+ }
+ .cardcust{
+    border-radius: 8px;
+    background: white;
+    padding: 14px;
+    box-shadow: rgba(205, 211, 214, 0.21) 0px 8px 25px;
+    border: 1px solid #f1f1f1;
+ }
+ .pagination {
+    display: inline-block;
+    list-style-type: none;
+    padding: 0;
+    margin-top:1.5rem;
+  }
+  
+  .pagination li {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .pagination li.active {
+    background-color: #52dd26;
+    color: white;
+    border-radius: 3px;
+  }
+  .populartxt{
+    margin-top: 18px;
+    h2{
+        font-weight: 500;
+    }
+}
+ion-segment-button {
+    --color-checked: #ffffff;
+    --indicator-height: 0px;
+    font-size: 14px;
+    --background-checked: #88d834;
+    --border-radius: 50px;
+    min-height: 0;
+    height: 38px;
+    text-transform: capitalize;
+    margin: 0px 3px;
+    border: 1px solid #f1f1f1;
+}
+.userReview{
+    .firctchar{
+        background: #fddfe4;
+        color: #a70c0c;
+        padding: 6px;
+        text-align: center;
+        border-radius: 5px;
+    }
+    p.sbtxt{
+        margin: 0;
+        color: #4b4b4b;
+        font-size: 13px;
+    }
+    .rateby{
+        font-size: 13px;
+    background: #11c918;
+    color: #fff;
+    padding: 4px;
+    border-radius: 3px;
+    }
+    .ratingBtns{
+        ion-icon{
+            color: #11c918;
+            font-size: 10px;
+            position: relative;
+            top: -2px;
+            left: -1px;
+        }
+        ion-button {
+            text-transform: capitalize;
+            --border-width: 1px;
+            --border-color: #d9d9d9;
+            --color: #000;
+        }
+    }
+    h3{
+        margin-top: 10px!important;
+        font-weight: 500;
+    }
+    .thumbicon{
+        border-top: 1px solid #ddd;
+        ion-icon{
+            font-size: 20px;
+            color: #8b8b8b;
+            margin: 3px 5px;
+        }
+    }
+}
+
+.datevnt{
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    ion-icon{
+        font-size: 18px;
+        vertical-align: sub;
+    }
+    .blutxt{
+       color: #0081dc;
+       text-align: right;
+    }
+}
+.iconfix{
+    font-size: 20px;
+    vertical-align: text-top;
+}
+.blutxt{
+    color: #0081dc;
+ }
+  .colored{
+    color: red;
+  }
+  .ovrallrating{
+    h1{
+        font-weight: 600;
+    }
+    .p, .starratex{
+        margin: 0;
+        color: gray;
+    }
+    .blutxt{
+        color: #0083dc;
+    }
+    .starrate{
+     margin-right: 3px;
+    }
+    .rtvalue{
+        margin-right: 10px;
+    }
+    .vertxt{
+        border-top: 1px solid gray;
+        margin: 12px 0px;
+        padding-top: 10px;
+        ion-icon{
+            color: gray;
+            margin-left: 4px;
+        }
+    }
+    
+}
+::ng-deep .mat-progress-bar-fill::after {
+    background-color: #FFC107;
+}
+.highligtbox{
+    margin-top: 12px;
+    .aliceblue{
+        background: aliceblue;
+        margin: 0;
+        padding:12px;
+        border-radius: 6px;
+    }
+    .pinklight{
+        background: #f9ecee;
+        margin: 0;
+        padding:12px;
+        border-radius: 6px;
+        margin-top: 12px;
+    }
+    
+}
+.rates{
+    font-size: 13px;
+    ion-icon{
+        color: #11c918;
+        color: #11c918;
+        font-size: 19px;
+      vertical-align: bottom;
+    }
+}
+.infrafacility{
+    img{
+        width: 30px;
+        vertical-align: middle;
+        margin-right: 4px;
+    }
+    p{
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 12px;
+    }
+    h6{
+        font-size: 14px;
+    }
+}
+.sbtxt {
+    font-size: 14px;
+    font-weight: 300 !important;
+}
+
+table.infotbl, th, td {
+        border: 1px solid #ddd;
+        border-collapse: collapse;
+        padding:4px 6px;
+}
+table.infotbl th{
+   background: #004983;
+   color: #fff;
+   font-weight: 500;
+} 
+.thirdsection .HeadTxt h5 {
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+
+.span{
+    color: #0081dc;
+    margin-left: 10px;
+    font-weight: normal !important;
+}
+
+.setlikecol{
+    display: flex;
+  
+}
+
+.span{
+    color: #0081dc;
+    margin-left: 10px;
+    font-weight: normal !important;
+}
+
+.icon {
+    font-size: 24px; /* Adjust size */
+    color: black; /* Black outline initially */
+    fill: none; /* No fill */
+    stroke: currentColor; /* Border color */
+    stroke-width: 2; /* Adjust border thickness */
+    transition: color 0.3s ease; /* Smooth transition */
+  }
+  
+  /* Thumbs-Up icon clicked */
+  .thumbs-up[style*="blue"] {
+    fill: blue; /* Fill blue when clicked */
+  }
+  
+  /* Thumbs-Down icon clicked */
+  .thumbs-down[style*="red"] {
+    fill: red; /* Fill red when clicked */
+  }
+  

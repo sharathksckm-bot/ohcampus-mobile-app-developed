@@ -1,0 +1,151 @@
+
+ <ion-content>
+
+  <ion-row class="ion-align-items-center ion-padding-top">
+    <ion-col size="2" class="text-center">
+      <ion-icon class="closeicon" name="close-outline" (click)="go()"></ion-icon>
+    </ion-col>
+    <ion-col size="7">
+      <div class="seticon">
+        <img class="iconsize" src="../assets/icon/logo_15.png">
+      </div>
+    </ion-col>
+    <ion-col size="3">
+      <h5 class="loginh5" (click)="glogin()">Login</h5>
+    </ion-col>
+   </ion-row>
+
+<div class="setlets">
+  <h5>Let's get you started!</h5>
+  <p>Sign up to discover insights on colleges, exams, courses, and more, tailored just for you</p>
+</div>
+
+  <div class="googldiv" *ngIf="!isGoogleLogin" (click)="googleSignIn()">
+    <img class="googlelogo" src="../../../assets/icon/search.png">Sign up with Google</div> 
+
+    <p class="or-divider">OR</p>
+
+
+<form [formGroup]="signForm" class="gmailform" >
+ 
+  <div class="matfield">
+    <div *ngIf="!showOtpSection">
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Enter your name" formControlName="name"
+        >
+        <ion-icon name="person-outline" class="icon" matSuffix></ion-icon>
+        <mat-error *ngIf="signForm.get('name').errors?.required && signForm.get('name').touched">
+          Name is required
+        </mat-error>
+        <mat-error *ngIf="signForm.get('name').errors?.pattern && signForm.get('name').touched">
+          Only alphabets are allowed
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="Enter your email address" formControlName="email">
+        <ion-icon class="icon" matSuffix name="mail-outline"></ion-icon>
+        <mat-error *ngIf="signForm.get('email').errors?.required && signForm.get('email').touched">
+          Email address is required
+        </mat-error>
+        <mat-error *ngIf="signForm.get('email').errors?.email && signForm.get('email').touched">
+          Please enter a valid email address
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" [type]="showPassword ? 'text' : 'password'"
+          placeholder="Enter your password">
+        <ion-icon class="icon" matSuffix [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+          (click)="togglePasswordVisibility('password')"></ion-icon>
+        <mat-error *ngIf="signForm.get('password').errors?.required && signForm.get('password').touched">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="signForm.get('password').errors?.minlength && signForm.get('password').touched">
+          Password must be at least 6 characters long
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Confirm Password</mat-label>
+        <input matInput formControlName="confirmpassword" [type]="showConfirmPassword ? 'text' : 'password'"
+          placeholder="Confirm your password">
+        <ion-icon class="icon" matSuffix [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"
+          (click)="togglePasswordVisibility('confirmpassword')"></ion-icon>
+        <mat-error
+          *ngIf="signForm.get('confirmpassword').errors?.required && signForm.get('confirmpassword').touched">
+          Confirm password is required
+        </mat-error>
+        <mat-error
+          *ngIf="signForm.get('confirmpassword').errors?.passwordMismatch && signForm.get('confirmpassword').touched">
+          Passwords do not match
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Mobile No</mat-label>
+        <input matInput placeholder="Enter your Mobile Number" formControlName="mobilenum" type="tel" maxlength="10">
+        <ion-icon class="icon" matSuffix name="call-outline"></ion-icon>
+        <mat-error *ngIf="signForm.get('mobilenum').hasError('required') && signForm.get('mobilenum').touched">
+          Mobile Number is required
+        </mat-error>
+        <mat-error *ngIf="signForm.get('mobilenum').hasError('pattern') && signForm.get('mobilenum').touched">
+          Please enter a valid 10-digit Mobile Number
+        </mat-error>
+      </mat-form-field>
+
+
+      <mat-checkbox formControlName="agreements" class="termscon"  color="primary">
+        <span class="termstext" style="color: black;">I agree to the OhCampus Terms and Conditions <br>and privacy policy and  provide consent to be <br> contacted for promotion via whatsapp, sms,mail,<br>etc. </span>
+      </mat-checkbox>
+       
+    </div>
+  <div *ngIf="showOtpSection">
+    <mat-form-field class="w-75" appearance="outline" >
+      <mat-label>OTP</mat-label>
+      <input matInput placeholder="Enter your  Otp" formControlName="Otp">
+      <mat-error *ngIf="signForm.get('Otp').errors?.required && signForm.get('Otp').touched">
+        Otp is required
+      </mat-error>
+      <mat-error *ngIf="signForm.get('Otp').errors?.email && signForm.get('Otp').touched">
+        Please enter a valid Otp
+      </mat-error>   
+    </mat-form-field>
+  </div>
+   
+    <ion-button *ngIf="!showOtpSection" (click)="submit()"  class="dsa"  mat-raised-button color="primary" >Sign up</ion-button>
+    <ion-button *ngIf="showOtpSection" (click)="submitOtp()" class="dsa"  mat-raised-button color="primary">Verify OTP</ion-button>
+   
+   
+ 
+
+  </div>
+ 
+</form>
+
+
+
+<div *ngIf="isGoogleLogin">
+  <ion-card>
+<ion-card-header>
+  <ion-card-title class="ion-text-center"><b>{{user.displayName}}</b></ion-card-title>
+ 
+</ion-card-header>
+
+<ion-card-content>
+  <ion-img [src]="user.photoURL" style="border-radius: 1px;"></ion-img>
+  <ion-item>
+    <ion-label>email:</ion-label>
+    <span>{{user.email}}</span>
+  </ion-item>
+</ion-card-content>
+</ion-card>
+</div>
+
+</ion-content> 
+
+
+

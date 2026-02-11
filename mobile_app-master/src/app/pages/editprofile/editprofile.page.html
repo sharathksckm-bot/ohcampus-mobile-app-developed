@@ -1,0 +1,89 @@
+
+
+
+
+ <ion-header [translucent]="true">
+  <ion-toolbar >
+    <ion-grid >
+      <ion-row>
+        <ion-col size="2">
+          <ion-icon name="arrow-back" routerLink="/tabs/tabs/tab1"></ion-icon>
+        </ion-col>
+        <ion-col size="8" class="text-center">
+          <h5 class="primaryhead m0">Profile </h5>
+        </ion-col>
+        </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header> 
+
+<ion-content [fullscreen]="true" style="--background:aliceblue ;">
+  <div class="profbox">
+  <ion-list>
+
+  <ion-item class="profilehead" lines="none">
+    <ion-avatar slot="start">
+      <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+    </ion-avatar>
+    <ion-label> 
+      <h6>{{username}}</h6>
+     
+    </ion-label>
+  </ion-item>
+
+
+  <ion-item lines="full" class="ion-margin-top" *ngIf="email">
+    <ion-icon name="mail-outline" slot="start"></ion-icon>
+    <ion-label> {{email}}</ion-label>
+  </ion-item>
+
+ 
+  <ion-item lines="full" *ngIf="email"  (click)="logout()" (click)="logout1()" >
+    <ion-icon name="log-out-outline" slot="start"></ion-icon>
+    <ion-label> Log Out</ion-label>
+  </ion-item>
+
+  <ion-item lines="full" *ngIf="!email" (click)="presentSignInModal()">
+    <ion-icon name="log-in-outline" slot="start"></ion-icon>
+    <ion-label> Log In</ion-label>
+  </ion-item>
+
+</ion-list>
+</div>
+</ion-content>
+
+
+<ion-footer class="main-footer">
+  <ion-toolbar>
+
+    <div class="footer-tabs">
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab1">
+        <ion-icon name="home"></ion-icon>
+        <span>Home</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab2">
+        <ion-icon name="search-outline"></ion-icon>
+        <span>Search</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab3">
+        <ion-icon name="albums-outline"></ion-icon>
+        <span>Recommended</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab4">
+        <ion-icon name="bookmark-outline"></ion-icon>
+        <span>Shortlist</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab5">
+        <ion-icon name="chatbox-outline"></ion-icon>
+        <span>Assistant</span>
+      </div>
+
+    </div>
+
+  </ion-toolbar>
+</ion-footer>

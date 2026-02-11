@@ -1,0 +1,82 @@
+<ion-content [fullscreen]="true">
+  <div style="    margin: 0;
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: 100%;">
+    <!-- <div class="welcomeslides">
+    </div> -->
+
+    <div class="welcome ion-padding" style="text-align:center;">
+      <img src="./../../../assets/icon/logo_15.png">
+      <p>Hello</p>
+      <p>Welcome To <span style="color: var(--ion-color-primary);">OhCampus.com</span></p>
+
+      <div class="wel-section">
+        <ion-icon name="school"></ion-icon>
+        <ion-label> <b>Explore 10,000+ Colleges & 6,000+ Courses </b>- Find the perfect college and program for you. </ion-label>
+        <div style="margin-top:6px">
+          <img src="../../../assets/icon/notebook.png">
+          <ion-label> <b>250+ Exams Insights</b> - Get details on entrance exams, eligibility, and tips.  </ion-label>
+        </div>
+        <div style="margin-top:6px">
+          <img src="../../../assets/icon/speaking.png">
+          <ion-label> <b>Student Reviews</b> - Read real student experiences and ask any questions for guidance. </ion-label>
+        </div>
+        <div style="margin-top:6px">
+          <svg xmlns="http://www.w3.org/2000/svg" style="margin-right: 10px;
+          fill: #ad9187;"  width="16" height="16" fill="currentColor" class="bi bi-briefcase-fill" viewBox="0 0 16 16">
+            <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v1.384l7.614 2.03a1.5 1.5 0 0 0 .772 0L16 5.884V4.5A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5"/>
+            <path d="M0 12.5A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5V6.85L8.129 8.947a.5.5 0 0 1-.258 0L0 6.85z"/>
+          </svg>
+          <ion-label> <b>Personalized Admission Guidance</b> - Simplify your admission process with expert advice. </ion-label>
+        </div>
+      </div>
+      </div>
+
+    <div class="welcomeFooter">
+
+      
+      <p>Sign up using</p>
+    
+       <ion-button fill="outline" shape="round" *ngIf="!isGoogleLogin" (click)="googleSignIn()" >
+        <img src="../../../assets/icon/search.png">Google
+        </ion-button> 
+ 
+
+      <ion-button fill="outline"  shape="round" routerLink="/gmailform">
+        <ion-icon name="mail" slot="start" class="e" ></ion-icon>Email
+      </ion-button>
+      <p>Already have an account? <span routerLink="/login">Login</span></p>
+
+      <span  (click)="skipLogin()">Skip and start the search</span>
+    </div>
+
+  
+  <div *ngIf="isGoogleLogin">
+    <ion-card>
+  <ion-card-header>
+    <ion-card-title class="ion-text-center"><b>{{user.displayName}}</b></ion-card-title>
+   
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-img [src]="user.photoURL" style="border-radius: 1px;"></ion-img>
+    <ion-item>
+      <ion-label>email:</ion-label>
+      <span>{{user.email}}</span>
+    </ion-item>
+  </ion-card-content>
+</ion-card>
+</div>
+
+</div>
+</ion-content>
+
+
+
+
+
+

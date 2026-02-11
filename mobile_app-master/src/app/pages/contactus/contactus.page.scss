@@ -1,0 +1,41 @@
+.setfbox{
+  border-radius: 10px;
+  border: 1px solid #b0cfe7;
+  padding: 12px;
+  background: aliceblue;
+  margin: 10px;
+  line-height: 1.4;
+}
+.setform{
+    margin: 10px;
+    
+.w-75{
+    width:100%;
+  }
+
+}
+
+::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 0.3em 0px 10px 0px !important;
+    }
+  ::ng-deep .mat-form-field-label-wrapper { top: -1.5em; }
+  
+  ::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+      transform: translateY(-1.1em) scale(.75);
+      width: 133.33333%;
+  }
+  .contactitle{
+    padding-left: 16px;
+    font-weight: 500;
+    font-size: 18px;
+  }
+  .seticon{
+    color: #98dc09;
+    top: 3px;
+    position: relative;
+    font-size: 16px;
+  }
+  .setaddress{
+    font-weight: 500;
+    margin-top: 0 !important;
+  }

@@ -1,0 +1,140 @@
+
+<div class="HeadTxt px-12">
+  <h5 class="heading"> {{collegename}} <span> </span></h5>
+  
+</div>
+
+
+<div class="px-12">
+  <ion-segment [scrollable]="true" value="Questions" (ionChange)="segmentChanged($event)">
+    <ion-segment-button value="Questions">
+      <ion-label>Questions</ion-label>
+    </ion-segment-button>
+    
+    <ion-segment-button value="Unanswered">
+      <ion-label>Unanswered</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+ 
+    <div *ngIf="selectedSegment === 'Questions'" class="mx-10">
+
+      <div *ngIf="!ansArry || ansArry.length === 0" class="no-data-msg">
+        No questions or answers found.
+      </div>
+      
+      <ion-card *ngFor="let item of ansArry;"  class="qcard">
+        <ion-card-header>
+          <ion-card-title>{{item.question}}</ion-card-title>
+          <span>{{item.QuestionFollowCount}} Follower -  {{item.views}} views</span>
+        </ion-card-header>
+        
+        <ion-row class="px-12">
+          <ion-col size="2">
+            <h1 class="firctchar">{{ item.fullname?.charAt(0) || '' }}</h1>
+          </ion-col>
+          <ion-col size="6">
+<h2>{{item.fullname}}</h2>
+           
+          </ion-col>
+          <ion-col size="4">
+                        <div class="timeline">
+              <ion-icon name="time-outline"></ion-icon>{{item.question_asked}} </div>
+          </ion-col>
+        </ion-row>
+        <ion-card-content *ngFor="let answer of item.Answeres | slice:0:1">
+          {{ answer.answer }}
+        
+          <ion-row>
+            <ion-col size="6">
+              <div class="cbottom">
+                <div class="likes">
+                  <!-- Like Icon -->
+                  <ion-icon 
+                    name="thumbs-up" 
+                    [ngClass]="{'blue-icon': answer.isLiked}" 
+                    (click)="toggleLikeDislike(answer, 'like')">
+                  </ion-icon>
+                  <!-- Ensure likeCount is displayed properly and defaults to 0 -->
+                  <span>{{ answer.like || 0 }}</span>
+        
+                  <!-- Dislike Icon -->
+                  <ion-icon 
+                    name="thumbs-down" 
+                    [ngClass]="{'blue-icon': answer.isDisliked}" 
+                    (click)="toggleLikeDislike(answer, 'dislike')">
+                  </ion-icon>
+                  <!-- Ensure dislikeCount is displayed properly and defaults to 0 -->
+                  <span>{{ answer.dis_like || 0 }}</span>
+                </div>
+              </div>
+            </ion-col>
+        
+            <ion-col size="6">
+              <div *ngIf="!item.isFollowing" class="botomtxt" (click)="toggleFollow(item)">
+                Follow <ion-icon name="share-social"></ion-icon>
+              </div>
+              <div *ngIf="item.isFollowing" class="botomtxt" (click)="toggleFollow(item)">
+                UnFollow <ion-icon name="share-social"></ion-icon>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+        
+      </ion-card>
+    </div>
+
+
+
+    
+    <div *ngIf="selectedSegment === 'Unanswered'" class="mx-10">
+      <ion-card *ngFor="let item of unansArry;" class="qcard">
+        <ion-card-header>
+          <ion-row>
+            <ion-col size="8">
+              <ion-card-title>{{item.question}}</ion-card-title>
+          <span class="mt-6">{{item.QuestionFollowCount}} Follower - {{item.views}} Views</span>
+            </ion-col>
+            <ion-col size="4">
+              
+          <div *ngIf="!item.isFollowing" class="botomtxt" (click)="toggleFollow(item)">
+            Follow <ion-icon name="share-social"></ion-icon>
+          </div>
+        
+          <!-- Unfollow Button -->
+          <div *ngIf="item.isFollowing" class="botomtxt" (click)="toggleFollow(item)">
+            UnFollow <ion-icon name="share-social"></ion-icon>
+          </div>
+            </ion-col>
+          </ion-row>
+
+        </ion-card-header>
+      </ion-card>
+    </div>
+</div>
+
+
+
+
+
+<!-- 11 student forum -->
+<div class="forumsec">
+  <ion-row class="firstrow">
+      <ion-col size="12">
+          <h4>{{collegename}}</h4>
+          <h5>Student Forum</h5>
+      </ion-col>
+  </ion-row>
+  <form [formGroup]="studentForum">
+      <div class="setdiv">
+          <ion-row class="firstrow">
+              <ion-col size="12">
+                  <h5>Anything you would want to ask experts?</h5>
+              </ion-col>
+          </ion-row>
+          <ion-input placeholder="Write here" formControlName="studentque">
+          </ion-input>
+          <ion-button (click)="postQuestion()">Submit</ion-button>
+      </div>
+  </form>
+</div>
+<!-- 11 student forum -->

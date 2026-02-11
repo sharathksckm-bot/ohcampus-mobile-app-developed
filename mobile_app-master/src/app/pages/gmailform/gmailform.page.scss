@@ -1,0 +1,228 @@
+.setform{
+    padding:14px;
+}
+
+.w-75{
+    width: 323px;
+}
+
+
+.setfield{
+   
+  
+    width:100%
+}
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin:0!important; 
+}
+
+.btnclass{
+   text-align: center;
+  
+  
+   }
+
+::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 0.3em 0px 10px 0px !important;
+    }
+  ::ng-deep .mat-form-field-label-wrapper { top: -1.5em; }
+  
+  ::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+      transform: translateY(-1.1em) scale(.75);
+      width: 133.33333%;
+  }
+
+.setp{
+    text-align: center;
+}
+.span{
+   color: #007fdc;
+       font-weight: 500;
+}
+
+.seticon{
+    
+    text-align: center;
+}
+
+
+.icons{
+    height: 35px;
+    width: 36px;
+    margin-right: 5px;}
+
+.iconss{
+    height: 28px;
+        width: 27px;
+        margin-right: 5px;
+        margin-top: 4px;
+}
+
+
+
+.settext{
+    margin: 0;
+    font-size: 12px;
+}
+
+.setspn{
+   color: #007fdc;
+       font-weight: 500;
+}
+
+.setcol{
+    display: flex;
+}
+
+.iconsize{
+
+    height: 40px;
+}
+
+.example-container mat-form-field + mat-form-field {
+    margin-left: 8px;
+  }
+
+.mobnofield{
+    margin-top: 1rem;
+    display: flex;
+    .ccode{
+        width: 35%;
+    }
+}
+
+.googldiv{
+    display: flex;
+    border: 1px solid gray;
+    border-radius: 50px;
+    margin: auto;
+    width: 80%;
+    font-size: 16px;
+    font-weight: 500;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+}
+
+.googlelogo{
+    width: 24px;
+    position: relative;
+    right: 15px;
+}
+
+.loginh5{
+    color:#1388de;;
+    text-align: center;
+    margin: 0px;
+}
+
+.or-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #000; /* Change the color as needed */
+    font-size: 16px; /* Adjust the font size as needed */
+    margin: 20px 35px;
+  }
+  
+  .or-divider::before,
+  .or-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid lightgray; /* Change the line color as needed */
+    margin: 0 10px;
+  }
+  
+  .setlets{
+    margin: 18px 28px;
+    h5{
+        font-weight: 500;
+    font-size: 23px;
+    }
+  }
+
+
+  .closeicon{
+    font-size: 26px;
+  }
+
+
+  .gmailform{
+    text-align: center;
+    padding-bottom: 10px;
+  }
+
+  .btn{
+    margin: 15px;
+  }
+
+  .signupbtn{
+    background: #ebebeb57;
+    /* border-radius: 10px; */
+    display: flex;
+    border: 1px solid gray;
+    border-radius: 50px;
+    margin: auto;
+    width: 80%;
+    font-size: 16px;
+    font-weight: 500;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    color: black;
+    box-shadow: none;
+  }
+
+
+
+  .btn{
+    width: 30%;
+    height: 37px;
+    width: -webkit-fill-available;
+    height: 44px;
+    background-color: #007fdc !important;
+    margin: 0px 16px;
+    border-radius: 50px;
+    box-shadow: none !important;
+    --border-radius: 50px;
+    border-radius: 50px;
+}
+
+
+.dsa{
+    width: 30%;
+    height: 37px;
+    width: -webkit-fill-available;
+    height: 44px;
+    background-color: #007fdc !important;
+    margin: 0px 16px;
+    border-radius: 50px;
+    box-shadow: none !important;
+    --border-radius: 50px;
+    border-radius: 50px;
+}
+
+::ng-deep .mat-checkbox.termscon{
+    margin: 0px 20px 10px;
+  }
+  ::ng-deep .mat-checkbox.termscon .mat-checkbox-inner-container {
+    display: inline-block;
+    height: 16px;
+    line-height: 0;
+    margin-right: 8px;
+    order: 0;
+    position: relative;
+    white-space: nowrap;
+    width: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  ::ng-deep .mat-checkbox.termscon .mat-checkbox-layout .mat-checkbox-label {
+    line-height: 20px;
+  }
+  .termstext{
+    font-size: 14px;
+    text-wrap: wrap;
+    display: block;
+    text-align: left;
+  }

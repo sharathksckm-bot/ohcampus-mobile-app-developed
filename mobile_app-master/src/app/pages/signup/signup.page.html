@@ -1,0 +1,128 @@
+
+<ion-content [fullscreen]="true">
+  <div class="main-div">
+    <form [formGroup]="signForm" class="form_login">
+      <div class="setimg">
+        <img src="../../../assets/icon/N_imgP.png">
+      </div>
+      <div class="login">
+        <img src="../../../assets/icon/logo_15.png">
+      </div>
+      <div class="matfield">
+        <div *ngIf="!showOtpSection">
+          <mat-form-field class="w-75" appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput placeholder="Enter your name" formControlName="name" (input)="checkValidInputData($event, 'name')">
+            <ion-icon name="person-outline" class="icon" matSuffix></ion-icon>
+            <mat-error *ngIf="signForm.get('name').errors?.required && signForm.get('name').touched">
+              Name is required
+            </mat-error>
+            <mat-error *ngIf="signForm.get('name').errors?.pattern && signForm.get('name').touched">
+              Only alphabets are allowed
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="w-75" appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput placeholder="Enter your email address" formControlName="email">
+            <ion-icon class="icon" matSuffix name="mail-outline"></ion-icon>
+            <mat-error *ngIf="signForm.get('email').errors?.required && signForm.get('email').touched">
+              Email address is required
+            </mat-error>
+            <mat-error *ngIf="signForm.get('email').errors?.email && signForm.get('email').touched">
+              Please enter a valid email address
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="w-75" appearance="outline">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" [type]="showPassword ? 'text' : 'password'"
+              placeholder="Enter your password">
+            <ion-icon class="icon" matSuffix [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+              (click)="togglePasswordVisibility('password')"></ion-icon>
+            <mat-error *ngIf="signForm.get('password').errors?.required && signForm.get('password').touched">
+              Password is required
+            </mat-error>
+            <mat-error *ngIf="signForm.get('password').errors?.minlength && signForm.get('password').touched">
+              Password must be at least 6 characters long
+            </mat-error>
+            <mat-error *ngIf="signForm.get('password').errors?.maxlength && signForm.get('password').touched">
+              Password cannot be more than 10 characters long
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="w-75" appearance="outline">
+            <mat-label>Confirm Password</mat-label>
+            <input matInput formControlName="confirmpassword" [type]="showConfirmPassword ? 'text' : 'password'"
+              placeholder="Confirm your password">
+            <ion-icon class="icon" matSuffix [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"
+              (click)="togglePasswordVisibility('confirmpassword')"></ion-icon>
+            <mat-error *ngIf="signForm.get('confirmpassword').errors?.required && signForm.get('confirmpassword').touched">
+              Confirm Password is required
+            </mat-error>
+            <mat-error *ngIf="signForm.get('confirmpassword').errors?.passwordMismatch && signForm.get('confirmpassword').touched">
+              Passwords do not match
+            </mat-error>
+            <mat-error *ngIf="signForm.get('confirmpassword').errors?.maxlength && signForm.get('confirmpassword').touched">
+              Password cannot be more than 10 characters long
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="w-75" appearance="outline">
+            <mat-label>Mobile Number</mat-label>
+            <input matInput placeholder="Enter your mobile number" formControlName="mobilenum"
+              (input)="checkValidInputData($event, 'mobilenum')">
+            <ion-icon name="call-outline" class="icon" matSuffix></ion-icon>
+            <mat-error *ngIf="signForm.get('mobilenum').errors?.required && signForm.get('mobilenum').touched">
+              Mobile number is required
+            </mat-error>
+            <mat-error *ngIf="signForm.get('mobilenum').errors?.pattern && signForm.get('mobilenum').touched">
+              Only numeric values are allowed and it should be exactly 10 digits long
+            </mat-error>
+          </mat-form-field>
+
+          <mat-checkbox formControlName="agreements" class="termscon" color="primary">
+            <span class="termstext">
+              I agree to the OhCampus Terms and Conditions and privacy policy and  provide consent to be 
+              contacted for promotion via whatsapp, sms,mail etc. 
+            </span>
+          </mat-checkbox>
+
+        </div>
+
+        <div *ngIf="showOtpSection">
+          <mat-form-field class="w-75" appearance="outline">
+            <mat-label>Email OTP</mat-label>
+            <input matInput formControlName="Otp" placeholder="Enter OTP">
+            <ion-icon class="icon" matSuffix name="key-outline"></ion-icon>
+            <mat-error *ngIf="signForm.get('Otp').errors?.required && signForm.get('Otp').touched">
+              OTP is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+       
+        <!-- <ion-button class="submit-btn btn" (click)="!showOtpSection ? submit() : submitOtp()">
+          <span *ngIf="!showOtpSection">Sign Up</span>
+          <span *ngIf="showOtpSection">Submit OTP</span>
+        </ion-button> -->
+
+        <div  (click)="!showOtpSection ? submit() : submitOtp()">
+          <ion-button *ngIf="!showOtpSection" class="submit-btn btn"  (click)="submit()">
+            <span >Sign Up</span>
+          </ion-button>
+
+          <ion-button *ngIf="showOtpSection" class="submit-btn btn" (click)="submitOtp()">
+            <span >Submit OTP</span>
+          </ion-button>
+
+        </div>
+
+
+        <div class="already-account">
+          <p>Already have an account? <span class="primary-color" routerLink="/login">Login here</span></p>
+        </div>
+      </div>
+    </form>
+  </div>
+</ion-content>

@@ -1,0 +1,514 @@
+.firstsection{
+
+background-color: white;
+padding-left: 10px;
+}
+
+.secdiv{
+    background-color: white;
+    margin-top:13px;
+    border-top:2px solid lightgray;
+    position:relative;
+    padding: 16px 6px 0;
+border-top:2px solid lightgray;
+
+    .border{
+        position:relative;
+    }
+}
+
+.setcard{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+     height: 110px;
+     box-shadow: none;
+     border: 1px dashed gray;
+     border-radius: 10px;
+    ion-icon{
+        font-size: 30px;
+    }
+    ion-label{
+        text-align: end;
+    }
+}
+
+// 3rd section
+.shearesec{
+    padding-left: 10px;
+    background-color: white;
+    padding:5px;
+    border-top: 2px solid lightgray;
+    border-bottom: 2px solid lightgray;
+    margin-top: 17px;
+    .labelset{
+        position: relative;
+    top: 14px;
+    font-size: 15px;
+    }
+
+.setimg{
+    width:100px  !important;
+    height:100px  !important;
+     margin:6px
+}
+.set{
+    height: 35px;
+    position: relative;
+    top: -1px;
+}
+}
+
+// 4th section
+
+.cardsection{ 
+    padding-left: 10px;
+    background-color: white;
+width: 400px;
+    height: 400px;
+    margin-top: 15px;
+    border-top: 2px solid lightgray;
+    border-bottom: 2px solid lightgray;
+    .setcrd{
+        text-align:left;
+        padding:12px;
+        position: relative;
+        .vs{
+            width: 30px;
+            height: 30px;
+            background-color: black;
+            border-radius: 50px;
+            position: absolute;
+            color: #fff;
+            padding: 6px;
+            left: 45%;
+            top: 15%;
+            z-index: 1;
+            font-style: italic;
+        }
+       
+.setimg{
+    width: 82px;
+    //border: 1px solid lightgray;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+.title{
+    color: black;
+    font-weight: bold;
+    font-size:11px;
+}
+.setclgN{
+    font-size:11px;
+}
+.setrating{
+    font-size:8px;
+}
+.seticons{
+    color: #c2c26d;
+}
+.setbtn{
+    text-align:center;
+}
+    }
+
+}
+
+.vsimg{
+    border: 1px solid #cbcbcb;
+    text-align: center;
+    padding: 6px;
+}
+
+
+.secdiv{
+    position: relative;
+    .bordr{
+        position: absolute;
+        border-left: 1px solid #a0a0a0;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+    }
+}
+
+// compare clgdetails section css
+
+// 4th section
+    
+.cardsection{ 
+    padding-left: 10px;
+    background-color: white;
+    padding-bottom: 12px;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    margin-top: 1rem;
+    .setcrd{
+        text-align:left;
+        padding:12px;
+        position: relative;
+        .vs{
+            width: 30px;
+            height: 30px;
+            background-color: black;
+            border-radius: 50px;
+            position: absolute;
+            color: #fff;
+            padding: 6px;
+            left: 45%;
+            top: 15%;
+            z-index: 1;
+            font-style: italic;
+        }
+       
+.setimg{
+    width: 82px;
+    //border: 1px solid lightgray;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+.title{
+    color: #000;
+    font-weight: 500;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.setclgN{
+    font-size:12px;
+}
+.setrating{
+    font-size:8px;
+}
+.seticons{
+    color: #FFC107;
+}
+.setbtn{
+    text-align:center;
+}
+    }
+
+}
+
+.vsimg{
+    border: 1px solid #cbcbcb;
+    text-align: center;
+    padding: 6px;
+    height: 87px;
+}
+.secdiv{
+    position: relative;
+    .bordr{
+        position: absolute;
+        border-left: 1px solid #a0a0a0;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+    }
+}
+ion-header ion-icon {
+    font-size: 24px!important;
+    padding-top: 4px;
+}
+.cmprsection{
+    img{
+        width: 100px;
+        margin: auto;
+        display: block;
+    }
+    table{
+        width: 100%;
+    }
+    table td {
+        width: 50%;
+        text-align: left;
+        border: 1px solid lightgray;
+        padding: 8px 12px;
+    }
+    h6{
+        color: #3F51B5;
+        font-weight: 500;
+        font-size: 14px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    p{
+        font-size: 14px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    ion-button{
+        --border-width: 1px;
+        text-transform: capitalize;
+    }
+    .vss{
+        width: 30px;
+        height: 30px;
+        background-color: black;
+        border-radius: 50px;
+        position: absolute;
+        color: #fff;
+        padding: 6px;
+        left: 47%;
+        top: 2%;
+        z-index: 1;
+        font-style: italic;
+        box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    }
+    .closecard{
+        display: block;
+        margin-left: auto;
+        font-size: 20px;
+        border-radius: 50px;
+        padding: 2px;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    }
+    ion-accordion-group{
+        h5{
+            margin: auto;
+            color: black;
+        }
+    }
+    .reviewSec{
+        p.bold{
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .seticons{
+            color: #FFC107;
+        }
+       .lightgray {
+            color:#dbdbdb;
+        }
+        ion-icon{
+            font-size: 18px;
+            vertical-align: middle;
+        }
+       
+    }
+}
+.facility{
+    p{
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    img{
+        width: 24px;
+        margin: 0px 14px 0px 0px;
+    }
+}
+.blue{
+    color: #0083dc;
+}
+.gray{
+    color: gray;
+}
+
+// 3rd section
+.shearesec1{
+padding-left: 10px;
+background-color: white;
+padding:5px;
+border-top: 2px solid lightgray;
+border-bottom: 2px solid lightgray;
+margin-top: 17px;
+.labelset{
+    position: relative;
+top: 14px;
+font-size: 15px;
+}
+
+.setimg{
+width:35px;
+
+ margin:6px
+}
+.set{
+height: 35px;
+position: relative;
+top: -1px;
+}
+}
+
+
+.setcard{
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+ height: 110px;
+ box-shadow: none;
+ border: 1px dashed gray;
+ border-radius: 10px;
+ion-icon{
+    font-size: 30px;
+}
+ion-label{
+    text-align: end;
+}
+}
+
+
+// model css
+
+.inputset{
+position:relative;
+text-align: center;
+width: 100%;
+margin:15px;
+input{
+    border:0;
+    height: 40px;
+    width:80%;
+    border-bottom:1px solid lightgray;
+   
+}
+}
+
+.title{
+// background: #53658a;  
+
+h5{
+color:white;  
+}
+
+.iconset{
+font-size: 28px;
+padding-top:15px;
+padding-left:8px;
+color:white;
+
+}
+
+}
+
+.btndiv{
+text-align: center;
+position: relative;
+top: 156px;
+background: #c8c8c8;
+}
+
+
+
+::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+padding: 0.3em 0px 10px 0px !important;
+}
+::ng-deep .mat-form-field-label-wrapper { top: -1.5em; }
+
+::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  transform: translateY(-1.1em) scale(.75);
+  width: 100%;
+}
+
+
+.searchbar {
+    --border-radius: 50px;
+    padding: 0;
+    --box-shadow: none;
+    border: 1px solid gray;
+    border-radius: 50px;
+  
+}
+
+ion-searchbar {
+    --color: black !important; 
+   
+  }
+  .degree-course-card {
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btndiv {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .btndiv ion-button {
+    background-color: #007bff;
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 10px 20px;
+  }
+  .collegecard{
+    border: 1px solid;
+    border-radius: 10px;
+    ion-card-title{
+        font-size: 18px;
+    }
+    ion-card-header{
+        background: #9bd61e;
+        margin-bottom: 12px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+  }
+
+  .setclose{
+    font-size: 29px;
+    color: black;
+  }
+
+
+ .facelityarr{
+    p {
+        display: flex;
+        align-items: center; /* Align text and icons vertically */
+        gap: 8px; /* Space between icon and text */
+      }
+      
+      i, mat-icon {
+        color: blue; /* Set icon color to blue */
+        font-size: 10px; /* Set icon size to 10px */
+      }
+      
+      span {
+        font-size: 14px; /* Adjust text size as needed */
+      }
+ }
+
+ .iconsset{
+    font-size: 22px;
+    color: blue;
+    margin-right: 6px;
+ }
+
+ion-select {
+  white-space: normal !important;
+  --padding-start: 12px;
+  --padding-end: 12px;
+}
+ 
+::ng-deep .alert-radio-label.sc-ion-alert-md  {
+  white-space: normal !important;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+}
+::ng-deep  ion-select-option.ionselect{
+  white-space: normal !important;
+  height: auto !important;
+  line-height: 1.2 !important;
+  padding: 10px;
+  display: block;
+}
+.text-wrapper {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}

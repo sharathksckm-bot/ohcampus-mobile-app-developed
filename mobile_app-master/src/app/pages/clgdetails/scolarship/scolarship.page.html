@@ -1,0 +1,230 @@
+
+<div>
+  <div class="px-12">
+    <div>
+    <h5>{{collegename}}</h5>
+    <p [innerHTML]="scholarshipdata"></p>
+    </div> 
+
+     
+
+    <div>
+    
+      <div class="ovrallrating" *ngIf="totalRateCount">
+      <div>
+        <h2 class="headtxt">Overall rating <span class="sbtxt">(Out of 5)</span></h2>
+      </div>
+      <ion-row>
+        <ion-col size="2">
+          <h1>{{totalRateCount}}</h1>
+        </ion-col>
+        <ion-col size="10">
+          <ion-icon *ngFor="let star of getStarIcons().full" name="star" class="starrate"></ion-icon>
+          <ion-icon *ngFor="let star of getStarIcons().half" name="star-half" class="starrate"></ion-icon>
+          <ion-icon *ngFor="let star of getStarIcons().empty" name="star-outline" class="starrate"></ion-icon>
+          <p class="p">Based on {{totalReview}} Verified Reviews</p>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="3">
+          <span class="blutxt">> 3-4 star</span>
+        </ion-col>
+        <ion-col size="7" class="selfcenter">
+          <mat-progress-bar mode="determinate" [value]="three2fourRate"></mat-progress-bar>
+        </ion-col>
+        <ion-col size="2">
+          <span>{{three2fourRate}}%</span>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="3">
+          <span class="blutxt">> 4-5 star</span>
+        </ion-col>
+        <ion-col size="7" class="selfcenter">
+          <mat-progress-bar mode="determinate" [value]="four2fiveRate"></mat-progress-bar>
+        </ion-col>
+        <ion-col size="2">
+          <span>{{four2fiveRate}}%</span>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="3">
+          <span class="blutxt">> 2-3 star</span>
+        </ion-col>
+        <ion-col size="7" class="selfcenter">
+          <mat-progress-bar mode="determinate" [value]="two2threeRate"></mat-progress-bar>
+        </ion-col>
+        <ion-col size="2">
+          <span>{{two2threeRate}}%</span>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="3">
+          <span class="blutxt">> 1-2 star</span>
+        </ion-col>
+        <ion-col size="7" class="selfcenter">
+          <mat-progress-bar mode="determinate" [value]="one2twoRate"></mat-progress-bar>
+        </ion-col>
+        <ion-col size="2">
+          <span>{{one2twoRate}}%</span>
+        </ion-col>
+      </ion-row>
+    
+      </div> 
+
+    </div>
+
+  </div>
+
+
+
+
+ <!-- review section -->
+
+ <div *ngIf="reviewsArr && reviewsArr.length > 0">
+              
+  <div class="cardcust userReview" *ngFor="let item of reviewsArr">
+    <ion-row>
+      <ion-col size="2">
+       
+     
+        <h1 *ngIf="item?.user_name; else showDefaultIcon" class="firstchar">
+          {{ item.user_name.charAt(0) }}
+        </h1>
+        <ng-template #showDefaultIcon class="firstchar">
+          <ion-icon name="person" style="border: 10px solid #b74949;"></ion-icon>
+        </ng-template>  
+
+     
+      </ion-col>
+      <ion-col size="7">
+        <h2>{{item.user_name}}</h2>
+        <p class="sbtxt">{{item.coursename}}</p>
+      </ion-col>
+      <ion-col size="3">
+        <div class="rates">
+          <ion-icon name="shield-checkmark"></ion-icon> Verified
+        </div>
+      </ion-col>
+    </ion-row>
+    <div class="ratingBtns">
+      <ion-button fill="outline" size="small">
+        <ion-icon slot="start" name="star"></ion-icon>{{item.placement_rate}} Placements
+      </ion-button>
+      <ion-button fill="outline" size="small">
+        <ion-icon slot="start" name="star"></ion-icon>{{item.infrastructure_rate}} Infrastructure
+      </ion-button>
+      <ion-button fill="outline" size="small">
+        <ion-icon slot="start" name="star"></ion-icon>{{item.faculty_rate}} Faculty
+      </ion-button>
+      <ion-button fill="outline" size="small">
+        <ion-icon slot="start" name="star"></ion-icon>{{item.campus_rate}} Campus life
+      </ion-button>
+      <ion-button fill="outline" size="small">
+        <ion-icon slot="start" name="star"></ion-icon>{{item.money_rate}} Value For Money
+      </ion-button>
+    </div>
+    <p><span>Placements: </span> {{item.placement_desc}} </p>
+    <p><span>Infrastructure: </span> {{item.infrastructure_desc}}.</p>
+    <p><span>Faculty: </span> {{item.faculty_desc}}</p>
+    <p><span>Campus Life: </span> {{item.campus_desc}}</p>
+    <p><span>Value For Money: </span> {{item.money_desc}}</p>
+
+    <ion-row class="thumbicon">
+      <ion-col class="setlikecol">
+      
+        <div>Was this review helpful </div>
+
+        <div style="display: flex;">
+          <!-- Thumbs Up Icon -->
+          <span class="span" (click)="isThumbsUpClicked = !isThumbsUpClicked; isThumbsDownClicked = false;">
+            <ion-icon name="thumbs-up" class="icon thumbs-up"
+              [style.color]="isThumbsUpClicked ? 'blue' : 'black'">
+            </ion-icon>
+          </span>
+
+          <!-- Separator -->
+          <span class="span">|</span>
+
+          <!-- Thumbs Down Icon -->
+          <span class="span"
+            (click)="isThumbsDownClicked = !isThumbsDownClicked; isThumbsUpClicked = false;">
+            <ion-icon name="thumbs-down" class="icon thumbs-down"
+              [style.color]="isThumbsDownClicked ? 'red' : 'black'">
+            </ion-icon>
+          </span>
+        </div>
+      
+      </ion-col>
+    </ion-row>
+  </div>
+
+</div>
+
+    <!--review section closed  -->
+
+
+  
+
+
+
+    <div class="px-12 pt-12">
+
+    <div *ngIf="latenpopArr && popularArr.length > 0">
+      <ion-row class="ion-margin">
+      
+        <ion-col size="12">
+          <!-- <span>{{collegename}}</span><br> -->
+          <span style=" font-weight: 500;font-size: 18px;"> Latest & Popular Articles </span>
+        </ion-col>
+      </ion-row>
+  
+
+        <div style="padding-top: 0;">
+          <ion-segment [scrollable]="true" value="Latest" (ionChange)="segmentChanged($event)">
+            <ion-segment-button value="Latest">
+              <ion-label>Latest</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="Popular">
+              <ion-label>Popular</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+          <div *ngIf="selectedSegment === 'Latest'">
+            <div *ngFor="let latest of latenpopArr">
+              <ion-row  class="setrw">
+                <ion-col size="8" (click)="articlesdetails(latest.id)">
+                  <p class="p1">{{latest.title}}: </p>
+                  <p class="p2"> {{latest.post_rate_date}}</p>
+                  <p class="p3">Views : {{latest.views}} </p>
+                </ion-col>
+                <ion-col size="4">
+                  <img [src]="latest.image">
+                </ion-col>
+              </ion-row>
+        
+             
+              </div>
+          </div>
+            <div *ngIf="selectedSegment === 'Popular'">
+              <div *ngFor="let popular of popularArr">
+                <ion-row class="setrw">
+                  <ion-col size="8" (click)="articlesdetails(popular.id)">
+                    <p class="p1">{{popular.title}}: </p>
+                    <p class="p2">{{popular.post_rate_date}}</p>
+                    <p class="p3">Views : {{popular.views}} </p>
+                  </ion-col>
+                  <ion-col size="4">
+                    <img [src]="popular.image">
+                  </ion-col>
+                </ion-row>
+                </div>
+              </div>
+          
+        </div>
+      </div>
+
+
+  
+  </div>
+  
+</div>

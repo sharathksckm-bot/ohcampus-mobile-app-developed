@@ -1,0 +1,48 @@
+.setdiv{
+    margin: 10px;
+}
+
+.pset{
+
+    background-color: #9bd61e;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    padding: 10px;
+    margin: 4px;
+}
+.trending{
+    background: #f2f9ff;
+    padding: 20px 10px;
+    border-radius: 16px;
+    margin: 0px 10px 10px;
+    border: 1px solid #b6ddff;
+  
+  .setlist{
+    padding: 10px;
+      border: 1px solid #b8b88a;
+      border-radius: 15px;
+      margin: 10px;
+  }
+  // .listclass{
+  //   padding: 13px;
+  //   font-size: 21px;
+  //   border: 1px solid gray;
+  //   color: #484440;
+  //   width: 151px;
+  //   height: 47px;
+  //   border-radius: 10px;
+  //   margin: 0;
+  //   background: #1d6eff;
+  // }
+  ion-item{
+    --padding-start: 0;
+    padding-inline-end: 0;
+    --background: transparent;
+  }
+  h4{
+    margin-top: 0;
+  }
+  
+  }

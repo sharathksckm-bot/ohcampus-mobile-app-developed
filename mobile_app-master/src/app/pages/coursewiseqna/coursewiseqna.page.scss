@@ -1,0 +1,24 @@
+
+.maindiv{
+    margin-bottom: 1.5rem;
+    .qns{
+        font-weight: 500;
+        background-color: aliceblue;
+        padding: 8px 10px;
+        font-size: 15px;
+        line-height: 1.4;
+    }
+    .ans{
+        margin: 10px;
+        color: gray;
+        font-size: 15px;
+        display: flex;
+        p{
+            margin: 0;
+            min-width: 42px;
+        }
+    }
+}
+
+
+

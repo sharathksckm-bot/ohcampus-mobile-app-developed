@@ -1,0 +1,62 @@
+{
+  "_from": "cordova-plugin-preview-any-file",
+  "_id": "cordova-plugin-preview-any-file@0.2.9",
+  "_inBundle": false,
+  "_integrity": "sha512-OXgbmbfH+jeUme5q4NM7KZMra05E8G2ddolWrAQYt2cBAspikqSCg43a0TfaTQp/dBP94mzG/WA3ea+f7KSoKg==",
+  "_location": "/cordova-plugin-preview-any-file",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "cordova-plugin-preview-any-file",
+    "name": "cordova-plugin-preview-any-file",
+    "escapedName": "cordova-plugin-preview-any-file",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-preview-any-file/-/cordova-plugin-preview-any-file-0.2.9.tgz",
+  "_shasum": "7e6d207d0cfb5c235455546c882c185b838e0da2",
+  "_spec": "cordova-plugin-preview-any-file",
+  "_where": "E:\\prashant\\IONIC\\RiNG",
+  "author": {
+    "name": "Mostafa Mansour",
+    "email": "mostafa@outlook.kr"
+  },
+  "bugs": {
+    "url": "https://github.com/mostafa-mansour1/previewAnyFile/issues"
+  },
+  "bundleDependencies": false,
+  "cordova": {
+    "id": "cordova-plugin-preview-any-file",
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  },
+  "deprecated": false,
+  "description": "Plugin to preview any file type from any where in native mode",
+  "homepage": "https://github.com/mostafa-mansour1/previewAnyFile",
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "view document",
+    "pdf",
+    "doc",
+    "docx",
+    "cordova zip",
+    "cordova document"
+  ],
+  "license": "MIT",
+  "name": "cordova-plugin-preview-any-file",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mostafa-mansour1/previewAnyFile.git"
+  },
+  "version": "0.2.9"
+}

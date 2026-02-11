@@ -1,0 +1,117 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="1">
+          <ion-icon style="margin-top: 5px;" name="chevron-back-outline"  routerLink="/specourselist"></ion-icon>  
+        </ion-col>
+        <ion-col size="8">
+          
+          <ion-buttons>
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="3" class="text-right selfcenter flex just-right">
+          
+          <div class="notification">
+            <!-- <ion-icon name="notifications-outline"></ion-icon> -->
+            <ion-badge color="danger"></ion-badge>
+            <ion-icon routerLink="/editprofile" name="person-outline"></ion-icon>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+
+
+
+
+
+<ion-content style="--background: aliceblue;">
+  <div>
+    <h5 style="margin:10px">Trending Specialization Colleges</h5>
+
+    
+    <div *ngIf="isLoading; else dataContent">
+      <p style="text-align: center;">Loading specialization colleges, please wait...</p>
+    </div>
+
+    <ng-template #dataContent>
+      
+      <div class="m10" *ngIf="clgltsArry && clgltsArry.length > 0; else noData">
+        <div *ngFor="let clg of clgltsArry" lines="none">
+          <ion-card class="size_set">
+            <img class="img_align" [src]="clg.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+            
+            <p class="tit_set" (click)="getclgid(clg.id)">{{ clg.title }}</p>
+            <p class="set_botm">
+              <ion-icon name="location-outline"></ion-icon>{{ clg.city }}
+            </p>
+            <p class="courserate">
+              <span>Total Course - {{ clg.courseCount }}</span>
+            </p>
+            <p class="fees" *ngIf="clg.total_fees">Annual Fees (INR): - {{ clg.total_fees }}</p>
+
+            <ion-row>
+             
+              <div class="img_alignn" 
+              [ngClass]="{'shortlisted': isShortlisted(clg.id)}"
+              (click)="toggleShortlist(clg.id)">
+           <ion-icon [name]="isShortlisted(clg.id) ? 'bookmark' : 'bookmark-outline'"
+                     [class.active]="isShortlisted(clg.id)">
+           </ion-icon>
+         </div>
+
+              <ion-button (click)="brochure(clg.id)">Brochure</ion-button>
+              <ion-button (click)="clgpredict(clg.id, clg.CatId, clg.subCatName)">
+                Predict Admission
+              </ion-button>
+            </ion-row>
+          </ion-card>
+        </div>
+      </div>
+
+      <ng-template #noData>
+        <p style="text-align:center; margin:20px;">Data not found</p>
+      </ng-template>
+    </ng-template>
+  </div>
+</ion-content>
+
+
+<ion-footer class="main-footer">
+  <ion-toolbar>
+
+    <div class="footer-tabs">
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab1">
+        <ion-icon name="home"></ion-icon>
+        <span>Home</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab2">
+        <ion-icon name="search-outline"></ion-icon>
+        <span>Search</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab3">
+        <ion-icon name="albums-outline"></ion-icon>
+        <span>Recommended</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab4">
+        <ion-icon name="bookmark-outline"></ion-icon>
+        <span>Shortlist</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab5">
+        <ion-icon name="chatbox-outline"></ion-icon>
+        <span>Assistant</span>
+      </div>
+
+    </div>
+
+  </ion-toolbar>
+</ion-footer>

@@ -1,0 +1,73 @@
+
+
+// .prefCourse{
+//     // margin-top: 1rem;
+//     ion-label{
+//         font-weight: 20;
+//         font-size: 9px;
+//     }
+//     span{
+//         font-size: 13px;
+//         color: gray;
+//     }
+//     .imgdiv{
+//         width: 20px;
+//         height: 15px;
+//         padding: 7px;
+//         border-radius: 50px;
+//         margin-right: 16px;
+//         background: #deebf6;
+//         }
+//        ion-item{
+
+//         h2 {
+//       font-size: 12px;   // category name size
+//       font-weight: 500;
+//     }
+
+//     p {
+//       font-size: 10px;   // total courses size
+//       color: gray;
+//     }
+//         // margin-bottom: 1rem;
+//        }
+// }
+// .blue{
+//     color:blue;
+// }
+
+// .custom-icon {
+//     width: 7px;
+//     height: 5px;
+//     margin: -1px 2px;
+//     object-fit: contain;
+//   }
+
+.prefCourse {
+
+  ion-item {
+    --min-height: 48px;   
+    ion-avatar img {
+      width: 28px;
+      height: 28px;
+    }
+
+    ion-label {
+
+      h6 {
+        font-size: 15px;    
+        font-weight: 500;
+      }
+
+      p {
+        font-size: 13px;      
+        color: gray;
+      }
+    }
+
+    ion-icon {
+      font-size: 14px;      
+      color: #666;
+    }
+  }
+}

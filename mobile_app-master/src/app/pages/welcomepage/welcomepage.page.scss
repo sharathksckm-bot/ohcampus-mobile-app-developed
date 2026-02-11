@@ -1,0 +1,102 @@
+
+.welcomeslides{
+    h1{
+        color: var(--ion-color-primary);
+        margin: 1rem;
+    }
+}
+.welcome{
+    h1{
+        font-weight: 600;
+        margin: 3rem 0 0;
+        text-align: center;
+    }
+    p{
+       
+
+        
+            margin-top: 10px;
+            margin: 0;
+            font-size:16px;
+            color: #424242;
+    
+    }
+    ion-icon{
+       
+        width: 20px;
+        height: 20px;
+        vertical-align: bottom;
+        margin-right: 10px;
+    }
+    .red{
+        color: red;
+        fill: red;
+        background: #fff5e7;
+    }
+    .green{
+        color: #45cb45;
+        background: #e5ffc6;
+    }
+    .yellow{
+        color: #FFC107;
+        background: #fffaca;
+    }
+
+}
+.welcomeFooter{
+    // text-align: center;
+    // margin-top: 2rem;
+    // background: whitesmoke;
+    // height: -webkit-fill-available;
+    // position: absolute;
+    // width: 100%;
+    // padding-top: 16px;
+
+    text-align: center;
+    background: whitesmoke;
+    height: 38vh;
+    width: 100%;
+    padding-top: 16px;
+    
+    p{
+        color: gray;
+        margin-bottom: 1.5rem;
+    }
+    span{
+        color: var(--ion-color-primary);
+    }
+    ion-button{
+        --border-color: #d5d5d5;
+        color: gray;
+        text-transform: capitalize;
+        font-weight: 500;
+        
+        ion-icon.e{
+            color: var(--ion-color-primary);
+        }
+        img{
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+        }
+    }
+}
+
+
+
+.wel-section{
+    margin-top: 1rem;
+    font-size:16px;
+    color: #424242;
+    b{
+        color: #000;
+        font-weight: 600!important;
+        letter-spacing: 0.5px;
+    }
+    img{
+        width: 22px;
+        height: 22px;
+        vertical-align: bottom;
+        margin-right: 10px;
+    }
+}

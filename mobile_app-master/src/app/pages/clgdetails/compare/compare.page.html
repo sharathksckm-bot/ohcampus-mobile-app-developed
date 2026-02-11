@@ -1,0 +1,224 @@
+
+<div class="px-12">
+<div class="cardsections" *ngIf="clgdetailArry && clgdetailArry.length > 0">
+  <h5> {{collegename}}</h5>
+  <ion-card class="setcrd">
+    <div class="vs">VS</div>
+     <ion-row>
+      <ion-col size="6" *ngFor="let item of clgdetailArry">
+      <div class="vsimg"> <img class="setimg" [src]="item.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';"></div>
+       <p class="title">{{item.title}} </p>
+       <p class="setclgN"> {{item.title}}</p>
+      
+      </ion-col>
+      <ion-col size="6">
+        <div class="vsimg"> <p><ion-icon name="add-outline"></ion-icon></p> Add College</div>
+       
+      </ion-col>
+     </ion-row>
+     <div class="setbtn" >
+      <ion-button (click)="compclg(collegeId)">Compare</ion-button>
+     </div> 
+  </ion-card>
+</div>
+
+
+<div class="cardsections mt-24" *ngIf="clglistforcomp && clglistforcomp.length > 0">
+  <h5> {{collegename}} Popular comparisons</h5>
+  <ion-card class="setcrd" *ngFor="let item of clglistforcomp">
+    <div class="vs">VS</div>
+     <ion-row>
+      <ion-col size="6" >
+      <div class="vsimg"> <img class="setimg" [src]="clglogo" onerror="this.src='../../assets/clg_img/no_image2.jpg';"></div>
+       <p class="title">{{collegename}}</p>
+      
+      </ion-col>
+      <ion-col size="6" >
+        <div class="vsimg"><img class="setimg" [src]="item.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';"> </div>
+        <p class="title">{{item.title}}</p>
+       
+      </ion-col>
+     </ion-row>
+     <div class="setbtn" >
+      <ion-button (click)="twoclgcompar(collegeId,collegeId2)">Compare</ion-button>
+     </div> 
+  </ion-card>
+
+</div>
+
+
+
+<!--  -->
+<div class="thirdsection" style="padding-top:1.5rem;" *ngIf="popularclgarry && popularclgarry.length > 0">
+ 
+  <div class="HeadTxt">
+    <h5>Explore popular similar colleges</h5>
+    
+  </div>
+
+  <div>
+    <ion-slides [options]="slideOptspage">
+
+      <ion-slide class="slide_set" *ngFor="let item of popularclgarry">
+        <ion-card class="size_set w100">
+          <div class="imgHead">
+            <p class="tit_set">{{item.title}}</p>
+            <img class="img_align" [src]="item.logo"
+              onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+          </div>
+
+          <p class="set_botm">
+            <ion-icon name="location-outline"></ion-icon>{{item.cityname}}
+          </p>
+          <p style="display: flex;"> <span class="spn">{{item.courseCount}} courses</span>
+            <ion-icon name="star" class="starrate"></ion-icon><span
+              class="spnn">{{item.rating.totalRateCount}}</span>
+          </p>
+          
+
+          <div class="footerpart" style="display: flex;align-items: center;">
+            <ion-button fill="outline" shape="round" class="boomark" style="height: 30px;width: 30px;">
+              <ion-icon name="bookmark-outline"></ion-icon>
+            </ion-button>
+            <ion-button shape="round" class="capitalize greenbtn" style="margin-left:2px; margin-right:2px">
+              <ion-icon name="arrow-down-circle" class="mr-6"></ion-icon> Brocher
+            </ion-button>
+            <ion-button shape="round" class="capitalize greenbtn" >
+              Predict Admission
+            </ion-button>
+        </div>
+
+        </ion-card>
+      </ion-slide>
+    </ion-slides>
+  </div>
+</div>
+
+
+ <!--  -->
+
+ <div class="px-12" *ngIf="clgimgArry && clgimgArry.length > 0">
+  <div class="HeadTxt mt0">
+    <h5 > Photos & Videos</h5>
+  </div>
+  <ion-row>
+    <ion-col size="6" *ngFor="let item of clgimgArry">
+      <img class="" [src]="item.image">
+    </ion-col>
+    
+  </ion-row>
+  </div>
+ <!--  -->
+
+
+ <!--  -->
+ <div class="thirdsection " *ngIf="suitclgarry && suitclgarry.length > 0">
+   
+  <div class="HeadTxt">
+    <h5>Best suited colleges for you</h5>
+    <p>Because you showed interest in {{ selectedCourseName }}</p>
+  </div>
+
+  <div>
+    <ion-slides [options]="slideOptspage">
+
+      <ion-slide class="slide_set" *ngFor="let item of suitclgarry">
+        <ion-card class="size_set w100">
+          <div class="imgHead">
+            <p class="tit_set">{{item.title}}</p>
+            <img class="img_align" [src]="item.logo"
+              onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+          </div>
+
+          <p class="set_botm">
+            <ion-icon name="location-outline"></ion-icon>{{item.cityname}}
+          </p>
+          <p style="display: flex;"> <span class="spn">{{item.courseCount}} courses</span>
+            <ion-icon name="star" class="starrate"></ion-icon><span
+              class="spnn">{{item.rating.totalRateCount}}</span>
+          </p>
+        
+
+          <div class="footerpart" style="display: flex;align-items: center;">
+            <ion-button fill="outline" shape="round" class="boomark" style="height: 30px;width: 30px;">
+              <ion-icon name="bookmark-outline"></ion-icon>
+            </ion-button>
+            <ion-button shape="round" class="capitalize greenbtn" style="margin-left:2px; margin-right:2px">
+              <ion-icon name="arrow-down-circle" class="mr-6"></ion-icon> Brocher
+            </ion-button>
+            <ion-button shape="round" class="capitalize greenbtn" >
+              Predict Admission
+            </ion-button>
+        </div>
+
+        </ion-card>
+      </ion-slide> 
+    </ion-slides>
+  </div>
+</div>
+
+ <!--  -->
+
+
+   <!--  -->
+   <div *ngIf="latenpopArr && popularArr.length > 0">
+    <div class="populartxt">
+      <h2> </h2>
+    </div>
+
+
+          <h5>Latest & Popular Articles </h5>
+          <ion-segment [scrollable]="true" value="Latest" (ionChange)="segmentChanged($event)">
+            <ion-segment-button value="Latest">
+              <ion-label>Latest</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="Popular">
+              <ion-label>Popular</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+          <div *ngIf="selectedSegment === 'Latest'">
+            <div *ngFor="let latest of latenpopArr">
+              <ion-row  class="setrw">
+                <ion-col size="8" (click)="articlesdetails(latest.id)">
+                  <p class="p1">{{latest.title}}: </p>
+                  <p class="p2"> {{latest.post_rate_date}}</p>
+                  <p class="p3">{{latest.views}} </p>
+                </ion-col>
+                <ion-col size="4">
+                  <img [src]="latest.image">
+                </ion-col>
+              </ion-row>
+              </div>
+          </div>
+            <div *ngIf="selectedSegment === 'Popular'">
+              <div *ngFor="let popular of popularArr">
+                <ion-row class="setrw">
+                  <ion-col size="8" (click)="articlesdetails(popular.id)">
+                    <p class="p1">{{popular.title}}: </p>
+                    <p class="p2">{{popular.post_rate_date}}</p>
+                    <p class="p3">{{popular.views}} </p>
+                  </ion-col>
+                  <ion-col size="4">
+                    <img [src]="popular.image">
+                  </ion-col>
+                </ion-row>
+                </div>
+              </div>
+          
+        </div>
+        
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+ 

@@ -1,0 +1,43 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "com-badrit-base64": {
+      "PACKAGE_NAME": "com.qz.ringApp"
+    },
+    "cordova-plugin-androidx-adapter": {
+      "PACKAGE_NAME": "com.qz.ringApp"
+    },
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.qz.ringApp"
+    },
+    "cordova-plugin-document-viewer": {
+      "PACKAGE_NAME": "com.qz.ringApp"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.qz.ringApp"
+    },
+    "cordova-plugin-file-opener2": {
+      "PACKAGE_NAME": "com.qz.ringApp"
+    },
+    "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "com.qz.ringApp"
+    },
+    "cordova-plugin-filechooser": {
+      "PACKAGE_NAME": "com.qz.ringApp"
+    },
+    "cordova-plugin-filepath": {
+      "PACKAGE_NAME": "com.qz.ringApp"
+    }
+  },
+  "dependent_plugins": {
+    "cordova-plugin-androidx": {
+      "PACKAGE_NAME": "com.qz.ringApp"
+    }
+  }
+}

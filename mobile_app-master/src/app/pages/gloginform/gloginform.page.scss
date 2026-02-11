@@ -1,0 +1,167 @@
+.googldiv{
+  display: flex;
+  border: 1px solid gray;
+  border-radius: 50px;
+  margin: auto;
+  width: 80%;
+  font-size: 16px;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+}
+
+.googlelogo{
+  width: 24px;
+  position: relative;
+  right: 15px;
+}
+
+.loginh5{
+  color: #1388de;
+  text-align: center;
+  margin: 0px;
+}
+
+.or-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #000; /* Change the color as needed */
+  font-size: 16px; /* Adjust the font size as needed */
+  margin: 20px 35px;
+}
+
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid lightgray; /* Change the line color as needed */
+  margin: 0 10px;
+}
+.mx-16{
+  margin: 0 16px;
+}
+  
+.seticon{
+    
+  text-align: center;
+}
+
+
+
+  .setlets{
+    margin: 28px;
+    h5{
+        font-weight: 500;
+    font-size: 23px;
+    }
+  }
+
+
+  .closeicon{
+    font-size: 26px;
+  }
+
+
+
+  .gmailform{
+    text-align: center;
+    padding-bottom: 10px;
+  }
+
+
+  
+ion-input{
+    border: 1px solid ;
+    width: 80%;
+    border-radius: 8px;
+  }
+  .error{
+      color:red;
+      list-style: none; 
+  } 
+  .login{
+    margin-top: -15px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .main-div{
+      background: ('/../../src/assets/icon/simple-img.png');
+  }
+  .setimg{
+    text-align:right;
+  }
+  .example-container mat-form-field + mat-form-field {
+      margin-left: 8px;
+    } 
+    .example-right-align {
+      text-align: right;
+    }
+    input.example-right-align::-webkit-outer-spin-button,
+    input.example-right-align::-webkit-inner-spin-button {
+      display: none;
+    }
+  .icon{
+    font-size: 20px;
+    padding-right: 10px;
+    color:rgb(99, 92, 92);
+  }
+  .btn{
+    width: 30%;
+    height: 37px;
+    width: -webkit-fill-available;
+    height: 44px;
+    background-color: #007fdc !important;
+    margin: 0px 16px;
+    border-radius: 50px;
+    box-shadow: none !important;
+  }
+  .span{
+    color: blue;
+  }
+  .p1{
+    padding-right: 20px;
+    color: #0081dc;
+    margin-top: 0px!important;
+    text-align: right;
+  }
+  .matfield{
+    text-align: center;
+  }
+  .w-75{
+    width:90%;
+    margin: 0 10px; 
+  }
+  .setimg2{
+     position: fixed;
+    bottom: 0%;
+    left: 0%;
+    z-index: -1;
+  }
+  
+  .form_login{
+    z-index: 111!important;
+    
+    background-color: #ffffff!important;
+  }
+  
+  ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 0.3em 0px 10px 0px !important;
+    }
+  ::ng-deep .mat-form-field-label-wrapper { top: -1.5em; }
+  
+  ::ng-deep .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+      transform: translateY(-1.1em) scale(.75);
+      width: 133.33333%;
+  }
+  
+  .iconsize{
+    position: relative;
+    top: 6px;
+    height: 44px;
+   
+    left: 14px;
+}
+  
+

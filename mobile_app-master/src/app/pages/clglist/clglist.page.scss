@@ -1,0 +1,101 @@
+.size_set{
+  border-radius: 8px;
+  word-spacing: 2px;
+  background: white;
+  text-align: left;
+  --overflow: visible !important;
+  overflow: unset !important;
+  contain: unset;
+  padding: 20px 20px 12px;
+  margin-top: 2rem !important;
+  box-shadow: rgba(205, 211, 214, 0.8) 0px 8px 25px;
+  margin-bottom: 2rem;
+  border: 1px solid #f1f1f1;
+  margin: 0;
+    ion-button{
+      --box-shadow: none!important;
+      font-size: 14px;
+      text-transform: capitalize;
+      font-weight: normal;
+      // --border-radius: 50px;
+      // --padding-start: 1.5em;
+      // --padding-end: 1.5em;
+    }
+  }
+   
+  .tit_set{
+    font-size: 16px;
+    color: black;
+    font-weight: 500;
+    margin-top:20px;
+    padding-top: 20px;
+  }
+  .set_botm{
+    border-bottom: 1px dashed #f3f3f3;
+    font-size: 14px;
+    padding-bottom: 6px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .fees{
+    font-size: 16px;
+    margin:5px;
+  }
+  .img_align{
+    padding: 5px;
+    height: 70px !important;
+    width: 70px !important;
+    background: #ffffff !important;
+    border-radius: 10px !important;
+    position: absolute !important;
+    left: 20px;
+    top: -12%;
+    border: 1px solid #c9c9c9;
+  }
+  .courserate{
+    ion-icon{
+      margin-right: 4px;
+    }
+  }
+  .bookMark{
+    padding: 5px;
+    background: #ffffff !important;
+    border-radius: 20px !important;
+    position: absolute !important;
+    right: 10px;
+    top: 6%;
+    border: 1px solid gray;
+}
+
+.btnsett{
+  text-align: center;
+    margin-top: 20px;
+    ion-button {
+      --border-radius: 50px;
+      border-radius: 50px;
+  }
+}
+
+
+.img_alignn.shortlisted {
+  background-color: #ffc107; /* Background color for shortlisted item */
+}
+
+ion-icon.active {
+  color: blue; /* Color for active bookmark (when shortlisted) */
+}
+
+.img_alignn{
+  padding: 5px;
+ background: #ffffff !important;
+ border-radius: 20px !important;
+ position: absolute !important;
+ right: 20px;
+    top: 14px;
+ border: 1px solid #746ac0;
+ width: 26px;
+ height: 26px;
+}
+

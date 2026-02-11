@@ -1,0 +1,27 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="2">
+          <ion-icon name="arrow-back" routerLink="/preferedcourses"></ion-icon>
+        </ion-col>
+        <ion-col size="8" class="selfcenter text-center">
+          <h6 class="m0">Levels</h6>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="btnset" *ngIf="clevel" > 
+    <h2></h2>
+    <ion-row  >
+      <ion-col  size="6" *ngFor="let level of clevel" > 
+        <button  (click)="selectLevel(level)" class="level-button"  (click)="getCourses(level.category_id)" >
+          {{ level.name }}
+        </button>
+      </ion-col>
+    </ion-row>
+  </div>
+</ion-content>

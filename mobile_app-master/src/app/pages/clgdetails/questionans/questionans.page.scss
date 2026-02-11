@@ -1,0 +1,153 @@
+
+.p-12{
+    padding: 12px;
+}
+.px-12{
+    padding: 0 12px;
+    padding-bottom: 7px;
+}
+
+.firctchar{
+    background: #f4fbea;
+    color: #4CAF50;
+    padding: 6px;
+    text-align: center;
+    border-radius: 5px;
+}
+p.sbtxt{
+    margin: 0;
+    color: #4b4b4b;
+    font-size: 13px;
+}
+.timeline{
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    ion-icon{
+        margin-right: 4px;
+    }
+}
+.cbottom{
+    padding: 0 12px;
+    p{
+        margin-top: 0px;
+        color: #47a5f1;
+    }
+    .likes{
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        ion-icon{
+            margin: 0px 6px;
+            font-size: 16px;
+            color: #aaa;
+        }
+    }
+}
+.heading{
+   // color: #4c9ddd;
+    font-weight: 500;
+    span{
+        color: #68da44;
+        font-size: 16px;
+        display: inline-block;
+        margin-top: 10px;
+    }
+}
+ion-segment-button {
+    --color-checked: #ffffff;
+    --indicator-height: 0px;
+    font-size: 14px;
+    --background-checked: #88d834;
+    --border-radius: 50px;
+    min-height: 0;
+    height: 38px;
+    text-transform: capitalize;
+    margin: 0px 3px;
+    border: 1px solid #f1f1f1;
+}
+.discusion{
+    ion-card{
+        margin: 0;
+    }
+}
+.oinfo{
+    padding: 2px 30px;
+    color: #249bd1;
+    line-height: 1.8;
+    margin-top: 0;
+}
+.botomtxt{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    //padding-left: 57px;
+    ion-icon{
+        margin-left: 10px;
+        font-size: 16px;
+        color: #2196F3;
+    }
+}
+.mt-6{
+    margin-top: 6px;
+    display: block;
+}
+.mx-10{
+    ion-card{
+        margin: 10px 0!important;
+    }
+}
+.clgList{
+    padding-left: 20px;
+    color: blue;
+    li{
+        padding: 5px 0px;
+    }
+}
+
+.forumsec{
+    background: rgb(246 245 230);
+    padding: 12px;
+    background: rgb(228 236 239);
+    padding: 22px 10px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    ion-input{
+        border-bottom: 1px solid #ddd;
+     
+    }
+
+    ion-button{
+        margin-top: 18px;
+    }
+    .setdiv{
+        background: white;
+        border-radius: 10px;
+        padding: 18px;    
+    }
+    .text-center{
+        text-align: center;
+    }
+    h5{
+        font-size: 14px;
+    }
+}
+
+.blue-icon {
+    color: blue;
+  }
+  
+
+  .no-data-msg {
+    text-align: center;
+    color: #777;
+    font-size: 1.2rem;
+    margin-top: 20px;
+  }
+
+  .qcard{
+    ion-card-header, ion-card-title{
+        color: #000!important;
+    }
+
+  }

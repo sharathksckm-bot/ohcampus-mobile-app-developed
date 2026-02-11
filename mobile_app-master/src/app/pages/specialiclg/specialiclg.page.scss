@@ -1,0 +1,83 @@
+/* Add your CSS styles for college list here */
+.college-list {
+    font-family: Arial, sans-serif;
+  }
+  
+  .college-list h2 {
+    color: #333;
+  }
+  
+  .college-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .college-list li {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .college-list li:hover {
+    background-color: #eaeaea;
+  }
+  
+
+  .trending{
+    background: #f2f9ff;
+    padding: 20px 10px;
+    border-radius: 16px;
+    margin: 0px 10px 10px;
+    border: 1px solid #b6ddff;
+  
+  .setlist{
+    padding: 10px;
+      border: 1px solid #b8b88a;
+      border-radius: 15px;
+      margin: 10px;
+  }
+  // .listclass{
+  //   padding: 13px;
+  //   font-size: 21px;
+  //   border: 1px solid gray;
+  //   color: #484440;
+  //   width: 151px;
+  //   height: 47px;
+  //   border-radius: 10px;
+  //   margin: 0;
+  //   background: #1d6eff;
+  // }
+  ion-item{
+    --padding-start: 0;
+    padding-inline-end: 0;
+    --background: transparent;
+  }
+  h4{
+    margin-top: 0;
+  }
+  
+  }
+  .notification{
+    color: var(--ion-color-primary);
+    position: relative;
+    ion-badge{
+        position: absolute;
+        right: -5%;
+        top: -7px;
+        font-size: 10px;
+        border-radius: 50px;
+        width: 20px;
+        height: 20px;
+        padding: 6px 4px;
+    }
+}
+.spllist{
+  margin-bottom: 12px;
+  border-bottom: 1px solid gray;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+
+}

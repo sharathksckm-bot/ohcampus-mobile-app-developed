@@ -1,0 +1,107 @@
+<ion-header [translucent]="true" class="headerBg">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="1"> <ion-icon name="chevron-back-outline" style="margin-top: 5px;" routerLink="/tabs/tabs/tab1"></ion-icon></ion-col>
+
+        <ion-col size="8">
+          <ion-buttons class="primaryhead">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="3" class="text-right selfcenter flex just-right">
+          
+          <!-- <div class="notification" (click)="notification()"><ion-icon name="notifications-outline"></ion-icon>
+            <ion-badge color="danger"></ion-badge>
+          </div> -->
+          
+          <ion-icon routerLink="/editprofile" name="person-outline" class="primary-color"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+
+
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="cardtitset">Who We Are</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <h5 class="tital"> <a href="https://www.ohcampus.com" target="_blank">OhCampus.com</a>: India's First Integrated Campus Media and Admission Portal</h5>
+      <br>
+      <p>
+        <a href="https://www.ohcampus.com" target="_blank">OhCampus.com</a> is a pioneering platform in India that serves as both a campus media outlet and an admission portal. We act as an information bridge between aspiring students and colleges, providing a unique, integrated approach that helps scholars manage their careers and achieve their goals.
+      </p>
+      <br>
+      <p>
+        Our platform offers comprehensive information on engineering, medical, management, pharmacy, arts, and science colleges. We also feature top courses such as animation and gaming, finance and accounting, law, vocational training, fashion, hospitality and tourism, and design—helping students explore their interests and make informed decisions.
+      </p>
+      <br>
+      <p>
+        In addition to course details, subjects, fees, and infrastructure, we provide valuable resources such as links to scholarships and loans. Our team of expert admission counselors is available to guide you through the admission process, offering personalized support to help you choose the right college and chart the next steps in your career.
+      </p>
+      <br>
+      <p>
+        If you’re unsure about your options, <a href="https://www.ohcampus.com" target="_blank">OhCampus.com</a> offers a comparison tool to evaluate colleges based on rankings, placements, facilities, and reviews. Our website also hosts a wide range of articles featuring the latest educational news, college festivals, and more.
+      </p>
+      <br>
+      <p>
+        Students can filter colleges and courses based on rankings from top educational sources. Currently, we focus on six states—Karnataka, Kerala, Tamil Nadu, Maharashtra, Telangana, and Andhra Pradesh—with additional expertise in PG admissions in the medical sector in Rajasthan.
+      </p>
+      <br>
+      <p>
+        <a href="https://www.ohcampus.com" target="_blank">OhCampus.com</a> simplifies the process of finding the right academic path, offering filters for top careers, exam sections, and a quick inquiry form that ensures prompt responses from our counselors.
+      </p>
+      <br>
+      <p>
+        For assistance, feel free to contact us at 
+        <a href="tel:8884560456" style="color: blue;">8884560456</a> or 
+        <a href="tel:9482243432" style="color: blue;">9482243432</a>. 
+        Remember, your future shines bright when you take the right steps. Best of luck!
+      </p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+
+<ion-footer class="main-footer">
+  <ion-toolbar>
+
+    <div class="footer-tabs">
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab1">
+        <ion-icon name="home"></ion-icon>
+        <span>Home</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab2">
+        <ion-icon name="search-outline"></ion-icon>
+        <span>Search</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab3">
+        <ion-icon name="albums-outline"></ion-icon>
+        <span>Recommended</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab4">
+        <ion-icon name="bookmark-outline"></ion-icon>
+        <span>Shortlist</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab5">
+        <ion-icon name="chatbox-outline"></ion-icon>
+        <span>Assistant</span>
+      </div>
+
+    </div>
+
+  </ion-toolbar>
+</ion-footer>
+
+

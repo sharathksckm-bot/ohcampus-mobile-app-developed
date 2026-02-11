@@ -1,0 +1,116 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="1">
+          <ion-icon style="margin-top: 5px;" name="chevron-back-outline"  routerLink="/tabs/tabs/tab1"></ion-icon>  
+        </ion-col>
+        <ion-col size="8">
+          <ion-buttons>
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="3" class="text-right selfcenter flex just-right">
+          <div class="notification">
+            <!-- <ion-icon name="notifications-outline"></ion-icon> -->
+            <ion-badge color="danger"></ion-badge>
+          <ion-icon routerLink="/editprofile" name="person-outline"></ion-icon>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+   </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="maindiv">
+  <div class="m10">
+    <b>Course Details</b></div>
+  <div *ngFor="let item of crsdetailarry">
+  <div class="m10" >
+  <ion-card>
+    <img [src]="item.image">
+  </ion-card>
+  <h5 class="titleset">{{item.name}}</h5>
+</div>
+
+  <div class="m10"> 
+    <div><b>Course Description :</b></div>
+    <p class="m0" innerHtml="{{item.course_description}}"></p>
+</div>
+
+<div class="m10"> 
+  <p><b>Course Type :</b>  {{item.type}}</p>
+ 
+</div>
+
+<div class="m10"> 
+  <p><b>Course Duration :</b> {{item.duration}} Year</p>
+</div>
+
+<div class="m10"> 
+  <p> <b>Eligibility :</b> {{item.eligibility}} </p>
+</div>
+<div class="m10"> 
+  <div> <b>Scope :</b></div>
+  <p class="m0">{{item.scope}}</p>
+</div>
+
+
+
+
+
+
+
+
+<!-- <div class="m10"> 
+  <div> <b>Job Profile :</b> <span [innerHTML]="item.job_profile.replace(/\n/g, '')"></span> </div>
+</div> -->
+<div class="m10"> 
+  <b>Job Profile :</b> <br> 
+  <p class="m0" [innerHTML]="sanitizeHtml(item.job_profile)"></p>
+</div>
+<div class="m10"> 
+  <b>Certification :</b> <br> 
+  <p class="m0" [innerHTML]="sanitizeHtml(item.certification)"></p>
+    <!-- {{item.certification}}  -->
+</div>
+
+</div>
+</div>
+</ion-content>
+
+<ion-footer class="main-footer">
+  <ion-toolbar>
+
+    <div class="footer-tabs">
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab1">
+        <ion-icon name="home"></ion-icon>
+        <span>Home</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab2">
+        <ion-icon name="search-outline"></ion-icon>
+        <span>Search</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab3">
+        <ion-icon name="albums-outline"></ion-icon>
+        <span>Recommended</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab4">
+        <ion-icon name="bookmark-outline"></ion-icon>
+        <span>Shortlist</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab5">
+        <ion-icon name="chatbox-outline"></ion-icon>
+        <span>Assistant</span>
+      </div>
+
+    </div>
+
+  </ion-toolbar>
+</ion-footer>

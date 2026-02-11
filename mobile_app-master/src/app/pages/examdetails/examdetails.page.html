@@ -1,0 +1,135 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="1">
+          <ion-icon style="margin-top: 5px;" name="chevron-back-outline"  routerLink="/tabs/tabs/tab1"></ion-icon>  
+        </ion-col>
+        <ion-col size="8">
+          <ion-buttons>
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="3" class="text-right selfcenter flex just-right">
+          <div class="notification">
+            <!-- <ion-icon name="notifications-outline"></ion-icon> -->
+            <ion-badge color="danger"></ion-badge>
+          <ion-icon routerLink="/editprofile" name="person-outline"></ion-icon>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+   </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="excategory">
+    <ion-card class="m0">
+      <img [src]="clglogo">
+    </ion-card>
+    <h6>Exam Name : {{examname}}</h6>
+    <p>Exam Category : {{examcatname}}</p>
+  </div>
+<div class="examdetails">
+  <!-- section1 -->
+  
+  <!-- 2 section -->
+  <div>
+<h5>Exam Detail:</h5>
+<p [innerHTML]="examdescription"></p>
+  </div>
+
+
+<!-- 3rd section -->
+<div>
+  <div class="populartxt">
+    <h5> Other Details </h5>
+  </div>
+
+  <div class="mx10">
+   
+
+    <ion-segment [scrollable]="true" [(ngModel)]="selectedSegment" class="segmentspace-y">
+      <ion-segment-button value="Process">
+        <ion-label>Process</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="Pattern">
+        <ion-label>Pattern</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="Criteria">
+        <ion-label>Criteria</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    
+    
+    <div *ngIf="selectedSegment === 'Process'">
+      <p [innerHTML]="process"></p>
+    </div>
+    
+   
+    <div *ngIf="selectedSegment === 'Pattern'">
+      <p [innerHTML]="pattern"></p>
+    </div>
+    
+  
+    <div *ngIf="selectedSegment === 'Criteria'">
+      <p [innerHTML]="criteria"></p>
+    </div>
+    
+
+  </div>
+</div>
+<!-- 4th section -->
+ <div  *ngIf="relatedExamsarry && relatedExamsarry.length > 0">
+  <h5>Related Exams</h5>
+  <ion-slides>
+    <ion-slide *ngFor="let item of relatedExamsarry">
+<div  *ngFor="let exam of relatedExamsSub">
+  <ion-card>
+    <img [src]="exam.image">
+  </ion-card>
+  <p>{{exam.title}}</p>
+</div>
+    </ion-slide>
+  </ion-slides>
+ </div>
+
+</div>
+</ion-content>
+
+
+<ion-footer class="main-footer">
+  <ion-toolbar>
+
+    <div class="footer-tabs">
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab1">
+        <ion-icon name="home"></ion-icon>
+        <span>Home</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab2">
+        <ion-icon name="search-outline"></ion-icon>
+        <span>Search</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab3">
+        <ion-icon name="albums-outline"></ion-icon>
+        <span>Recommended</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab4">
+        <ion-icon name="bookmark-outline"></ion-icon>
+        <span>Shortlist</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab5">
+        <ion-icon name="chatbox-outline"></ion-icon>
+        <span>Assistant</span>
+      </div>
+
+    </div>
+
+  </ion-toolbar>
+</ion-footer>
+

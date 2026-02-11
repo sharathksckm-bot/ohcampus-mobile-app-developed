@@ -1,0 +1,175 @@
+<ion-header [translucent]="true" class="headerBg">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="9">
+          <ion-buttons class="primaryhead">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="3" class="text-right selfcenter flex just-right">
+
+
+
+          <ion-icon routerLink="/editprofile" class="notification" name="person-outline"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- section-1 -->
+  <div class="m10">
+
+    <div *ngIf="fewclgArr && fewclgArr.length  > 0; else noDataTemplate">
+
+
+
+      <h4> Featured Colleges</h4>
+      <div class="slide_set" *ngFor="let item of fewclgArr">
+
+        <ion-card class="size_set m0" style="margin-bottom: 12px !important;">
+          <div class="imgHead">
+            <div>
+              <p class="tit_set" (click)="clgdetails(item.id)">{{ item.title }}</p>
+              <p class="set_botm">
+                <ion-icon name="location-outline"></ion-icon>{{ item.city }}
+              </p>
+            </div>
+            <img class="img_align" [src]="item.image || '../../assets/clg_img/no_image2.jpg'" alt="College logo">
+          </div>
+          <p>Courses Offered</p>
+          <p><span class="spna">{{ item.totalCourseCount }} courses</span>
+            <span class="spnn" *ngIf="item.rating> 0"><ion-icon name="star" class="starrate"></ion-icon> {{ item.rating
+              }}</span>
+          </p>
+          <ion-row class="footerpart">
+
+
+            <ion-button fill="outline" shape="round" class="boomark" [ngClass]="{'shortlisted': isShortlisted(item.id)}"
+              (click)="toggleShortlist(item.id)">
+              <ion-icon [name]="isShortlisted(item.id) ? 'bookmark' : 'bookmark-outline'"
+                [class.active]="isShortlisted(item.id)">
+              </ion-icon>
+            </ion-button>
+
+
+            <ion-button shape="round" (click)="brochure(item.id)">
+              Brochure
+            </ion-button>
+            <ion-button shape="round" (click)="clgpredict(item.id, item.CatId, item.subCatName)">
+              Predict Admission
+            </ion-button>
+          </ion-row>
+        </ion-card>
+      </div>
+    </div>
+
+    <ng-template #noDataTemplate>
+      <p>No colleges found.</p>
+    </ng-template>
+
+
+
+
+
+    <div class="conselling">
+      <ion-row>
+        <ion-col size="8" class="selfcenter">
+          <h3>Confused about which college or exam to opt for?</h3>
+        </ion-col>
+        <ion-col size="4">
+          <img src="../../assets/clg_icon/noimageanu.jpg">
+        </ion-col>
+      </ion-row>
+
+      <ul>
+        <li>Chat with our counselor</li>
+        <li>Get your personalised list of colleges & exam matching your preferrences</li>
+      </ul>
+      <div class="setbtn">
+        <ion-button (click)="openModal()">Get Free Counselling</ion-button>
+      </div>
+    </div>
+
+  </div>
+
+
+
+  <ion-modal [isOpen]="isModalOpen">
+    <ng-template>
+
+      <ion-content>
+        <div class="matfield">
+          <div class="modelhead">
+            <ion-icon class="iconclose" name="close-outline" (click)="setOpen(false)"></ion-icon>
+            <h2 style="text-align: center;">Counselling Form</h2>
+
+          </div>
+
+          <div class="modal-content" style="overflow: hidden;">
+
+            <form [formGroup]="admissionForm">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Student Name</mat-label>
+                <input matInput placeholder="Enter student name" formControlName="StudentName"
+                  (input)="checkValidInputData($event, 'studentName')">
+              </mat-form-field>
+
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>State</mat-label>
+                <mat-select formControlName="state" (selectionChange)="onStateChange($event.value)">
+                  <mat-option *ngFor="let state of stateltsArry" [value]="state.id">{{ state.statename }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>City</mat-label>
+                <mat-select formControlName="city">
+                  <mat-option *ngFor="let city of cityltsArry" [value]="city.id">{{ city.city }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              
+
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Pursuing / Completed Course</mat-label>
+                
+                <input matInput placeholder="Enter Course Name" formControlName="passingstatus">
+
+              </mat-form-field>
+
+
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Passing Year</mat-label>
+                <mat-select placeholder="Enter Passing year" formControlName="passingYear">
+                  <!-- <mat-option ngFor="let item of lastFiveYears">{{item}}</mat-option> -->
+                  <mat-option *ngFor="let visaregions of lastFiveYears" [value]="visaregions">
+                    {{visaregions}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Interested Courses</mat-label>
+                <input matInput placeholder="Enter Course name" formControlName="interestedCourses"
+                  (input)="checkValidInputData($event, 'studentName')">
+              </mat-form-field>
+
+
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Contact Number</mat-label>
+                <input matInput placeholder="Enter contact number" formControlName="mobileNumber"
+                  (input)="checkValidInputData($event, 'mobileNumber')">
+              </mat-form-field>
+
+              <button mat-raised-button color="primary" class="px-12 centbtn mt-4 mb-10" type="submit"
+                (click)="savconsellingform()">Submit</button>
+            </form>
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

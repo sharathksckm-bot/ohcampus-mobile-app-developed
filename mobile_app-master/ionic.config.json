@@ -1,0 +1,7 @@
+{
+  "name": "RiNG",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

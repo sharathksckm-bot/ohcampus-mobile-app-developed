@@ -1,0 +1,330 @@
+.px-12{
+    padding: 0 10px!important;
+}
+.py-12{
+    padding: 10px 0!important;
+}
+.pt-12{
+    padding-top:12px;
+}
+.headtxt{
+    font-weight: 500!important;
+}
+.sbtxt{
+    font-size: 14px;
+    font-weight: 300!important;
+}
+.ovrallrating{
+    h1{
+        font-weight: 600;
+    }
+    .p, .starratex{
+        margin: 0;
+        color: gray;
+    }
+    .blutxt{
+        color: #0083dc;
+    }
+    .starrate{
+     margin-right: 3px;
+    }
+    .rtvalue{
+        margin-right: 10px;
+    }
+    .vertxt{
+        border-top: 1px solid gray;
+        margin: 12px 0px;
+        padding-top: 10px;
+        ion-icon{
+            color: gray;
+            margin-left: 4px;
+        }
+    }
+    
+}
+::ng-deep .mat-progress-bar-fill::after {
+    background-color: #FFC107;
+}
+.populartxt{
+    margin-top: 18px;
+    h2{
+        font-weight: 500;
+    }
+}
+.segmentStud{
+    margin-top: 12px;
+  }
+  .likeDis{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .like{
+        color: green;
+    }
+    .dislike{
+        color: red;
+    }
+    p{
+        color: #0083dc;
+    }
+    span{
+        vertical-align: middle;
+    }
+  }
+  ion-segment-button {
+    --color-checked: #ffffff;
+    --indicator-height: 0px;
+    font-size: 14px;
+    --background-checked: #88d834;
+    --border-radius: 50px;
+    min-height: 0;
+    height: 38px;
+    text-transform: capitalize;
+    margin: 0px 3px;
+    border: 1px solid #f1f1f1;
+}
+.m-12{
+    margin: 12px;
+}
+.highligtbox{
+    margin-top: 12px;
+    .aliceblue{
+        background: aliceblue;
+        margin: 0;
+        padding:12px;
+        border-radius: 6px;
+    }
+    .pinklight{
+        background: #f9ecee;
+        margin: 0;
+        padding:12px;
+        border-radius: 6px;
+        margin-top: 12px;
+    }
+    
+}
+.rates{
+    font-size: 13px;
+    ion-icon{
+        color: #11c918;
+        color: #11c918;
+        font-size: 19px;
+      vertical-align: bottom;
+    }
+}
+.border-y{
+    margin-bottom: 14px;
+    padding: 0px 12px;
+    //box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.p1 {
+    margin: 0;
+}
+.p2{
+font-size: 14px!important;
+margin: 6px 0px!important;
+color: gray!important;
+}
+
+.p3{
+font-size: 14px!important;
+margin: 6px 0px!important;
+color: gray!important;
+}
+
+
+.setspn{
+    color:blue;
+}
+
+.setnotification{
+    width:360px;
+    height: 370px;
+    .settitle{
+        text-align: center;
+    background: #a4affe;
+    position: relative;
+    top: -14px;
+    height: 35px;
+    }
+    p{
+        color:#0083dc;
+    }
+}
+
+.thirdsection{
+    background: rgba(241, 245, 255, 0.3803921569);
+    background-image: linear-gradient(13deg, rgba(255, 255, 255, 0.94) 0%, rgba(0, 0, 0, 0.03) 100%);
+    background-blend-mode: lighten;
+    padding: 20px 10px 0px;
+    border-radius: 24px;
+    .HeadTxt {
+    h5{
+        margin: 2px 0px;
+    }
+    p{
+        margin: 0;
+        color: #7f8c8d;
+        margin-bottom: 4px;
+    }
+    }
+   
+}
+
+
+
+.font-semibold {
+    font-weight: bold;
+}
+
+
+
+.span{
+    color: #0081dc;
+    margin-left: 10px;
+    font-weight: normal !important;
+}
+
+.setlikecol{
+    display: flex;
+  
+}
+
+
+
+
+.starrate {
+    color: #FFD700; /* Gold color for stars */
+    font-size: 18px; /* Adjust star size */
+    margin-right: 2px; /* Space between stars */
+  }
+  
+  .rtvalue {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .bookmark{
+    --color: gray;
+    --border-color: lightgrey;
+   
+  }
+
+  .img_alignn.shortlisted {
+    background-color: #ffc107; 
+  }
+  
+  ion-icon.active {
+    color: blue; 
+  }
+  
+
+
+
+
+.thirdsectionpop{
+    background: rgba(241, 245, 255, 0.3803921569);
+    background-image: linear-gradient(13deg, rgba(255, 255, 255, 0.94) 0%, rgba(0, 0, 0, 0.03) 100%);
+    background-blend-mode: lighten;
+    padding: 20px 10px 0px;
+    border-radius: 24px;
+    .HeadTxt {
+    h5{
+        margin: 2px 0px;
+    }
+    p{
+        margin: 0;
+        color: #7f8c8d;
+        margin-bottom: 4px;
+    }
+    }
+   
+}
+
+.imgHeadpop{
+    display: flex;
+    justify-content: space-between;
+}
+  .size_setpop {
+ //   min-height: 270px;
+    width: 100%;
+    border-radius: 8px;
+    word-spacing: 2px;
+    background: white;
+    text-align: left;
+    --overflow: visible !important;
+    overflow: unset !important;
+    contain: unset;
+    padding: 5px;
+    box-shadow: rgba(205, 211, 214, 0.21) 0px 8px 25px;
+    margin-bottom: 2rem;
+    border: 1px solid #f1f1f1;
+    ion-button{
+        --padding-end: 7px;
+        --padding-start: 7px;
+        height: 30px;
+        --box-shadow: none;
+        font-size: 12px;
+    }
+    .boomark{
+       
+        --color: gray;
+        --border-color: lightgrey;
+    }
+}
+.img_alignpop {
+    padding: 2px;
+    height: 50px !important;
+    width: 50px !important;
+    background: #ffffff !important;
+    border-radius: 10px !important;
+    position: relative !important;
+    // left: 20px;
+    // top: -12%;
+    border: 1px solid #c9c9c9;
+}
+.spnpop{
+    color: var(--ion-color-secondary);
+    border-right: 1px solid gray;
+    padding-right: 10px;
+    font-size: 16px;
+    margin-right: 8px;
+}
+.tit_setpop{
+    font-size: 16px;
+    color: black;
+    font-weight: 500;
+    margin: 0;
+    padding-right: 6px;
+}
+.btnsets{
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.span{
+    color: #0081dc;
+    margin-left: 10px;
+    font-weight: normal !important;
+}
+
+.icon {
+    font-size: 24px; /* Adjust size */
+    color: black; /* Black outline initially */
+    fill: none; /* No fill */
+    stroke: currentColor; /* Border color */
+    stroke-width: 2; /* Adjust border thickness */
+    transition: color 0.3s ease; /* Smooth transition */
+  }
+  
+  /* Thumbs-Up icon clicked */
+  .thumbs-up[style*="blue"] {
+    fill: blue; /* Fill blue when clicked */
+  }
+  
+  /* Thumbs-Down icon clicked */
+  .thumbs-down[style*="red"] {
+    fill: red; /* Fill red when clicked */
+  }

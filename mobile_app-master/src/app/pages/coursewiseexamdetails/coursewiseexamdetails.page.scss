@@ -1,0 +1,44 @@
+
+.setrow{
+    border: 1px solid gray;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.seg-btnns{
+    --color-checked: #ffffff;
+    --indicator-height: 0px;
+    font-size: 14px;
+    --background-checked: #88d834;
+    --border-radius: 50px;
+    min-height: 0;
+    height: 38px;
+    text-transform: capitalize;
+    margin: 16px 5px;
+    border: 1px solid #f1f1f1;
+    // min-width: 179px;
+  
+  }
+
+  .imageset{
+    margin: auto;
+    width: 100%;
+    display: block;
+  }
+  .f30{
+    text-align: end;
+  }
+  
+  .maindiv{
+    h5{
+      background-color: aliceblue;
+      padding: 8px 10px;
+    }
+    p{
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+  .mx-10{
+    margin: 0 10px!important;
+  }

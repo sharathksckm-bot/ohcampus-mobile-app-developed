@@ -1,0 +1,104 @@
+.set_btn{
+    position: fixed;
+    bottom: 5px;
+    right: 10px;
+}
+
+
+ion-radio {
+    width: 30px;
+    height: 30px;
+  }
+  
+  ion-radio::part(container) {
+    border-radius: 8px;
+    border: 2px solid #ddd;
+  }
+  
+  ion-radio::part(mark) {
+    background: none;
+    transition: none;
+    transform: none;
+    border-radius: 0;
+  }
+  
+  ion-radio.radio-checked::part(container) {
+    background:#0081dc;
+    border-color: transparent;
+  }
+  
+  ion-radio.radio-checked::part(mark) {
+    width: 6px;
+    height: 10px;
+  
+    border-width: 0px 2px 2px 0px;
+    border-style: solid;
+    border-color: #fff;
+  
+    transform: rotate(45deg);
+  }
+
+.footerFix{
+  background: #fff;
+  width: 100%;
+  position: fixed;
+  z-index: 1111;
+  bottom: 0px;
+  text-align: center;
+  height: 55px;
+  padding: 5px;
+}
+
+
+// .custom-spinner .spinner {
+//   width: 100px !important;
+//   height: 100px !important;
+//   background-image: url('../../../assets/icon/loader.gif') !important;
+//   background-size: contain !important;
+//   background-repeat: no-repeat !important;
+//   background-position: center !important;
+// }
+
+// .custom-spinner .spinner-crescent {
+//   display: none !important;
+// }
+
+.custom-spinner .spinner {
+  width: 100px !important;
+  height: 100px !important;
+  background-image: url('../../../assets/icon/loader.gif') !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+
+.custom-spinner .spinner-crescent {
+  display: none !important;
+}
+
+.custom-loader {
+  .loading-wrapper {
+    background: white;
+    color: black; /* Adjust text color if necessary */
+  }
+
+  .spinner-crescent {
+    stroke: black; /* Change the spinner color if you are using a spinner */
+  }
+}
+
+.choosecourse{
+    padding: 0;
+    margin: 10px;
+    --background: aliceblue;
+    background: aliceblue;
+    
+  ion-item{
+    margin-bottom: 10px;
+    border-radius: 8px;
+  }
+}
+
+.custom-loading {
+  --background: #fff; 
+}

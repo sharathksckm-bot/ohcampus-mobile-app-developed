@@ -1,0 +1,156 @@
+
+
+<ion-header [translucent]="true" class="headerBg">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="1"> <ion-icon name="chevron-back-outline" style="margin-top: 5px;" routerLink="/tabs/tabs/tab1"></ion-icon></ion-col>
+
+        <ion-col size="8">
+          <ion-buttons class="primaryhead">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="3" class="text-right selfcenter flex just-right">
+         
+          <!-- <div class="notification" (click)="notification()"><ion-icon name="notifications-outline"></ion-icon>
+            <ion-badge color="danger"></ion-badge>
+          </div> -->
+          <ion-icon routerLink="/editprofile" name="person-outline"></ion-icon> 
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+<div style="padding: 10px;background: aliceblue;margin-bottom: 16px;">
+<ion-icon class="seticon" name="call"></ion-icon>
+<span class="contactitle">Contact Us</span></div>
+
+  <div class="setfbox">
+  <div class="setaddress">Address Details :</div>
+  <p class="text-lg text-secondary mt-6">
+      2nd Floor, SMG Plaza,<br>
+      Opp. Sangeetha Mobiles,<br>
+      M G Road, Chickmagalur, Pincode– 577101,<br>
+      Karnataka, India<br>
+      Enquiry : enquiry@ohcampus.com<br>
+      Telephone :  <a href="tel: +91 - 7019924014" style="color: blue;"> +91 - 7019924014</a><br>
+      Helpline No : <a href="tel: +91 - 8884560456" style="color: blue;"> +91 - 8884560456</a>
+  </p>
+ 
+</div>
+<div>
+</div>
+
+
+
+
+
+
+
+
+
+<div style="background: white;">
+  <form [formGroup]="contactUsForm" #contactUsNgForm="ngForm" novalidate>
+    <div class="setform">
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Enter your name" formControlName="name" (input)="checkValidInputDat($event, 'name')" type="text" >
+        <ion-icon name="person-outline" class="icon" matSuffix></ion-icon>
+        <mat-error *ngIf="contactUsForm.get('name').hasError('required') && contactUsForm.get('name').touched">
+          Name is required
+        </mat-error>
+        <mat-error *ngIf="contactUsForm.get('name').hasError('pattern') && contactUsForm.get('name').touched">
+          Only alphabets are allowed
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Contact No</mat-label>
+        <input matInput placeholder="Enter your Contact Number" formControlName="contactNumber" (input)="checkValidInputDat($event, 'contactNumber')" type="text" >
+        <ion-icon class="icon" matSuffix name="call-outline"></ion-icon>
+        <mat-error *ngIf="contactUsForm.get('contactNumber').hasError('required') && contactUsForm.get('contactNumber').touched">
+          Contact number is required
+        </mat-error>
+        <mat-error *ngIf="contactUsForm.get('contactNumber').hasError('pattern') && contactUsForm.get('contactNumber').touched">
+          Only 10-digit numbers are allowed
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Email ID</mat-label>
+        <input matInput placeholder="Enter your email address" formControlName="email" type="email" required>
+        <ion-icon class="icon" matSuffix name="mail-outline"></ion-icon>
+        <mat-error *ngIf="contactUsForm.get('email').hasError('required') && contactUsForm.get('email').touched">
+          Email address is required
+        </mat-error>
+        <mat-error *ngIf="contactUsForm.get('email').hasError('email') && contactUsForm.get('email').touched">
+          Please enter a valid email address
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Subject</mat-label>
+        <input matInput placeholder="Enter your email subject" formControlName="subject" required>
+        <ion-icon class="icon" matSuffix name="book-outline"></ion-icon>
+        <mat-error *ngIf="contactUsForm.get('subject').hasError('required') && contactUsForm.get('subject').touched">
+          Subject is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Message</mat-label>
+        <input matInput placeholder="Enter your email message" formControlName="message" required>
+        <ion-icon class="icon" matSuffix name="chatbox-outline"></ion-icon>
+        <mat-error *ngIf="contactUsForm.get('message').hasError('required') && contactUsForm.get('message').touched">
+          Message is required
+        </mat-error>
+      </mat-form-field>
+
+      <ion-button expand="block" type="submit" shape="round" (click)="contactusApplication()">Submit</ion-button>
+    </div>
+  </form>
+</div>
+
+
+</ion-content>
+
+
+<ion-footer class="main-footer">
+  <ion-toolbar>
+
+    <div class="footer-tabs">
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab1">
+        <ion-icon name="home"></ion-icon>
+        <span>Home</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab2">
+        <ion-icon name="search-outline"></ion-icon>
+        <span>Search</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab3">
+        <ion-icon name="albums-outline"></ion-icon>
+        <span>Recommended</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab4">
+        <ion-icon name="bookmark-outline"></ion-icon>
+        <span>Shortlist</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab5">
+        <ion-icon name="chatbox-outline"></ion-icon>
+        <span>Assistant</span>
+      </div>
+
+    </div>
+
+  </ion-toolbar>
+</ion-footer>
+

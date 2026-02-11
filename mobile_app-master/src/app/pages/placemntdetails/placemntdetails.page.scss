@@ -1,0 +1,46 @@
+.tblcontent{
+    p{
+        margin: 8px 0;
+        color: #0083dc; 
+    }
+}
+table, th, td {
+    border: 1px solid #e9edff;
+    border-collapse: collapse;
+    padding:6px 8px;
+    text-align:left;
+  }
+  table th.dblue{
+    background: #004983;
+    font-weight: 500;
+    color: #fff;
+  }
+
+
+  .maindiv{
+    // padding: 10px;
+    ion-card{
+        margin: 0;
+        --box-shadow:none;
+        box-shadow:none;
+        border-radius: 12px;
+        img{
+            width:100%;
+            display: block;
+        }
+    }
+    
+    h5{
+        background-color: aliceblue;
+        padding: 8px 10px;
+    }
+  }
+  h5{
+    background-color: aliceblue;
+    padding: 8px 10px;
+}
+
+.settble{
+  margin-bottom: 20px !important;
+  overflow-x: scroll;
+}

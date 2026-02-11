@@ -1,0 +1,75 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-grid >
+      <ion-row>
+        <ion-col size="2">
+          <ion-icon name="chevron-back-outline" class="f30" routerLink="/tabs/tabs/tab1"></ion-icon>
+          <!-- <ion-icon name="arrow-back-outline" routerLink="/tabs/tabs/tab1"></ion-icon> -->
+        </ion-col>
+        <ion-col size="8" class="text-center">
+          <h2 class="primaryhead m0">Notification </h2>
+        </ion-col>
+        
+        <ion-col size="2" class="text-right">
+          <!-- <ion-icon name="search-outline" class="primaryhead f30"></ion-icon> -->
+        </ion-col>
+        </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header> 
+<ion-content style="--background: aliceblue;">
+  <ion-list  class="notification-list">
+ 
+   <ion-item lines="none" *ngFor="let data of data">
+    <div>
+      <div class="headnote"><ion-label >{{data.title}}</ion-label> 
+        <!-- <p class="dys" >10 days</p> -->
+      </div>
+      <p> {{data.message}}</p>
+
+    </div>
+   </ion-item>
+   
+   
+  
+   
+   
+    
+   
+  </ion-list>
+</ion-content>
+
+<ion-footer class="main-footer">
+  <ion-toolbar>
+
+    <div class="footer-tabs">
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab1">
+        <ion-icon name="home"></ion-icon>
+        <span>Home</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab2">
+        <ion-icon name="search-outline"></ion-icon>
+        <span>Search</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab3">
+        <ion-icon name="albums-outline"></ion-icon>
+        <span>Recommended</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab4">
+        <ion-icon name="bookmark-outline"></ion-icon>
+        <span>Shortlist</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab5">
+        <ion-icon name="chatbox-outline"></ion-icon>
+        <span>Assistant</span>
+      </div>
+
+    </div>
+
+  </ion-toolbar>
+</ion-footer>

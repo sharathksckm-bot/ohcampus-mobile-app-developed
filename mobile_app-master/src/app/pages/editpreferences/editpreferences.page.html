@@ -1,0 +1,113 @@
+<ion-header [translucent]="true" class="headerBg">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="1"> <ion-icon name="chevron-back-outline" style="margin-top: 5px;" routerLink="/tabs/tabs/tab1"></ion-icon></ion-col>
+
+        <ion-col size="8">
+          <ion-buttons class="primaryhead">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="3" class="text-right selfcenter flex just-right">
+         
+          <!-- <div class="notification" (click)="notification()"><ion-icon name="notifications-outline"></ion-icon>
+            <ion-badge color="danger"></ion-badge>
+          </div> -->
+          <ion-icon routerLink="/editprofile" name="person-outline" class="primary-color"></ion-icon> 
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content style="--background:aliceblue">
+
+  <div class="ion-padding-top">
+    <!-- Category Section -->
+    <div *ngIf="!categorySelected">
+      <h4>Select Preferred Course</h4>
+      <ion-row style="margin: 6px;">
+        <ion-col size="6" *ngFor="let item of category">
+          <button class="level-button" (click)="selectCategory(item)">
+            {{ item.catname }}
+          </button>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <!-- Level Section -->
+    <div *ngIf="categorySelected && !levelSelected">
+      <h4>Select Level</h4>
+      <ion-row style="margin: 6px;">
+        <ion-col size="4" *ngFor="let item of clevel">
+          <button class="level-button" (click)="selectLevel(item.category_id)">
+            {{ item.name }}
+          </button>
+        </ion-col>
+      </ion-row>
+    </div>
+
+<!-- Subcourse Section -->
+<div *ngIf="levelSelected && categorySelected">
+  <h4>Select Subcourse</h4>
+  
+  <div>
+    <ion-row style="margin: 6px;">
+      <!-- Display the first few items with "Show More" functionality -->
+      <div style="margin: 4px;" *ngFor="let item of clist.slice(0, showMore ? clist.length : initialDisplayCount); let i = index">
+        <button 
+          class="level-button" 
+          [ngClass]="{'selected': isSelected(item)}" 
+          (click)="toggleSelection(item)"
+          [style.background-color]="isSelected(item) ? '#88d834' : ''">
+          {{ item.name }}
+          <ion-icon [name]="isSelected(item) ? 'checkmark-outline' : 'add-outline'" class="right-icon"></ion-icon>
+        </button>
+      </div>
+    </ion-row>
+
+    <!-- "Show More" button -->
+    <ion-row *ngIf="clist.length > initialDisplayCount && !showMore" style="margin: 6px;">
+      <ion-col size="12" class="text-right">
+        <ion-button fill="clear" shape="round" (click)="showMore = true">
+          Show More
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <ion-button expand="block" shape="round" class="sbbtn" (click)="submit()">Submit</ion-button>
+</div>
+
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-row>
+    <ion-tab-button class="botmtabset" routerLink="/tabs/tabs/tab1">
+      <ion-icon name="home" style="font-size:20px"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button class="botmtabset" tab="tab2" routerLink="/tabs/tabs/tab2">
+      <ion-icon name="search-outline" style="font-size:20px"></ion-icon>
+      <ion-label>Search</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button class="botmtabset" routerLink="/tabs/tabs/tab3">
+      <ion-icon name="albums-outline" style="font-size:20px"></ion-icon>
+      <ion-label>Recommended</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button class="botmtabset" routerLink="/tabs/tabs/tab4">
+      <ion-icon name="bookmark-outline" style="font-size:20px"></ion-icon>
+      <ion-label>Shortlist</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button class="botmtabset" routerLink="/tabs/tabs/tab5">
+      <ion-icon name="chatbox-outline" style="font-size:20px"></ion-icon>
+      <ion-label>Assistant</ion-label>
+    </ion-tab-button>
+  </ion-row>
+</ion-footer>

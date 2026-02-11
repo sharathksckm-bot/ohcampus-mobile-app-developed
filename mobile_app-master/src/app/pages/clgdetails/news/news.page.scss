@@ -1,0 +1,192 @@
+.px-12{
+    padding: 0 10px!important;
+}
+.py-12{
+    padding: 12px 0!important;
+}
+.pt-12{
+    padding-top:12px;
+}
+.headtxt{
+    font-weight: 500!important;
+}
+.sbtxt{
+    font-size: 14px;
+    font-weight: 300!important;
+}
+.ovrallrating{
+    h1{
+        font-weight: 600;
+    }
+    .p, .starratex{
+        margin: 0;
+        color: gray;
+    }
+    .blutxt{
+        color: #0083dc;
+    }
+    .starrate{
+     margin-right: 3px;
+    }
+    .rtvalue{
+        margin-right: 10px;
+    }
+    .vertxt{
+        border-top: 1px solid gray;
+        margin: 12px 0px;
+        padding-top: 10px;
+        ion-icon{
+            color: gray;
+            margin-left: 4px;
+        }
+    }
+    
+}
+::ng-deep .mat-progress-bar-fill::after {
+    background-color: #FFC107;
+}
+.populartxt{
+    margin-top: 18px;
+    h2{
+        font-weight: 500;
+    }
+}
+.segmentStud{
+    margin-top: 12px;
+  }
+  .likeDis{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .like{
+        color: green;
+    }
+    .dislike{
+        color: red;
+    }
+    p{
+        color: #0083dc;
+    }
+    span{
+        vertical-align: middle;
+    }
+  }
+  ion-segment-button {
+    --color-checked: #ffffff;
+    --indicator-height: 0px;
+    font-size: 14px;
+    --background-checked: #88d834;
+    --border-radius: 50px;
+    min-height: 0;
+    height: 38px;
+    text-transform: capitalize;
+    margin: 0px 3px;
+    border: 1px solid #f1f1f1;
+}
+.m-12{
+    margin: 12px;
+}
+.highligtbox{
+    margin-top: 12px;
+    .aliceblue{
+        background: aliceblue;
+        margin: 0;
+        padding:12px;
+        border-radius: 6px;
+    }
+    .pinklight{
+        background: #f9ecee;
+        margin: 0;
+        padding:12px;
+        border-radius: 6px;
+        margin-top: 12px;
+    }
+    
+}
+.rates{
+    font-size: 13px;
+    ion-icon{
+        color: #11c918;
+        color: #11c918;
+        font-size: 19px;
+      vertical-align: bottom;
+    }
+}
+.border-y{
+    margin-bottom: 14px;
+    padding: 0px 12px;
+    //box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+.mt-10{
+    margin-top: 10px;
+}
+.px-12{
+    padding: 0 12px;
+}
+.mt0{
+    margin-top: 0;
+}
+.firctchar{
+    background: #fddfe4;
+    color: #a70c0c;
+    padding: 6px;
+    text-align: center;
+    border-radius: 5px;
+}
+p.sbtxt{
+    margin: 0;
+    color: #4b4b4b;
+    font-size: 13px;
+}
+.thirdsection .HeadTxt h5 {
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+
+
+.span{
+    color: #0081dc;
+    margin-left: 10px;
+    font-weight: normal !important;
+}
+
+.setlikecol{
+    display: flex;
+  
+}
+
+.setpic{
+    width: 100%;
+    max-height: 150px;
+    overflow: hidden;
+}
+.setnoimage{
+    height: 150px;
+    width: 100%;
+}
+
+.span{
+    color: #0081dc;
+    margin-left: 10px;
+    font-weight: normal !important;
+}
+
+.icon {
+    font-size: 24px; /* Adjust size */
+    color: black; /* Black outline initially */
+    fill: none; /* No fill */
+    stroke: currentColor; /* Border color */
+    stroke-width: 2; /* Adjust border thickness */
+    transition: color 0.3s ease; /* Smooth transition */
+  }
+  
+  /* Thumbs-Up icon clicked */
+  .thumbs-up[style*="blue"] {
+    fill: blue; /* Fill blue when clicked */
+  }
+  
+  /* Thumbs-Down icon clicked */
+  .thumbs-down[style*="red"] {
+    fill: red; /* Fill red when clicked */
+  }
+  

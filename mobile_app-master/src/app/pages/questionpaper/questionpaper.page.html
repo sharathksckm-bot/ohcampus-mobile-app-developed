@@ -1,0 +1,54 @@
+
+<ion-header style="border-bottom: 1px solid #ddd;">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="3">
+          <ion-icon style="margin-top: 5px;" name="chevron-back-outline" routerLink="/tabs/tabs/tab1"></ion-icon>  
+        </ion-col>
+        <ion-col size="8">
+         <h3>{{examtitle}}</h3>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+<div class="q-papers">
+
+  <h6>Exam Description :</h6>
+  <p class="desc"  [innerHTML]="examdescription"></p>
+  <h6>
+        
+    Question Papers :</h6>
+      <h6 *ngIf="questionpaper==null">Will be available soon</h6>
+      
+        
+
+     
+
+      
+            <div *ngIf="questionpaper!=null">
+            
+        <ion-row class="papelist" *ngFor="let item of questionpaperdata">
+          <!-- <ion-col size="10">
+            <p class="p1">{{questionpaper.docs_title}}</p>
+          </ion-col>
+          <ion-col size="2">
+            <img src="../../../assets/icon/download.png" width="32" (click)="openExamPaper(questionpaper.exam_docs)">
+          </ion-col> -->
+          <ng-container *ngFor="let questionpaper of item.documents">
+            <ion-col size="10">
+              <p class="p1">{{ questionpaper.docs_title }}</p>
+            </ion-col>
+            <ion-col size="2">
+              <img src="../../../assets/icon/download.png" width="32" (click)="openExamPaper(questionpaper.exam_docs)">
+            </ion-col>
+          </ng-container>
+        </ion-row>
+      </div>
+  
+</div>
+
+</ion-content>

@@ -1,0 +1,95 @@
+<!-- 
+
+<ion-content [fullscreen]="true">
+  <div class="main-div">
+    <form [formGroup]="regForm" class="form_login" >
+      <div class="setimg">
+        <img src="../../../assets/icon/N_imgP.png">
+      </div>
+      <div class="login">
+        <img src="../../../assets/icon/logo_15.png">
+
+      </div>
+      
+      <div class="matfield">
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>email</mat-label>
+          <input matInput type="email" id="email" formControlName="email" >
+          <ion-icon class="icon" matSuffix name="mail-outline"></ion-icon>
+          <mat-error *ngIf="regForm.get('email')?.hasError('required')">
+            Email address is required
+          </mat-error>
+          <mat-error *ngIf="regForm.get('email')?.hasError('pattern')">
+            Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" type="{{ showPassword ? 'text' : 'password' }}"[(ngModel)]="password" required>
+          <ion-icon class="icon" matSuffix name="eye-off-outline" name="{{ showPassword ? 'eye-off' : 'eye' }}"
+          (click)="togglePasswordVisibility()"></ion-icon>
+          <mat-error *ngIf="regForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="regForm.get('password')?.hasError('pattern')">
+            Please enter Password at least 1 digit 1 capital and small letter and 1 special character. 
+          </mat-error>
+        </mat-form-field>
+
+        <p class="p1" routerLink="/forgot">Forgot Password?</p>
+        <div style="position:relative; z-index:11">
+          <button (click)="login()" class="btn" mat-raised-button color="primary" >Login</button>
+        </div>
+        <p>Create an account -<span class="span" routerLink="/signup"> Signup Now</span></p>
+      </div>
+    </form>
+  </div>
+</ion-content> -->
+
+
+
+<ion-content [fullscreen]="true">
+  <div class="main-div">
+    <form [formGroup]="regForm" class="form_login" (ngSubmit)="login()">
+      <div class="setimg">
+        <img src="../../../assets/icon/N_imgP.png">
+      </div>
+      <div class="login">
+        <img src="../../../assets/icon/logo_15.png">
+      </div>
+      
+      <div class="matfield">
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" id="email" formControlName="email">
+          <ion-icon class="icon" matSuffix name="mail-outline"></ion-icon>
+          <mat-error *ngIf="regForm.get('email')?.hasError('required')">
+            Email address is required
+          </mat-error>
+          <mat-error *ngIf="regForm.get('email')?.hasError('pattern')">
+            Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" [type]="showPassword ? 'text' : 'password'" required>
+          <ion-icon class="icon" matSuffix [name]="showPassword ? 'eye-off' : 'eye'" (click)="togglePasswordVisibility()"></ion-icon>
+          <mat-error *ngIf="regForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="regForm.get('password')?.hasError('pattern')">
+            Please enter a password with at least one digit, one uppercase letter, one lowercase letter, and one special character.
+          </mat-error>
+        </mat-form-field>
+
+        <p class="p1" routerLink="/forgot">Forgot Password?</p>
+        <div style="position:relative; z-index:11">
+          <ion-button type="submit" class="btn" mat-raised-button color="primary">Login</ion-button>
+        </div>
+        <p>Create an account - <span class="span" routerLink="/signup">Signup Now</span></p>
+      </div>
+    </form>
+  </div>
+</ion-content>

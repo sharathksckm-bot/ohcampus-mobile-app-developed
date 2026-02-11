@@ -1,0 +1,557 @@
+<div class="px-12 pt-12">
+
+    <!-- first section -->
+     <div class="courseCard">
+        <div>
+            <ion-row style="padding:10px">
+                <ion-col size="2">
+                    <ion-icon style="font-size: 34px;color: #88d834;" name="calendar-outline"></ion-icon>
+
+                </ion-col>
+                <ion-col size="6">
+                    <p style="margin: 0;">{{coursename}}</p>
+
+                </ion-col>
+                <ion-col size="4" (click)="openModal('open-modal')">
+                    <ion-button id="open-modal" style="font-size: 12px;">Apply Now</ion-button>
+                </ion-col>
+            </ion-row>
+           
+        </div>
+
+        <div *ngFor="let item of courseinfoArr">
+          
+            <div *ngIf="item.course_description" style="margin-bottom: 16px; padding:10px">
+                <h5 style="margin: 0; padding-left: 10px;">Overview</h5>
+                <h1 [innerHTML]="item.course_description"></h1>
+            </div>
+
+            <div class="wikiContents mt-3" *ngIf="courseinfoArr && courseinfoArr.length > 0">
+                <table class="table">
+                   
+
+                    <tbody>
+                        <tr>
+                            <td>
+                                Duration
+                            </td>
+                            <td>
+                                {{ item.duration ? item.duration + ' years' : 'NA' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Course Level
+                            </td>
+                            <td>
+                                {{ item.level ? item.level : 'NA' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Annual Fees (INR)
+                            </td>
+                            <td>
+                                {{ item.total_fees ? item.total_fees : 'NA' }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Eligibility
+                            </td>
+                            <td>
+                                <p>
+                                    Qualification:- {{ item?.eligibility || 'NA' }}
+                                </p>
+                                <!-- <p *ngIf="item.eligibility?.cut_off?.length">
+                                    Cut Off:- {{ item.eligibility.cut_off.join(', ') }}
+                                </p>
+                                <p *ngIf="item.eligibility?.other_eligibility">
+                                    Other Eligibility:- {{ item.eligibility.other_eligibility }}
+                                </p> -->
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Scope
+                            </td>
+                            <td>
+                                {{ item.scope ? item.scope : 'NA' }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Official Website
+                            </td>
+                            <td>
+                                <a *ngIf="item.website; else noWebsite" [href]="item.website">Go to Website</a>
+                                <ng-template #noWebsite>NA</ng-template>
+                            </td>
+                        </tr>
+                        <tr *ngIf="item.total_intake>0">
+                            <td>
+                                Total Intake
+                            </td>
+                            <td>
+                                {{ item.total_intake ? item.total_intake : 'NA' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                College Type
+                            </td>
+                            <td>
+                                {{ item.college_type ? item.college_type : 'NA' }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Job Profile
+                            </td>
+                            <td>
+                                {{ item.job_profile ? item.job_profile : 'NA' }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Certification
+                            </td>
+                            <td>
+                                {{ item.certification ? item.certification : 'NA' }}
+                            </td>
+                        </tr>
+                    </tbody>
+                    
+                </table>
+            </div>
+        </div>
+    </div> 
+    
+    
+    
+ 
+
+  
+
+
+    <!-- second section -->
+    <div class="courseCard" *ngIf="crsfeesstuctreArry && crsfeesstuctreArry.length > 0">
+        <div>
+            <ion-row style="padding:10px">
+                <ion-col size="2">
+                    <svg style="font-size: 34px;color: #88d834;" xmlns="http://www.w3.org/2000/svg" width="38"
+                        height="38" fill="currentColor" class="secondary-color bi bi-currency-rupee"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M4 3.06h2.726c1.22 0 2.12.575 2.325 1.724H4v1.051h5.051C8.855 7.001 8 7.558 6.788 7.558H4v1.317L8.437 14h2.11L6.095 8.884h.855c2.316-.018 3.465-1.476 3.688-3.049H12V4.784h-1.345c-.08-.778-.357-1.335-.793-1.732H12V2H4z" />
+                    </svg>
+                </ion-col>
+                <ion-col size="10">
+                    <p style="margin: 0;">{{coursename}}</p>
+
+                </ion-col>
+
+            </ion-row>
+            <h5 style="margin: 0; padding-left: 10px;">Fees</h5>
+        </div>
+
+
+
+        <div>
+            <table style="width:100%; margin-bottom : 18px">
+                <tbody>
+                    <tr>
+                        <th>
+                            <p>Fee components</p>
+                        </th>
+                        <th width="200">
+                            <p>Amount (4 years)</p>
+                        </th>
+                    </tr>
+                    <tr *ngFor="let item of crsfeesstuctreArry">
+                        <td>
+                            <span class="font-medium">{{item.feecomponent}}</span> <br>
+
+                        </td>
+                        <td>
+                            {{item.amount}}
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- second section closed-->
+
+
+   
+
+    <div class="courseCard" *ngIf="courseexamArry && courseexamArry.length > 0">
+        <div>
+          <ion-row style="padding:10px">
+            <ion-col size="2">
+              <ion-icon style="font-size: 34px; color: #88d834;" name="book"></ion-icon>
+            </ion-col>
+            <ion-col size="10">
+              <p style="margin: 0;">{{coursename}}</p>
+            </ion-col>
+          </ion-row>
+          <h5 style="margin: 0; padding-left: 10px;">Accepting Entrance Exams</h5>
+        </div>
+      
+        <div style="padding: 0 10px 4px;" *ngFor="let item of courseexamArry">
+          <h1 (click)="exmdetail(item.id)">
+            {{item.exam_name}}
+          </h1>
+          <p [innerHTML]="item.description"></p><br>
+          <p [innerHTML]="item.criteria"></p>
+        </div>
+      </div>
+    <!-- third section closed-->
+
+    <!-- 4 section -->
+    <div class="caskqns" *ngIf="commanlyaskedqaeArr && commanlyaskedqaeArr.length > 0">
+        <ion-accordion-group>
+            <ion-row>
+                <ion-col size="2">
+                    <img src="../../../assets/icon/QandA.png">
+                </ion-col>
+                <ion-col size="10">
+                    <h4 style="margin: 0;">Frequently Asked Questions</h4>
+                    <!-- <p style="margin: 0;">on Admission</p> -->
+                </ion-col>
+            </ion-row>
+
+            <ion-accordion [value]="item.value" *ngFor="let item of commanlyaskedqaeArr">
+                <ion-item slot="header">
+                    <ion-label>Q: {{item.question}}</ion-label>
+                </ion-item>
+                <div class="ion-padding" slot="content" [innerHTML]="item.answere">
+
+                </div>
+            </ion-accordion>
+
+        </ion-accordion-group>
+    </div>
+    <!-- 4 section closed-->
+
+
+    <!-- 5 section Admission process -->
+
+   
+
+    <div class="courseCard" *ngIf="admisionprocesArry && admisionprocesArry.length > 0">
+        <div>
+          <ion-row style="padding:10px">
+            <ion-col size="2">
+              <ion-icon style="font-size: 34px;color: #88d834;" name="school"></ion-icon>
+            </ion-col>
+            <ion-col size="10">
+              <p style="margin: 0;">{{coursename}}</p>
+              <h5 style="margin: 0; padding-left: 10px;">Admission Process</h5>
+            </ion-col>
+          </ion-row>
+        </div>
+      
+        <div style="padding: 0 10px 4px;" *ngFor="let item of admisionprocesArry">
+          <p style="color: #2196f3">Eligibility</p>
+          <p>{{item.eligibility}}</p>
+          <div class="flex justify-between">
+            <p style="color: #2196f3">Important Dates</p>
+          </div>
+          <div class="tabecontent mt-3" #ImportantDates [innerHTML]="item.Examnotification_or_ImportantDates"></div>
+        </div>
+      </div>
+      
+    <!-- 5 section Admission process closed-->
+
+
+
+
+   
+
+    <!-- 7 section Popular colleges -->
+    <div>
+        <div class="thirdsection" *ngIf="popularclgarry && popularclgarry.length > 0">
+
+            <div class="HeadTxt">
+                <h5> Explore popular similar colleges</h5>
+               
+            </div>
+
+            <div>
+                <ion-slides [options]="slideOptspage">
+
+                    <ion-slide class="slide_set" *ngFor="let item of popularclgarry">
+                        <ion-card class="size_set">
+                            <div class="imgHead">
+                                
+                                <p class="tit_set">
+                                    {{ item.title.length > 23 ? (item.title | slice:0:23) + '...' : item.title }}
+                                </p>
+                                <img class="img_align" [src]="item.logo"
+                                    onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+                            </div>
+
+                            <p class="set_botm">
+                                <ion-icon name="location-outline"></ion-icon>{{item.cityname}}
+                            </p>
+                            <p style="display: flex;"> <span class="spn">{{item.courseCount}} courses</span>
+                                <ion-icon name="star" class="starrate"></ion-icon><span
+                                    class="spnn">{{item.rating.totalRateCount}}</span>
+                            </p>
+
+                            <div class="footerpart" style="display: flex;align-items: center;">
+                                <ion-button fill="outline" shape="round" class="boomark"
+                                    style="height: 30px;width: 30px;"
+                                    [ngClass]="{'shortlisted': shortlistedColleges.has(collegeId)}"
+                                    (click)="addclgshortlist(collegeId)">
+                                    <ion-icon [name]="isBookmarked ? 'bookmark' : 'bookmark-outline'"
+                                        [class.active]="isBookmarked"></ion-icon></ion-button>
+
+                                <ion-button shape="round" class="capitalize greenbtn"
+                                    style="margin-left:2px; margin-right:2px" (click)="brochure(collegeId)">
+                                    <ion-icon name="arrow-down-circle" class="mr-6"></ion-icon> Brochure
+                                </ion-button>
+                                <ion-button shape="round" class="capitalize greenbtn"
+                                    (click)="clgpredict(item.collegeid,item.CatId,item.subCatName)">
+                                    Predict Admission
+                                </ion-button>
+                            </div>
+                        </ion-card>
+                    </ion-slide>
+                </ion-slides>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- 7 section Popular colleges closed-->
+
+    <!-- 8 section  colleges Photo & videos -->
+    <div *ngIf="clgimgArry && clgimgArry.length > 0">
+        <ion-row>
+
+            <ion-col size="12">
+                <p style="margin: 0;">{{collegename}}</p>
+                <h5 style="margin: 0;">Take a look at Campus</h5>
+            </ion-col>
+        </ion-row>
+        <ion-slides [options]="slidepic">
+            <ion-slide *ngFor="let item of clgimgArry">
+                <ion-card class="setpic">
+                    <img class="setnoimage" [src]="item.image" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+                </ion-card>
+            </ion-slide>
+
+        </ion-slides>
+    </div>
+
+    <!-- 8 section  colleges Photo & videos closed-->
+
+    <!-- 9 Article section -->
+    <div *ngIf="latenpopArr && popularArr.length > 0">
+        <div>
+            <ion-row class="border-y">
+
+                <ion-col size="12" class="selfcenter">
+                    <span style="font-weight: 500;font-size: 18px;"> Latest & Popular Articles </span>
+                </ion-col>
+            </ion-row>
+        </div>
+
+        <div class="mx10">
+            <ion-segment [scrollable]="true" value="Latest" (ionChange)="segmentChanged($event)">
+                <ion-segment-button value="Latest">
+                    <ion-label>Latest</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="Popular">
+                    <ion-label>Popular</ion-label>
+                </ion-segment-button>
+            </ion-segment>
+            <div *ngIf="selectedSegment === 'Latest'" class="mt10">
+                <div *ngFor="let latest of latenpopArr">
+                    <ion-row class="setrw mb5 mt6 pb0">
+                        <ion-col size="8" (click)="articlesdetails(latest.id)">
+                            <p class="atitle">{{latest.title}}: </p>
+                            <p class="p2"> {{latest.post_rate_date}}</p>
+                            <p class="p3">Views : {{latest.views}} </p>
+                        </ion-col>
+                        <ion-col size="4">
+                            <img [src]="latest.image">
+                        </ion-col>
+                    </ion-row>
+                </div>
+            </div>
+            <div *ngIf="selectedSegment === 'Popular'">
+                <div *ngFor="let popular of popularArr">
+                    <ion-row class="setrw mb5 mt6 pb0">
+                        <ion-col size="8" (click)="articlesdetails(popular.id)">
+                            <p class="atitle">{{popular.title}}: </p>
+                            <p class="p2">{{popular.post_rate_date}}</p>
+                            <p class="p3">Views : {{popular.views}} </p>
+                        </ion-col>
+                        <ion-col size="4">
+                            <img [src]="popular.image">
+                        </ion-col>
+                    </ion-row>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- 9 Article section closed-->
+
+
+<!--10 otherclgbycity -->
+<div class="trending" *ngIf="sameclgArry && sameclgArry.length > 0">
+    <div>
+      <h4>Other colleges offering {{coursename}} in {{cityname}}</h4>
+      <ion-item detail="true" *ngFor="let item of sameclgArry">
+        <ion-label class="ion-text-wrap">
+          <h3 (click)="clgdetls(item.id)">{{item.title}}</h3>
+        </ion-label>
+      </ion-item>
+    </div>
+  </div>
+
+  <!--10 otherclgbycity -->
+
+   
+
+    <!-- ion model 1 -->
+    <ion-modal trigger="open-modal">
+        <ng-template>
+            <ion-content>
+               
+                <div class="matfield">
+                    <ion-row style="border-bottom: 1px solid #cacaca;margin-bottom: 18px;">
+                        <ion-col size="2"></ion-col>
+                      <ion-col size="8" class="headtxt">
+                        <ion-icon style="color:#2196f3" name="person"></ion-icon>
+                        <h4 class="sethedding">APPLY NOW</h4>
+                      </ion-col>
+                      <ion-col size="2">
+                        <ion-icon class="iconclose" name="close-outline" (click)=" close()"></ion-icon>
+                      </ion-col>
+                    </ion-row>
+                   
+                    <form [formGroup]="aplicationForm">
+                      <mat-form-field class="w-75" appearance="outline">
+                        <mat-label>Student Name</mat-label>
+                        <input matInput placeholder="Enter your name" formControlName="student_name" (input)="checkValidInputDat($event, 'student_name')" type="text">
+                        <ion-icon name="person-outline" class="icon" matSuffix></ion-icon>
+                       
+                      </mat-form-field>
+                  
+                      <mat-form-field class="w-75" appearance="outline">
+                        <mat-label>Mobile Number</mat-label>
+                        <input matInput placeholder="Enter your mobile number"  formControlName="mobile_no" (input)="checkValidInputDat($event, 'mobile_no')" type="tel">
+                        <ion-icon name="call-outline" class="icon" matSuffix></ion-icon>
+                        
+                      </mat-form-field>
+                  
+                      <mat-form-field class="w-75" appearance="outline">
+                        <mat-label>Email</mat-label>
+                        <input matInput placeholder="Enter your name"  formControlName="email" >
+                        <ion-icon name="mail-outline" class="icon" matSuffix></ion-icon>
+                      </mat-form-field>
+                  
+                      <mat-form-field class="w-75" appearance="outline">
+                        <mat-label>Course Category</mat-label>
+                        <mat-select formControlName="category" (ngModelChange)="getCourseByCategoryClg()">
+                          <mat-option *ngFor="let course of CourseCategoryArr" [value]="course.category_id"> {{course.name}}</mat-option>
+                          
+                        </mat-select>
+                      </mat-form-field>
+                      
+                      <mat-form-field class="w-75" appearance="outline">
+                        <mat-label>Course</mat-label>
+                        <mat-select  formControlName="course">
+                            <mat-option  *ngFor="let course of CoursesByCatArr" [value]="course.name">{{course.name}}</mat-option>
+                         
+                        </mat-select>
+                      </mat-form-field>
+                    
+                    
+                      <mat-form-field class="w-75" appearance="outline">
+                        <mat-label>College</mat-label>
+                        <mat-select  formControlName="college" >
+                            <mat-option  *ngFor="let item of clgdetailArry" [value]="item.id">{{item.title}}</mat-option>
+                         
+                        </mat-select>
+                        <ion-icon  class="icon" matSuffix></ion-icon>
+                      </mat-form-field>
+                  
+                    
+                     
+
+
+                      <mat-form-field class="w-75" appearance="outline">
+                        <mat-label>Entrance Exam</mat-label>
+                        <input type="text"
+                               placeholder="Pick an exam"
+                               aria-label="Entrance Exam"
+                               matInput
+                               formControlName="entrence_exam"
+                               [formControl]="entranceExamControl"
+                               [matAutocomplete]="auto">
+                        <mat-autocomplete #auto="matAutocomplete">
+                          <mat-option *ngFor="let exam of filteredExams | async" [value]="exam.title">
+                            {{ exam.title }}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                      
+                      
+                      <mat-form-field class="w-75" appearance="outline">
+                        <mat-label>Expected/Secured Rank</mat-label>
+                        <input matInput placeholder="Enter your rank"  formControlName="rank">
+                        <ion-icon  class="icon" matSuffix></ion-icon>
+                      </mat-form-field>
+                  
+                      <mat-form-field class="w-75" appearance="outline">
+                        <mat-label>Expected/Secured Score</mat-label>
+                        <input matInput placeholder="Enter your score" formControlName="score" >
+                        <ion-icon  class="icon" matSuffix></ion-icon>
+                      </mat-form-field>
+                    </form>  
+                    <button mat-raised-button color="primary" class="px-12 justify-center mt-4 mb-10" (click)="savCourseApplication()">Submit</button>
+                  </div>
+
+            </ion-content>
+        </ng-template>
+    </ion-modal>
+    <!-- ion model close -->
+
+</div>
+
+
+ <!-- 11 student forum -->
+ <div class="forumsec">
+    <ion-row class="firstrow">
+        <ion-col size="12">
+            <h4>{{collegename}}</h4>
+            <h5>Student Forum</h5>
+        </ion-col>
+    </ion-row>
+    <form [formGroup]="studentForum">
+        <div class="setdiv">
+            <ion-row class="firstrow">
+                <ion-col size="12">
+                    <h5>Anything you would want to ask experts?</h5>
+                </ion-col>
+            </ion-row>
+            <ion-input placeholder="Write here" formControlName="studentque">
+            </ion-input>
+            <ion-button (click)="postQuestion()">Submit</ion-button>
+        </div>
+    </form>
+</div>
+<!-- 11 student forum -->

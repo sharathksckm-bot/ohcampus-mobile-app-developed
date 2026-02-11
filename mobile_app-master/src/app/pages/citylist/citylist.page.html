@@ -1,0 +1,91 @@
+
+<ion-header>
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="1">
+          <ion-icon style="margin-top: 5px;" name="chevron-back-outline"  routerLink="/tabs/tabs/tab1"></ion-icon>  
+        </ion-col>
+        <ion-col size="8">
+          <ion-buttons>
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="3" class="text-right selfcenter flex just-right">
+          <div class="notification">
+            <!-- <ion-icon name="notifications-outline"></ion-icon> -->
+            <ion-badge color="danger"></ion-badge>
+          <ion-icon routerLink="/editprofile" name="person-outline"></ion-icon>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </ion-toolbar>
+</ion-header>
+
+ 
+
+
+<ion-content style="--background:aliceblue;">
+  <form [formGroup]="cityform">
+    <div>
+      <h5 class="m10">Choose Locations</h5>
+      <div class="searchbar">
+        <ion-searchbar (ionInput)="onSearch($event)" formControlName="searchvalue"></ion-searchbar>
+      </div>
+      <div>
+        <ion-list class="locationlist">
+        <ion-item *ngFor="let item of filteredLocations">
+          <ion-checkbox slot="end" (ionChange)="clglistbyloc($event,item.id)"></ion-checkbox>
+          <ion-label>{{item.city}}</ion-label>
+        </ion-item>
+      </ion-list>
+
+      <div class="setbtn" >
+        <ion-button class="btn1" routerLink="/tabs/tabs/tab1">Cancel</ion-button>
+        <ion-button (click)="clglistbyloc1(id)">Done</ion-button>
+      </div>
+       
+      </div>
+    </div>
+  </form>
+</ion-content >
+<ion-footer class="main-footer">
+  <ion-toolbar>
+
+    <div class="footer-tabs">
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab1">
+        <ion-icon name="home"></ion-icon>
+        <span>Home</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab2">
+        <ion-icon name="search-outline"></ion-icon>
+        <span>Search</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab3">
+        <ion-icon name="albums-outline"></ion-icon>
+        <span>Recommended</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab4">
+        <ion-icon name="bookmark-outline"></ion-icon>
+        <span>Shortlist</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab5">
+        <ion-icon name="chatbox-outline"></ion-icon>
+        <span>Assistant</span>
+      </div>
+
+    </div>
+
+  </ion-toolbar>
+</ion-footer>
+
+
+
+

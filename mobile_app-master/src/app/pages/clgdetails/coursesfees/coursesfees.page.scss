@@ -1,0 +1,336 @@
+.setnotification{
+    width:360px;
+    height: 370px;
+    .settitle{
+        text-align: center;
+    background: #a4affe;
+    position: relative;
+    top: -14px;
+    height: 35px;
+    }
+    p{
+        color:#0083dc;
+    }
+}
+
+.populartxt{
+    margin-top: 18px;
+    h2{
+        font-weight: 500;
+    }
+}
+
+.px-10{
+    padding: 0 10px;
+}
+// .style{
+//     border-bottom: 1px solid #fcebeb;
+// }
+
+// .courseCard{
+//     padding-top:20px;
+// }
+
+.px-12{
+    padding: 0 12px;
+}
+.pt-12{
+    padding-top:12px;
+}
+.tabbody{
+    padding:12px 0px;
+    .bgsmockgray{
+         background-color: #f6f8fe;
+         border-radius: 12px;
+         padding:12px;
+    }
+    .headcard{
+        display: flex;
+        ion-icon{
+            font-size: 35px;
+            color: #0083dc;
+            margin-right: 8px;
+        }
+        span{
+            font-size: 14px;
+            color: #797979;
+        }
+        h2{
+            font-weight: 500;
+            color: #000;
+        }
+    }
+    .slid{
+        ion-card{
+            width: 100%;
+            padding: 10px;
+        }
+        .Whtcard{
+            text-align: left;
+            h3{
+                font-weight: 500;
+            }
+            span{
+                color: #0083dc; 
+            }
+        }
+    }
+}
+.accordians{
+    margin-top: 12px;
+    box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+    border-radius: 10px;
+    .paragraph ion-label{
+        line-height: 1.5;
+    }
+    ion-accordion{
+        border-radius: 10px;
+    }
+    ion-item{
+        border-bottom: 1px solid #f1f1f1;
+        p{
+            font-size: 14px;
+            color: #777;
+            margin: 6px 0;
+        }
+        h2{
+            font-weight: 500;
+        }
+        ion-label{   
+            font-size: 14px;
+        }
+    }
+}
+.tblcontent{
+    p{
+        margin: 8px 0;
+        color: #0083dc; 
+    }
+}
+table, th, td {
+    border: 1px solid #e9edff;
+    border-collapse: collapse;
+    padding:6px 8px;
+    text-align:left;
+  }
+  table th{
+   background:aliceblue;
+   font-weight: 500;
+  }
+  .iconbtn{
+    --padding-end: 12px;
+    --padding-start: 12px;
+  }
+  .segmentStud{
+    margin: 14px 0px;
+  }
+ 
+ .serchbar{
+    --box-shadow: none!important;
+    border-bottom: 1px solid!important;
+    padding:0!important;
+    .searchbar-input.sc-ion-searchbar-md{
+        padding: 8px 10px 8px 45px!important;   
+    }
+   
+ } 
+ .caskqns{
+    margin-bottom: 14px;
+ }
+ .filter-btn{
+    border: 1px solid;
+    border-radius: 50px;
+    margin: 0 4px;
+ }
+ .cardcust{
+    border-radius: 8px;
+    background: white;
+    padding: 14px;
+    box-shadow: rgba(205, 211, 214, 0.21) 0px 8px 25px;
+    border: 1px solid #f1f1f1;
+ }
+ .pagination {
+    display: inline-block;
+    list-style-type: none;
+    padding: 0;
+    margin-top:1.5rem;
+  }
+  
+  .pagination li {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .pagination li.active {
+    background-color: #52dd26;
+    color: white;
+    border-radius: 3px;
+  }
+  .populartxt{
+    margin-top: 18px;
+    h2{
+        font-weight: 500;
+    }
+}
+ion-segment-button {
+    --color-checked: #ffffff;
+    --indicator-height: 0px;
+    font-size: 14px;
+    --background-checked: #88d834;
+    --border-radius: 50px;
+    min-height: 0;
+    height: 38px;
+    text-transform: capitalize;
+    margin: 0px 3px;
+    border: 1px solid #f1f1f1;
+}
+.userReview{
+    .firctchar{
+        background: #fddfe4;
+        color: #a70c0c;
+        padding: 6px;
+        text-align: center;
+        border-radius: 5px;
+    }
+    p.sbtxt{
+        margin: 0;
+        color: #4b4b4b;
+        font-size: 13px;
+    }
+    .rateby{
+        font-size: 13px;
+    background: #11c918;
+    color: #fff;
+    padding: 4px;
+    border-radius: 3px;
+    }
+    .ratingBtns{
+        ion-icon{
+            color: #11c918;
+            font-size: 10px;
+            position: relative;
+            top: -2px;
+            left: -1px;
+        }
+        ion-button {
+            text-transform: capitalize;
+            --border-width: 1px;
+            --border-color: #d9d9d9;
+            --color: #000;
+        }
+    }
+    h3{
+        margin-top: 10px!important;
+        font-weight: 500;
+    }
+    .thumbicon{
+        border-top: 1px solid #ddd;
+        ion-icon{
+            font-size: 20px;
+            color: #8b8b8b;
+            margin: 3px 5px;
+        }
+    }
+}
+
+// ------------------popup----------------------------------
+
+ion-modal {
+    --height: 80%;
+    --width:95%;
+    --border-radius: 14px;
+    --box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+  
+  ion-modal::part(backdrop) {
+    background: rgba(209, 213, 219);
+    opacity: 1;
+  }
+  
+  .popucontent{
+    ion-toolbar{
+        border-bottom: 1px solid #ddd;
+    }
+    .filterpop{
+       height: 80%;
+       border-bottom: 1px solid #ddd;
+    }
+    .filterSegment{
+        flex-direction: column;
+        ion-segment-button {
+            --color-checked: #5aaf01;
+            --indicator-height: 0px;
+            font-size: 13px;
+            --background-checked: #f6ffec;
+            --border-radius: 6px;
+            min-height: 0;
+            height: 38px;
+            text-transform: capitalize;
+            //margin-left: -10px !important;
+            border: 0;
+            font-weight: 100 !important;
+            // --padding-start: 0px;
+        }
+    }
+    .brR{
+      border-right: 1px solid #ddd;    
+    }
+    ion-checkbox {
+        margin-right: 12px;
+    }
+   
+  }
+  .boomark{
+    --color: gray;
+    --border-color: #cfcfcf;
+    font-size: 12px;
+    --padding-end: 0px;
+    --padding-start: 0px;
+  }
+  .courseCard .midpart {
+    padding: 3px 10px;
+}
+.p2 ,.p3{
+    font-size: 14px;
+    margin: 6px 0px;
+    color: gray;
+}
+.p1{
+    margin: 0;
+}
+
+
+
+.trending{
+    background: #f2f9ff;
+    padding: 20px 10px;
+    border-radius: 16px;
+   
+    border: 1px solid #b6ddff;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  
+  .setlist{
+    padding: 10px;
+      border: 1px solid #b8b88a;
+      border-radius: 15px;
+      margin: 10px;
+  }
+ 
+  ion-item{
+    --padding-start: 0;
+    padding-inline-end: 0;
+    --background: transparent;
+  }
+  h4{
+    margin-top: 0;
+  }
+  
+  }
+
+  .footerpart{
+    padding-left: 30px;
+}

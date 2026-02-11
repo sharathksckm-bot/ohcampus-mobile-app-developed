@@ -1,0 +1,81 @@
+<ion-content>
+  <div class="matfield">
+    <ion-row>
+      <ion-col size="2"></ion-col>
+      <ion-col size="8">
+        <h5 style="margin:10px;">Apply Now</h5>
+      </ion-col>
+      <ion-col size="2">
+        <ion-icon class="iconclose" name="close-outline" ></ion-icon>
+      </ion-col>
+    </ion-row>
+    
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Student Name</mat-label>
+        <input matInput placeholder="Enter your name" type="text" >
+        <ion-icon name="person-outline" class="icon" matSuffix></ion-icon>
+      </mat-form-field>
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="Enter your email" type="text">
+        <ion-icon name="mail-outline" class="icon" matSuffix></ion-icon>
+      </mat-form-field>
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Mobile Number</mat-label>
+        <input matInput placeholder="Enter your mobile number">
+        <ion-icon name="call-outline" class="icon" matSuffix></ion-icon>
+      </mat-form-field>
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Course Category</mat-label>
+        <mat-select>
+          <mat-option> category.name </mat-option>
+          <mat-option> category.name </mat-option>
+          <mat-option> category.name </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Course</mat-label>
+        <mat-select>
+          <mat-option> course.name </mat-option>
+          <mat-option> course.name </mat-option>
+          <mat-option> course.name </mat-option>
+          <mat-option> course.name </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>College</mat-label>
+        <input matInput>
+      </mat-form-field>
+      
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Entrance Exam</mat-label>
+        <mat-select>
+          <mat-option> exam.title  </mat-option>
+          <mat-option> exam.title  </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Expected/Secured Rank</mat-label>
+        <input matInput placeholder="Enter your rank" type="number">
+        <ion-icon class="icon" matSuffix></ion-icon>
+      </mat-form-field>
+    
+      <mat-form-field class="w-75" appearance="outline">
+        <mat-label>Expected/Secured Score</mat-label>
+        <input matInput placeholder="Enter your score" type="number">
+        <ion-icon class="icon" matSuffix></ion-icon>
+      </mat-form-field>
+      
+      <button mat-raised-button class="btn ion-margin-bottom" type="submit">Submit</button>
+ 
+
+  </div>
+</ion-content>  

@@ -1,0 +1,81 @@
+<!--   
+   
+ 
+  
+  <ion-header [translucent]="true" >
+    <ion-toolbar>
+        <ion-grid>
+            <ion-row>
+                <ion-col size="2">
+                    <ion-icon name="arrow-back" routerLink="/editpreferences"></ion-icon>
+                </ion-col>
+                <ion-col size="8" class="selfcenter text-center">
+                    <h6 class="m0"> State List</h6>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content style="--background:aliceblue ;">
+    <div class="ion-margin">
+        <p>Choose your preferred State List</p>
+    </div>
+    <ion-list class="choosecourse">
+        <ion-item *ngFor="let item of statelist" lines="none">
+            <ion-label>{{item.statename}}</ion-label>
+            <ion-checkbox [value]="item.statename" (ionChange)="toggleSelection($event, item)"></ion-checkbox>
+        </ion-item>
+    </ion-list>
+    <div class="footerFix">
+      <ion-button (click)="handleButtonClick()" [disabled]="selectedOptions.length === 0">
+        Done
+    </ion-button>
+    </div>
+    
+</ion-content> -->
+
+
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="2">
+          <ion-icon name="arrow-back" routerLink="/editpreferences"></ion-icon>
+        </ion-col>
+        <ion-col size="8" class="selfcenter text-center">
+          <h6 class="m0">State List </h6>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen="true" style="--background: aliceblue;">
+  <div class="ion-margin">
+    <p>Choose your preferred State List</p>
+  </div>
+
+  <ion-list class="choosecourse">
+    <ion-item *ngFor="let item of statelist" lines="none">
+      <ion-label>{{ item.statename }}</ion-label>
+      <ion-checkbox
+        [value]="item.statename"
+        (ionChange)="toggleSelection($event, item)">
+      </ion-checkbox>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button expand="block"
+      (click)="handleButtonClick()"
+      [disabled]="selectedOptions.length === 0">
+      Done
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>
+
+
+

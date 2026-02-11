@@ -1,0 +1,64 @@
+
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="2">
+          <ion-icon name="arrow-back" routerLink="/tabs/tabs/tab1"></ion-icon>
+        </ion-col>
+       
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content style="--background:aliceblue">
+  <div class="main-div ion-padding">
+    <form [formGroup]="enquiryForm" (ngSubmit)="submitForm()">
+      <div class="matfield">
+        <h5 class="mt0">Enquiry Form</h5>
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" placeholder="Enter your name">
+          <ion-icon class="icon" matSuffix name="person-outline"></ion-icon>
+        
+          <mat-error *ngIf="enquiryForm.get('name').hasError('required') ">Name is required</mat-error>
+          <mat-error *ngIf="enquiryForm.get('name').hasError('pattern')">only alphabets are allowed is required</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="matfield">
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="Enter your email address">
+          <ion-icon class="icon" matSuffix name="mail-outline"></ion-icon>
+          <mat-error *ngIf="enquiryForm.get('email').hasError('required') && enquiryForm.get('email').touched">Email is required</mat-error>
+          <mat-error *ngIf="enquiryForm.get('email').hasError('email') && enquiryForm.get('email').touched">Please enter a valid email address</mat-error>
+        </mat-form-field>
+        <div class="matfield">
+          <mat-form-field class="w-75" appearance="outline">
+            <mat-label>Mobile</mat-label>
+            <input matInput formControlName="mobile" placeholder="Enter your mobile number" (keypress)="numberOnly($event)" maxlength="10" minlength="10">
+            <ion-icon class="icon" matSuffix name="call-outline"></ion-icon>
+          
+          </mat-form-field>
+        </div>
+        <div class="matfield">
+          <mat-form-field class="w-75" appearance="outline">
+            <mat-label>Course</mat-label>
+            <input matInput formControlName="course" placeholder="Enter the course">
+            <ion-icon class="icon" matSuffix name="school-outline"></ion-icon>
+
+          
+          </mat-form-field>
+        </div>
+
+      </div>
+      <ion-button expand="block" color="primary" type="submit">Submit</ion-button>
+
+    </form>
+  </div>   
+</ion-content>
+
+
+
+  

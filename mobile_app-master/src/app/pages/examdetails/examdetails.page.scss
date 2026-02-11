@@ -1,0 +1,32 @@
+.examdetails{
+    // margin: 10px;
+    p{
+        margin: 10px;
+    }
+    h5{
+        padding: 10px;
+        background: aliceblue;
+    }
+   
+}
+.excategory{
+    p{
+        margin: 0px 10px;
+    }
+    h6{
+        margin: 14px 10px 6px;
+    }
+}
+ion-segment-button{
+    --color-checked: #ffffff;
+    --indicator-height: 0px;
+    font-size: 14px;
+    --background-checked: #88d834;
+    --border-radius: 50px;
+    min-height: 0;
+    height: 38px;
+    text-transform: capitalize;
+    margin: 0px 3px;
+    border: 1px solid #f1f1f1;
+    min-width: 145px;
+}

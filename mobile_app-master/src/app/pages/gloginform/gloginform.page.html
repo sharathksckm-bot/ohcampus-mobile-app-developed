@@ -1,0 +1,85 @@
+
+
+<ion-content>
+ 
+
+   <ion-row class="ion-align-items-center ion-padding-top">
+    <ion-col size="2" class="text-center">
+      <ion-icon class="closeicon" name="close-outline" (click)="go()"></ion-icon>
+    </ion-col>
+    <ion-col size="7">
+      <div class="seticon">
+        <!-- <img class="iconsize" src="../assets/icon/logo_15.png"> -->
+        <img class="iconsize" src="../../../assets/icon/logo_15.png">
+      </div>
+    </ion-col>
+    <ion-col size="3">
+      <h5 class="loginh5" (click)="signup()">Signup</h5>
+    </ion-col>
+   </ion-row>
+
+<div class="setlets">
+  <h5>Let's get you started!</h5>
+  <p>Sign up to discover insights on colleges, exams, courses, and more, tailored just for you</p>
+</div>
+
+  <div class="googldiv" *ngIf="!isGoogleLogin" (click)="googleSignIn()">
+    <img class="googlelogo" src="../../../assets/icon/search.png">Login with Google</div> 
+
+    <p class="or-divider">OR</p>
+
+
+    <form [formGroup]="regForm" class="form_login" >
+      
+      <div class="matfield">
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>email</mat-label>
+          <input matInput type="email" id="email" formControlName="email" >
+          <ion-icon class="icon" matSuffix name="mail-outline"></ion-icon>
+          <mat-error *ngIf="regForm.get('email')?.hasError('required')">
+            Email address is required
+          </mat-error>
+          <mat-error *ngIf="regForm.get('email')?.hasError('pattern')">
+            Please enter a valid email address
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field class="w-75" appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" type="{{ showPassword ? 'text' : 'password' }}"[(ngModel)]="password" required>
+          <ion-icon class="icon" matSuffix name="eye-off-outline" name="{{ showPassword ? 'eye-off' : 'eye' }}"
+          (click)="togglePasswordVisibility()"></ion-icon>
+          <mat-error *ngIf="regForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="regForm.get('password')?.hasError('pattern')">
+            Please enter Password at least 1 digit 1 capital and small letter and 1 special character. 
+          </mat-error>
+        </mat-form-field>
+
+        <p class="p1" routerLink="/forgot">Forgot Password?</p>
+        <div class="mt1rem">
+          <ion-button expand="block" (click)="login()" class="dsa mx-16" color="primary" >Login</ion-button>
+        </div>
+      
+      </div>
+     
+    </form>
+
+    <div *ngIf="isGoogleLogin">
+      <ion-card>
+    <ion-card-header>
+      <ion-card-title class="ion-text-center"><b>{{user.displayName}}</b></ion-card-title>
+     
+    </ion-card-header>
+    
+    <ion-card-content>
+      <ion-img [src]="user.photoURL" style="border-radius: 1px;"></ion-img>
+      <ion-item>
+        <ion-label>email:</ion-label>
+        <span>{{user.email}}</span>
+      </ion-item>
+    </ion-card-content>
+    </ion-card>
+    </div>
+</ion-content>

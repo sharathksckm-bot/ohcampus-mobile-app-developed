@@ -1,0 +1,83 @@
+<ion-header [translucent]="true" class="headerBg">
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-icon style="margin-top: 20px;" name="chevron-back-outline"  routerLink="/tabs/tabs/tab1"></ion-icon>  
+
+        <ion-col size="8">
+          <ion-buttons class="primaryhead">
+            <ion-menu-button></ion-menu-button>
+          </ion-buttons>
+        </ion-col>
+        <ion-col size="3" class="text-right selfcenter flex just-right">
+          <!-- <div class="notification" (click)="notification()"><ion-icon name="notifications-outline"></ion-icon>
+            <ion-badge color="danger"></ion-badge>
+          </div> -->
+          <ion-icon routerLink="/editprofile" name="person-outline" class="primary-color"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="cardtitset">Terms And Condition</ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      You can continue to browse and use this website, only when you are harmonizing (agreeing) to abide (inform) and be bound with the following terms and conditions.
+      The content in the OhCampus.com can be appraised (updated) or confiscated (removed) by the company without any prior notice.
+      Our website may link to other websites hardly. These links are imparted (provided) only for your convenience, which provide further information. That does not signify that we are sanction (authorized) for their website. We are not accountable (responsible) for the content of the linked website.
+      If the content endowed by the college is not genuine, then company will confiscate (remove) those content, when company get notifications.
+      The data like text, video, images, company logo in site is subject to copyright law.
+      Unauthorized use of this website may give to a claim for damages and be a criminal offence.
+      
+      Cookies
+      
+      When we provide overhaul, we want to make them useful, affluent and reliable. Where services are delivered on the internet, this sometimes involves placing small amounts of information on your device, which cannot be used to identify you personally.
+      
+      These piece of information’s are used to improve services for you through, for example:
+      •    Qualifying a service to (be acquainted with) recognizes your device, so you don't have to give the same information numerous times during a task.
+      •    Recognizing that you may already have given a username and password, so you don't need to do it for every webpage requested.
+      •    Computing how many people are using our services, so they can be made easier to use and there's enough capacity to ensure they are fast.
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+<ion-footer class="main-footer">
+  <ion-toolbar>
+
+    <div class="footer-tabs">
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab1">
+        <ion-icon name="home"></ion-icon>
+        <span>Home</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab2">
+        <ion-icon name="search-outline"></ion-icon>
+        <span>Search</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab3">
+        <ion-icon name="albums-outline"></ion-icon>
+        <span>Recommended</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab4">
+        <ion-icon name="bookmark-outline"></ion-icon>
+        <span>Shortlist</span>
+      </div>
+
+      <div class="footer-btn" routerLink="/tabs/tabs/tab5">
+        <ion-icon name="chatbox-outline"></ion-icon>
+        <span>Assistant</span>
+      </div>
+
+    </div>
+
+  </ion-toolbar>
+</ion-footer>
+

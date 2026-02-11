@@ -1,0 +1,452 @@
+<div class="tabbody ">
+
+  <!-- section-1 -->
+  <div class="m10">
+
+
+    <div *ngIf="whatnew && whatnew.trim()" class="bgsmockgray">
+      <div class="headcard">
+        <div>
+          <h2>{{collegename}}</h2>
+        </div>
+      </div>
+      <div class="angular-editor-textarea" [innerHTML]="whatnew"></div>
+    </div>
+
+    <!-- section -2 -->
+
+
+
+
+    <ion-accordion-group *ngIf="admiprocessarry && admiprocessarry.length > 0" class="tblcontent accordians">
+      <ion-accordion value="first">
+        <ion-item detail="true" slot="header">
+          <ion-label>
+            <h6 class="my-10 ion-padding-top">{{collegename}} {{currentYear}}</h6>
+            <h2>Admission Process</h2>
+          </ion-label>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <ng-container>
+            <table style="width:100%">
+              <tr>
+                <th>Popular Courses</th>
+                <th>Accepted Exams</th>
+                <th>Eligibility/Cut-Off </th>
+              </tr>
+
+
+
+              <tr *ngFor="let item of admiprocessarry">
+                <td>{{ item.subCatName || 'N/A' }}</td>
+                <td>{{ item.Accepting_Exams || 'N/A' }}</td>
+                <td>
+                  <p>Qualification - </p>
+                  <div *ngIf="item.eligibility?.qualification?.length > 0; else noQualification">
+                    <div *ngFor="let qualification of item.eligibility.qualification">
+                      {{ qualification }}<br>
+                    </div>
+                  </div>
+                  <ng-template #noQualification>
+                    N/A
+                  </ng-template>
+
+                  <p>Cut_off - </p>
+                  <div *ngIf="item.eligibility?.cut_off?.length > 0; else noCutOff">
+                    <div *ngFor="let cut_off of item.eligibility.cut_off">
+                      {{ cut_off }}<br>
+                    </div>
+                  </div>
+                  <ng-template #noCutOff>
+                    N/A
+                  </ng-template>
+
+                  <div>
+                    <p>Other Eligibility - </p>
+                    <div *ngIf="item.eligibility?.other_eligibility; else noOtherEligibility">
+                      {{ item.eligibility.other_eligibility }}
+                    </div>
+                    <ng-template #noOtherEligibility>
+                      N/A
+                    </ng-template>
+                  </div>
+                </td>
+              </tr>
+
+
+
+            </table>
+          </ng-container>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+
+
+
+
+
+
+    <!-- section -3 -->
+
+
+
+
+    <ng-container *ngFor="let item of admiprocessarry">
+      <div class="courseCard" style="padding: 2px 12px;" *ngIf="item.Examnotification_or_ImportantDates">
+        <h6 class="my-10">{{collegename}} {{item.subCatName}} Admissions {{currentYear}}</h6>
+        <p>{{item.courseCount}} Courses | {{item.duration}} Years</p>
+
+
+
+
+        <div *ngIf="item.eligibility?.qualification?.length > 0 || 
+          item.eligibility?.cut_off?.length > 0 || 
+          item.eligibility?.other_eligibility" style="border: 1px solid lightgray;">
+          <p class="dticon"> <ion-icon name="checkmark-circle-outline"></ion-icon> Eligibility:</p>
+
+          <ion-row>
+            <ion-col>Qualification -</ion-col>
+            <ion-col *ngFor="let qualification of item.eligibility.qualification">{{ qualification }}</ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col>Cut_off -</ion-col>
+            <ion-col *ngFor="let cut_off of item.eligibility.cut_off">{{ cut_off }}</ion-col>
+            <ion-col *ngIf="item.eligibility.other_eligibility">{{ item.eligibility.other_eligibility }}</ion-col>
+          </ion-row>
+        </div>
+
+
+
+
+
+        <ion-row class="datevnt">
+          <ion-col class="dticon">
+            <ion-icon name="calendar-outline"></ion-icon> Dates & Events
+          </ion-col>
+          <ion-col class="blutxt" (click)="addmissiondatepdf(item.sub_category)">
+            Download Dates <ion-icon name="arrow-down-outline"></ion-icon>
+          </ion-col>
+        </ion-row>
+
+        <div class="tabecontent mt-3" [innerHTML]="item.Examnotification_or_ImportantDates"></div>
+      </div>
+    </ng-container>
+
+
+    <!--  -->
+
+    <!-- section- 4 -->
+  </div>
+
+
+
+  <div class="thirdsectionpop" *ngIf="popularclgarry && popularclgarry.length > 0">
+    <div class="HeadTxt">
+      <h5>Explore popular similar colleges</h5>
+    </div>
+
+    <div>
+      <ion-slides [options]="slideOptsnew">
+
+        <ion-slide *ngFor="let item of popularclgarry">
+          <ion-card class="size_setpop" style="margin-left: 0;width: 97%!important; margin-bottom:0 !important">
+            <div class="imgHeadpop">
+
+
+              <p class="tit_setpop" (click)="getclgid(item.collegeid)">
+                {{ item.title.length > 30 ? (item.title | slice:0:30) + '...' : item.title }}
+              </p>
+              <img class="img_alignpop" [src]="item.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+            </div>
+
+            <p class="set_botm">
+              <ion-icon name="location-outline"></ion-icon>{{item.city}}
+            </p>
+            <p style="display: flex;"> <span class="spnpop"></span>
+              <span class="spnn" *ngIf="item.rating> 0"><ion-icon name="star" class="starrate"></ion-icon>
+                {{item.ratings}}</span>
+            </p>
+
+            <div class="footerpart" style="display: flex;align-items: center;">
+
+
+
+              <ion-button fill="outline" shape="round" class="boomark"
+                [ngClass]="{'shortlisted': isShortlisted(item.collegeid)}" (click)="toggleShortlist(item.collegeid)">
+                <ion-icon [name]="isShortlisted(item.collegeid) ? 'bookmark' : 'bookmark-outline'"
+                  [class.active]="isShortlisted(item.collegeid)">
+                </ion-icon>
+              </ion-button>
+
+              <ion-button shape="round" class="capitalize greenbtn" style="margin-left:2px; margin-right:2px"
+                (click)="brochure(item.collegeid)">
+                <ion-icon name="arrow-down-circle" class="mr-6"></ion-icon>
+                Brochure
+              </ion-button>
+              <ion-button shape="round" class="capitalize greenbtn"
+                (click)="clgpredict(item.collegeid,item.CatId,item.subCatName)">
+                Predict Admission
+              </ion-button>
+            </div>
+
+          </ion-card>
+        </ion-slide>
+      </ion-slides>
+
+    </div>
+  </div>
+  <!--  -->
+
+
+
+
+  <div *ngIf="reviewsArr && reviewsArr.length > 0">
+    <div class="px-10 cardcust userReview" *ngFor="let item of reviewsArr">
+      <ion-row>
+        <ion-col size="2">
+          <!-- <h1 *ngIf="item.user_name?.charAt(0)" class="firctchar">{{item.user_name.charAt(0)}}</h1> -->
+
+          <h1 *ngIf="item?.user_name; else showDefaultIcon" class="firstchar">
+            {{ item.user_name.charAt(0) }}
+          </h1>
+          <ng-template #showDefaultIcon class="firstchar">
+            <ion-icon name="person" style="border: 10px solid #b74949;"></ion-icon>
+          </ng-template>
+
+        </ion-col>
+        <ion-col size="7">
+          <h2>{{item.user_name}}</h2>
+          <p class="sbtxt">{{item.coursename}}</p>
+        </ion-col>
+        <ion-col size="3">
+          <div class="rates">
+            <ion-icon name="shield-checkmark"></ion-icon> Verified
+          </div>
+        </ion-col>
+      </ion-row>
+      <div class="ratingBtns">
+        <ion-button fill="outline" size="small">
+          <ion-icon slot="start" name="star"></ion-icon>{{item.placement_rate}} Placements
+        </ion-button>
+        <ion-button fill="outline" size="small">
+          <ion-icon slot="start" name="star"></ion-icon>{{item.infrastructure_rate}} Infrastructure
+        </ion-button>
+        <ion-button fill="outline" size="small">
+          <ion-icon slot="start" name="star"></ion-icon>{{item.faculty_rate}} Faculty
+        </ion-button>
+        <ion-button fill="outline" size="small">
+          <ion-icon slot="start" name="star"></ion-icon>{{item.campus_rate}} Campus life
+        </ion-button>
+        <ion-button fill="outline" size="small">
+          <ion-icon slot="start" name="star"></ion-icon>{{item.money_rate}} Value For Money
+        </ion-button>
+      </div>
+      <p><span>Placements: </span> {{item.placement_desc}} </p>
+      <p><span>Infrastructure: </span> {{item.infrastructure_desc}}.</p>
+      <p><span>Faculty: </span> {{item.faculty_desc}}</p>
+      <p><span>Campus Life: </span> {{item.campus_desc}}</p>
+      <p><span>Value For Money: </span> {{item.money_desc}}</p>
+
+      <ion-row class="thumbicon">
+        <ion-col class="setlikecol">
+          <div>Was this review helpful </div>
+
+          <div style="display: flex;">
+            <!-- Thumbs Up Icon -->
+            <span class="span" (click)="isThumbsUpClicked = !isThumbsUpClicked; isThumbsDownClicked = false;">
+              <ion-icon name="thumbs-up" class="icon thumbs-up" [style.color]="isThumbsUpClicked ? 'blue' : 'black'">
+              </ion-icon>
+            </span>
+
+            <!-- Separator -->
+            <span class="span">|</span>
+
+            <!-- Thumbs Down Icon -->
+            <span class="span" (click)="isThumbsDownClicked = !isThumbsDownClicked; isThumbsUpClicked = false;">
+              <ion-icon name="thumbs-down" class="icon thumbs-down"
+                [style.color]="isThumbsDownClicked ? 'red' : 'black'">
+              </ion-icon>
+            </span>
+          </div>
+
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+
+
+</div>
+<!--close-   Anonymous-->
+
+
+<!-- section- 6  best suited colleges -->
+<div class="m10">
+
+  <div class="suitedclg">
+
+
+
+
+    <div *ngIf="suitclgarry && suitclgarry.length > 0">
+      <div class="thirdsection">
+        <div class="HeadTxt">
+          <h5> Best suited colleges for you</h5>
+          <p>Because you showed interest in {{ selectedCourseName }}</p>
+        </div>
+        <div>
+          <ion-slides [options]="slideOptssuited">
+
+            <ion-slide *ngFor="let item of suitclgarry">
+              <ion-card class="size_setpop">
+                <div class="imgHead">
+
+                  <p class="tit_set">
+                    {{ item.title.length > 23 ? (item.title | slice:0:23) + '...' : item.title }}
+                  </p>
+                  <img class="img_align" [src]="item.logo" onerror="this.src='../../assets/clg_img/no_image2.jpg';">
+                </div>
+
+                <p class="set_botm">
+                  <ion-icon name="location-outline"></ion-icon>{{item.cityname}}
+                </p>
+                <p style="display: flex;"> <span class="spnpop"></span>
+                  <span class="spnn" *ngIf="item.rating> 0"><ion-icon name="star" class="starrate"></ion-icon>
+                    {{item.ratings}}</span>
+                </p>
+
+                <div class="footerpart" style="display: flex;align-items: center;">
+
+                  <ion-button fill="outline" shape="round" class="boomark"
+                    [ngClass]="{'shortlisted': isShortlisted(item.id)}" (click)="toggleShortlist(item.id)">
+                    <ion-icon [name]="isShortlisted(item.id) ? 'bookmark' : 'bookmark-outline'"
+                      [class.active]="isShortlisted(item.id)">
+                    </ion-icon>
+                  </ion-button>
+
+                  <ion-button shape="round" class="capitalize greenbtn" (click)="brochuresuit(item.id)">
+                    <ion-icon name="arrow-down-circle" class="mr-6"></ion-icon> Brochure
+                  </ion-button>
+                  <ion-button shape="round" class="capitalize greenbtn"
+                    (click)="clgpredict(item.id,item.CatId,item.subCatName)">
+                    Predict Admission
+                  </ion-button>
+                </div>
+              </ion-card>
+            </ion-slide>
+          </ion-slides>
+        </div>
+      </div>
+    </div>
+
+
+    <!--  -->
+
+
+
+    <!-- section- 7 photo  & videos -->
+    <div *ngIf="collegename && clgimgArry?.length > 0">
+      <ion-row>
+        <ion-col size="12">
+          <p style="margin: 0;">{{collegename}}</p>
+        </ion-col>
+      </ion-row>
+
+      <h5>Take a look at Campus</h5>
+
+      <ion-slides [options]="slidepic">
+        <ion-slide *ngFor="let item of clgimgArry">
+          <ion-card class="setpic">
+            <img [src]="item.image">
+          </ion-card>
+        </ion-slide>
+      </ion-slides>
+    </div>
+
+
+
+    <!--  -->
+
+
+
+
+
+
+
+    <div *ngIf="latenpopArr && popularArr.length > 0">
+      <div class="populartxt">
+        <h2> Latest & Popular Articles</h2>
+      </div>
+
+
+      <ion-segment [scrollable]="true" value="Latest" (ionChange)="segmentChanged($event)">
+        <ion-segment-button value="Latest">
+          <ion-label>Latest</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="Popular">
+          <ion-label>Popular</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <div *ngIf="selectedSegment === 'Latest'" class="mt10">
+        <div *ngFor="let latest of latenpopArr">
+          <ion-row class="setrw mb5 mt6 pb0">
+            <ion-col size="8" (click)="articlesdetails(latest.id)">
+              <p class="p1">{{latest.title}}: </p>
+              <p class="p2"> {{latest.post_rate_date}}</p>
+              <p class="p3">Views : {{latest.views}} </p>
+            </ion-col>
+            <ion-col size="4">
+              <img [src]="latest.image">
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+      <div *ngIf="selectedSegment === 'Popular'">
+        <div *ngFor="let popular of popularArr">
+          <ion-row class="setrw mb5 mt6 pb0">
+            <ion-col size="8" (click)="articlesdetails(popular.id)">
+              <p class="p1">{{popular.title}}: </p>
+              <p class="p2">{{popular.post_rate_date}}</p>
+              <p class="p3">Views : {{popular.views}} </p>
+            </ion-col>
+            <ion-col size="4">
+              <img [src]="popular.image">
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+    </div>
+    <!--  -->
+  </div>
+  <!-- student Forum section -->
+
+  <div class="forumsec">
+    <ion-row class="firstrow">
+      <ion-col size="12">
+        <h4>{{collegename}}</h4>
+        <h5>Student Forum</h5>
+      </ion-col>
+    </ion-row>
+    <form [formGroup]="studentForum">
+      <div class="setdiv">
+        <ion-row class="firstrow">
+          <ion-col size="12">
+            <h5>Anything you would want to ask experts?</h5>
+          </ion-col>
+        </ion-row>
+        <ion-input placeholder="Write here" formControlName="studentque">
+        </ion-input>
+        <ion-button (click)="postQuestion()">Submit</ion-button>
+      </div>
+    </form>
+  </div>
+
+  <!--  -->
+
+
+
+
+
+
+
+</div>

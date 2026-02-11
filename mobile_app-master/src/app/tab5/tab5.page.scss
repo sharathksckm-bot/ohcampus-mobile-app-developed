@@ -1,0 +1,30 @@
+.imgwh{
+    width: 55px;
+    margin: 12px 16px;
+}
+
+.tooltip{
+    text-align: center;
+    border-radius: 6px;
+    padding: 4px 20px;
+    position: absolute;
+    z-index: 1;
+    top: 12%;
+    left: 25%;
+    border: 1px dashed #00bf36;
+    background: #f2fff5;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+    h6{
+        margin: 14px 0;
+    }
+}
+.tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: 35%;
+    left: 0%;
+    margin-left: -21px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent #00cb39 transparent transparent;
+  }
