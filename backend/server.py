@@ -610,6 +610,17 @@ async def update_admission_alerts(college_id: str, alerts: List[AdmissionAlertIn
 
 @api_router.get("/colleges/{college_id}/courses", response_model=List[Course])
 async def get_courses(college_id: str):
+    """Get courses for a specific college - supports both MySQL and MongoDB"""
+    # Try MySQL first for c- prefixed IDs (also handle legacy mysql- prefix)
+    if college_id.startswith("c-") or college_id.startswith("mysql-"):
+        try:
+            courses = await get_courses_for_college(college_id)
+            if courses:
+                return courses
+        except Exception as e:
+            logging.error(f"Error fetching courses from MySQL: {e}")
+    
+    # Fallback to MongoDB
     courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(100)
     return courses
 
