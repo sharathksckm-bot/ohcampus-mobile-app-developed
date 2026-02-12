@@ -362,22 +362,22 @@ export default function Courses() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
         <Card className="shadow-lg border-0">
           <CardContent className="p-4 lg:p-6">
-            {/* First Row - Search and Primary Filters */}
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-              {/* Search */}
-              <div className="relative w-full lg:flex-1 lg:max-w-sm">
+            {/* Row 1 - Search */}
+            <div className="mb-4">
+              <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
                 <Input
-                  placeholder="Search courses..."
+                  placeholder="Search courses by name, college, or location..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 h-10 font-body border-slate-300 w-full text-sm"
+                  className="pl-10 h-11 font-body border-slate-300 w-full"
                   data-testid="course-search"
                 />
               </div>
+            </div>
 
-              {/* Filters Row */}
-              <div className="flex flex-wrap gap-2 lg:gap-3 items-center">
+            {/* Row 2 - Filters */}
+            <div className="flex flex-wrap gap-3 items-center">
                 {/* Category Filter */}
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                   <SelectTrigger className="w-[140px] h-10 text-sm" data-testid="category-filter">
