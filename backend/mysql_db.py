@@ -267,7 +267,7 @@ async def get_college_by_id(college_id: str) -> Optional[Dict[str, Any]]:
                 whats_new = [what_new_raw.strip()]
     
     return {
-        "id": f"mysql-{row['id']}",
+        "id": f"c-{row['id']}",
         "mysql_id": row['id'],
         "name": row['name'] or '',
         "slug": row['slug'] or '',
@@ -331,9 +331,9 @@ async def get_courses_for_college(college_id: str) -> List[Dict[str, Any]]:
     courses = []
     for row in results:
         course = {
-            "id": f"mysql-cc-{row['college_course_id']}",
+            "id": f"cc-{row['college_course_id']}",
             "mysql_id": row['college_course_id'],
-            "college_id": f"mysql-{row['collegeid']}",
+            "college_id": f"c-{row['collegeid']}",
             "course_id": row['courseid'],
             "name": row['course_name'] or '',
             "slug": row['slug'] or '',
@@ -427,9 +427,9 @@ async def get_course_by_id(course_id: str) -> Optional[Dict[str, Any]]:
     
     return {
         "course": {
-            "id": f"mysql-cc-{row['college_course_id']}",
+            "id": f"cc-{row['college_course_id']}",
             "mysql_id": row['college_course_id'],
-            "college_id": f"mysql-{row['collegeid']}",
+            "college_id": f"c-{row['collegeid']}",
             "course_id": row['courseid'],
             "name": row['course_name'] or '',
             "slug": row['slug'] or '',
@@ -541,9 +541,9 @@ async def get_all_courses_with_colleges(
     courses = []
     for row in results:
         course = {
-            "id": f"mysql-cc-{row['college_course_id']}",
+            "id": f"cc-{row['college_course_id']}",
             "mysql_id": row['college_course_id'],
-            "college_id": f"mysql-{row['collegeid']}",
+            "college_id": f"c-{row['collegeid']}",
             "course_id": row['courseid'],
             "name": row['course_name'] or '',
             "slug": row['slug'] or '',
