@@ -810,7 +810,7 @@ async def get_college_fees(college_id: str):
     fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(100)
     return fees
 
-@api_router.post("/fees", response_model=Fee)
+@api_router.post("/fees", response_model=Fee, status_code=status.HTTP_201_CREATED)
 async def create_fee(fee_data: FeeBase, current_user: dict = Depends(require_admin)):
     fee = Fee(**fee_data.model_dump())
     await db.fees.insert_one(fee.model_dump())
