@@ -242,9 +242,22 @@ async def get_all_courses_with_colleges(
     search: Optional[str] = None,
     level: Optional[str] = None,
     category: Optional[str] = None,
-    limit: int = 100
-) -> List[Dict[str, Any]]:
-    """Fetch courses from featured colleges - optimized query"""
+    page: int = 1,
+    limit: int = 50
+) -> Dict[str, Any]:
+    """Fetch courses from featured colleges with pagination"""
+    
+    # Base query for counting
+    count_query = """
+        SELECT COUNT(*) as total FROM college_course cc
+        INNER JOIN courses c ON cc.courseid = c.id
+        INNER JOIN college col ON cc.collegeid = col.id
+        LEFT JOIN academic_categories ac ON c.academic_category = ac.category_id
+        WHERE (col.package_type = 'feature_listing' OR col.package_type = 'featured_listing')
+        AND col.status = 1 AND col.is_deleted = 0 AND cc.is_deleted = 0
+    """
+    
+    # Main query with all details
     query = """
         SELECT 
             cc.id as college_course_id,
@@ -253,10 +266,14 @@ async def get_all_courses_with_colleges(
             cc.total_fees,
             cc.duration,
             cc.level,
+            cc.eligibility as course_eligibility,
+            cc.description as course_description,
             c.name as course_name,
             c.slug,
             c.eligibility,
             c.scope,
+            c.job_profile,
+            c.course_description as master_description,
             ac.name as academic_level,
             col.title as college_name,
             col.accreditation,
@@ -274,16 +291,29 @@ async def get_all_courses_with_colleges(
         AND cc.is_deleted = 0
     """
     params = []
+    count_params = []
     
     if search:
-        query += " AND (c.name LIKE %s OR col.title LIKE %s)"
+        search_condition = " AND (c.name LIKE %s OR col.title LIKE %s)"
+        query += search_condition
+        count_query += search_condition
         params.extend([f"%{search}%", f"%{search}%"])
+        count_params.extend([f"%{search}%", f"%{search}%"])
     
     if level:
-        query += " AND (cc.level = %s OR ac.name = %s)"
+        level_condition = " AND (cc.level = %s OR ac.name = %s)"
+        query += level_condition
+        count_query += level_condition
         params.extend([level, level])
+        count_params.extend([level, level])
     
-    query += f" ORDER BY c.name LIMIT {limit}"
+    # Get total count
+    count_result = await execute_query(count_query, tuple(count_params) if count_params else None)
+    total = count_result[0]['total'] if count_result else 0
+    
+    # Add pagination
+    offset = (page - 1) * limit
+    query += f" ORDER BY c.name LIMIT {limit} OFFSET {offset}"
     
     results = await execute_query(query, tuple(params) if params else None)
     
@@ -298,8 +328,10 @@ async def get_all_courses_with_colleges(
             "slug": row['slug'] or '',
             "level": row['level'] or row['academic_level'] or 'UG',
             "duration": row['duration'] or '4 Years',
-            "eligibility": row['eligibility'] or '',
+            "eligibility": row['course_eligibility'] or row['eligibility'] or '',
+            "description": row['course_description'] or row['master_description'] or '',
             "scope": row['scope'] or '',
+            "job_profile": row['job_profile'] or '',
             "total_fees": row['total_fees'] or '',
             "college": {
                 "id": f"mysql-{row['collegeid']}",
@@ -311,7 +343,41 @@ async def get_all_courses_with_colleges(
         }
         courses.append(course)
     
-    return courses
+    return {
+        "courses": courses,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": (total + limit - 1) // limit
+    }
+
+async def get_course_levels() -> List[str]:
+    """Get all distinct course levels from featured colleges"""
+    query = """
+        SELECT DISTINCT cc.level
+        FROM college_course cc
+        INNER JOIN college col ON cc.collegeid = col.id
+        WHERE (col.package_type = 'feature_listing' OR col.package_type = 'featured_listing')
+        AND col.status = 1 AND col.is_deleted = 0 AND cc.is_deleted = 0
+        AND cc.level IS NOT NULL AND cc.level != ''
+        ORDER BY cc.level
+    """
+    results = await execute_query(query)
+    return [r['level'] for r in results if r['level']]
+
+async def get_course_names() -> List[str]:
+    """Get all distinct course names from featured colleges"""
+    query = """
+        SELECT DISTINCT c.name
+        FROM college_course cc
+        INNER JOIN courses c ON cc.courseid = c.id
+        INNER JOIN college col ON cc.collegeid = col.id
+        WHERE (col.package_type = 'feature_listing' OR col.package_type = 'featured_listing')
+        AND col.status = 1 AND col.is_deleted = 0 AND cc.is_deleted = 0
+        ORDER BY c.name
+    """
+    results = await execute_query(query)
+    return [r['name'] for r in results if r['name']]
 
 async def get_states() -> List[str]:
     """Get all states with featured colleges"""
