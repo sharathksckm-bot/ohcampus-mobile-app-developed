@@ -473,33 +473,6 @@ async def get_colleges_endpoint(
             college["course_count"] = len(courses)
         
         return colleges
-        
-        # If fee_range filter, also get min/max first year fees for display
-        if fee_range:
-            fee_filter = {
-                "college_id": college["id"],
-                "$or": [
-                    {"fee_type": "annual", "year_or_semester": 1},
-                    {"fee_type": "semester", "year_or_semester": {"$in": [1, 2]}}
-                ]
-            }
-            if fee_range == "below_100000":
-                fee_filter["amount"] = {"$lt": 100000}
-            elif fee_range == "100000_to_200000":
-                fee_filter["amount"] = {"$gte": 100000, "$lte": 200000}
-            elif fee_range == "above_200000":
-                fee_filter["amount"] = {"$gt": 200000}
-            
-            fees = await db.fees.find(fee_filter, {"_id": 0, "amount": 1}).to_list(100)
-            if fees:
-                amounts = [f["amount"] for f in fees]
-                college["min_fee"] = min(amounts)
-                college["max_fee"] = max(amounts)
-        
-        college["courses"] = courses
-        result.append(college)
-    
-    return result
 
 @api_router.get("/colleges/compare")
 async def compare_colleges(college_ids: str):
@@ -512,16 +485,30 @@ async def compare_colleges(college_ids: str):
     
     result = []
     for college_id in ids:
+        # Try MySQL first for mysql- prefixed IDs
+        if college_id.startswith("mysql-"):
+            try:
+                college = await get_college_by_id(college_id)
+                if college:
+                    courses = await get_courses_for_college(college_id)
+                    result.append({
+                        "college": college,
+                        "courses": courses,
+                        "fees": [],
+                        "fees_by_course": {},
+                        "admission_charges": []
+                    })
+                continue
+            except Exception as e:
+                logging.error(f"Error fetching college from MySQL: {e}")
+        
+        # Fallback to MongoDB
         college = await db.colleges.find_one({"id": college_id}, {"_id": 0})
         if college:
-            # Get courses for this college
             courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(100)
-            # Get fees for this college
             fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(100)
-            # Get admission charges
             admission_charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(100)
             
-            # Calculate total fees per course (excluding hostel)
             fees_by_course = {}
             for fee in fees:
                 course_id = fee["course_id"]
@@ -545,8 +532,19 @@ async def compare_colleges(college_ids: str):
     
     return result
 
-@api_router.get("/colleges/{college_id}", response_model=College)
+@api_router.get("/colleges/{college_id}")
 async def get_college(college_id: str):
+    """Get single college by ID - supports both MySQL and MongoDB"""
+    # Try MySQL first for mysql- prefixed IDs
+    if college_id.startswith("mysql-"):
+        try:
+            college = await get_college_by_id(college_id)
+            if college:
+                return college
+        except Exception as e:
+            logging.error(f"Error fetching college from MySQL: {e}")
+    
+    # Fallback to MongoDB
     college = await db.colleges.find_one({"id": college_id}, {"_id": 0})
     if not college:
         raise HTTPException(status_code=404, detail="College not found")
