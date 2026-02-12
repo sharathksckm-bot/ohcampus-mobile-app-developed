@@ -47,20 +47,19 @@ export default function AdminDashboard() {
         collegesAPI.getAll({}),
         feesAPI.getAll({}),
         faqsAPI.getAll({}),
-        coursesAPI.getAll({}),
+        coursesAPI.getAllWithCollege({ limit: 100 }), // Get more courses for status counts
       ]);
       
       // Handle both array and object responses for courses
-      const courses = Array.isArray(coursesRes.data) 
-        ? coursesRes.data 
-        : (coursesRes.data?.courses || []);
+      const coursesData = coursesRes.data?.courses || [];
+      const totalCourses = coursesRes.data?.total || coursesData.length;
       const colleges = collegesRes.data || [];
       
-      setAllCourses(courses);
+      setAllCourses(coursesData);
       setAllColleges(colleges);
       
       // Filter courses needing attention (Closing, Under Waiting)
-      const attentionCourses = courses.filter(c => 
+      const attentionCourses = coursesData.filter(c => 
         c.seat_status === 'Closing' || c.seat_status === 'Under Waiting'
       );
       
@@ -73,20 +72,20 @@ export default function AdminDashboard() {
       setCoursesNeedingAttention(enrichedCourses);
       
       // Count by status
-      const closingCount = courses.filter(c => c.seat_status === 'Closing').length;
-      const waitingCount = courses.filter(c => c.seat_status === 'Under Waiting').length;
-      const closedCount = courses.filter(c => c.seat_status === 'Closed').length;
+      const closingCount = coursesData.filter(c => c.seat_status === 'Closing').length;
+      const waitingCount = coursesData.filter(c => c.seat_status === 'Under Waiting').length;
+      const closedCount = coursesData.filter(c => c.seat_status === 'Closed').length;
       
       setStats({
-        colleges: collegesRes.data.length,
-        fees: feesRes.data.length,
-        faqs: faqsRes.data.length,
-        courses: courses.length,
+        colleges: colleges.length,
+        fees: (feesRes.data || []).length,
+        faqs: (faqsRes.data || []).length,
+        courses: totalCourses, // Use total from API
         closingCourses: closingCount,
         waitingCourses: waitingCount,
         closedCourses: closedCount,
       });
-      setRecentColleges(collegesRes.data.slice(0, 5));
+      setRecentColleges(colleges.slice(0, 5));
     } catch (error) {
       console.error('Failed to fetch data:', error);
       toast.error('Failed to load dashboard data');
