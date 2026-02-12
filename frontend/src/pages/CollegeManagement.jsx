@@ -107,6 +107,8 @@ export default function CollegeManagement() {
   const [courseDialogOpen, setCourseDialogOpen] = useState(false);
   const [updatingCourse, setUpdatingCourse] = useState(null);
   const [totalCoursesCount, setTotalCoursesCount] = useState(0);
+  const [selectedCollegeCourses, setSelectedCollegeCourses] = useState([]);
+  const [loadingCollegeCourses, setLoadingCollegeCourses] = useState(false);
   
   // Admission Alerts state
   const [alertsDialogOpen, setAlertsDialogOpen] = useState(false);
