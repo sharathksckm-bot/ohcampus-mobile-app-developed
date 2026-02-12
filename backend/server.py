@@ -639,30 +639,30 @@ async def get_courses_with_college(category: Optional[str] = None, search: Optio
         # Fallback to MongoDB
         query = {}
         if category:
-        query["category"] = category
-    if search:
-        query["name"] = {"$regex": search, "$options": "i"}
-    
-    courses = await db.courses.find(query, {"_id": 0}).to_list(500)
-    
-    # Enrich with college info and fees
-    result = []
-    for course in courses:
-        college = await db.colleges.find_one({"id": course["college_id"]}, {"_id": 0})
-        if college:
-            course["college"] = {
-                "id": college["id"],
-                "name": college["name"],
-                "city": college["city"],
-                "state": college["state"],
-                "category": college["category"]
-            }
-            # Get fees for this course
-            fees = await db.fees.find({"course_id": course["id"]}, {"_id": 0}).to_list(20)
-            course["fees"] = fees
-            result.append(course)
-    
-    return result
+            query["category"] = category
+        if search:
+            query["name"] = {"$regex": search, "$options": "i"}
+        
+        courses = await db.courses.find(query, {"_id": 0}).to_list(500)
+        
+        # Enrich with college info and fees
+        result = []
+        for course in courses:
+            college = await db.colleges.find_one({"id": course["college_id"]}, {"_id": 0})
+            if college:
+                course["college"] = {
+                    "id": college["id"],
+                    "name": college["name"],
+                    "city": college["city"],
+                    "state": college["state"],
+                    "category": college["category"]
+                }
+                # Get fees for this course
+                fees = await db.fees.find({"course_id": course["id"]}, {"_id": 0}).to_list(20)
+                course["fees"] = fees
+                result.append(course)
+        
+        return result
 
 @api_router.get("/courses/{course_id}")
 async def get_course_detail(course_id: str):
