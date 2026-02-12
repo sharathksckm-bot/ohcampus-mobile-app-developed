@@ -566,7 +566,7 @@ async def get_college(college_id: str):
         raise HTTPException(status_code=404, detail="College not found")
     return college
 
-@api_router.post("/colleges", response_model=College)
+@api_router.post("/colleges", response_model=College, status_code=status.HTTP_201_CREATED)
 async def create_college(college_data: CollegeBase, current_user: dict = Depends(require_admin)):
     college = College(**college_data.model_dump())
     await db.colleges.insert_one(college.model_dump())
