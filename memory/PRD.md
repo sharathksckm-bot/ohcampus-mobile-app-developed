@@ -237,6 +237,43 @@ Create a web-based counseling platform for OhCampus counselors with:
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Latest Updates (Feb 2026)
+### Iteration 12 - Bug Fixes & UI Improvements (Feb 12, 2026)
+1. **OhCampus Logo Updated**: Changed to official logo from https://ohcampus.com/assets/images/logo/ohCampusLogo.png
+   - Login page displays logo correctly
+   - Navbar displays logo with "Counselor Portal" text
+   - Favicon updated to OhCampus logo
+2. **College Display Fixes**:
+   - Established Year now shows correctly on Dashboard, College Detail, and Compare Colleges pages
+   - Highlights tab shows numbered list of college highlights
+   - What's New tab shows recent updates
+   - Placements tab shows statistics table (Year, Highest Package, Average Package, Placement Rate, Total Offers, Top Recruiters)
+3. **Course Details Modal Redesign**:
+   - Description section with blue gradient background
+   - Eligibility section with green gradient background
+   - Scope & Career section with purple gradient background
+   - Job Profiles displayed as colorful orange badges
+   - HTML content properly rendered (no raw HTML visible)
+4. **Courses Page Filters Fixed**:
+   - State filter populated with all available states
+   - City filter populated with all available cities
+   - Filters work correctly with server-side pagination
+5. **Compare Colleges Enhanced**:
+   - Established Year row shows correctly for all colleges
+   - Highlights row shows numbered highlights for each college
+   - Placements row shows placement statistics (or "—" if no data)
+6. **Admin Dashboard Working**:
+   - Statistics cards showing: 8 Featured Colleges, 22 Total Courses, 24 Fee Records, 7 FAQs
+   - Courses Needing Attention section showing courses with Closing/Under Waiting status
+   - Seat Availability Overview showing counts by status
+7. **Multi-Category Filter Support**:
+   - Colleges with multiple categories (e.g., "Engineering, Management") now appear in both category filters
+   - Uses FIND_IN_SET for proper MySQL filtering
+8. **Backend MySQL Improvements**:
+   - get_college_by_id now fetches highlights from college_highlights table
+   - get_college_by_id now fetches placement statistics from college_placement_statistics table
+   - get_course_by_id now returns job_profiles as parsed array
+   - All HTML content sanitized before rendering
+
 ### Iteration 11 - UI Redesign, Scholarship Report & Target Alerts (Feb 8, 2026)
 1. **Dashboard College Cards Redesign**: Removed images, made cards attractive with:
    - Gradient blue icon with GraduationCap instead of images
