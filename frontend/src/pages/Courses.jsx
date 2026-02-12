@@ -134,14 +134,15 @@ export default function Courses() {
   // Fetch filters separately
   const fetchFilters = useCallback(async () => {
     try {
-      const [categoriesRes, levelsRes] = await Promise.all([
+      const [categoriesRes, levelsRes, filtersRes] = await Promise.all([
         coursesAPI.getCategories(),
         fetch(`${process.env.REACT_APP_BACKEND_URL}/api/filters/course-levels`).then(r => r.json()),
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/filters`).then(r => r.json()),
       ]);
       setCategories(categoriesRes.data.categories || []);
       setLevels(levelsRes.levels || ['UG', 'PG', 'Diploma', 'Doctorial']);
-      setStates(categoriesRes.data.states || []);
-      setCities(categoriesRes.data.cities || []);
+      setStates(filtersRes.states || []);
+      setCities(filtersRes.cities || []);
     } catch (error) {
       console.error('Failed to load filters:', error);
     }
