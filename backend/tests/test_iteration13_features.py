@@ -241,7 +241,8 @@ class TestCompareCollegesAPI:
         assert len(data) == 2
         
         # Check each college has required fields
-        for college in data:
+        for item in data:
+            college = item.get("college", item)  # Handle nested structure
             assert "id" in college
             assert "name" in college
             # Check for established_year
