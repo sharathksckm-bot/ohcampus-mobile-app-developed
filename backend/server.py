@@ -15,6 +15,13 @@ import jwt
 import csv
 import io
 
+# MySQL Integration
+from mysql_db import (
+    get_featured_colleges, get_college_by_id, get_courses_for_college,
+    get_all_courses_with_colleges, get_states, get_cities, get_categories,
+    get_fee_structure, close_mysql_pool
+)
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
