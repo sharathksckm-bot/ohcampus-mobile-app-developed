@@ -624,7 +624,7 @@ async def get_courses(college_id: str):
     courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(100)
     return courses
 
-@api_router.post("/courses", response_model=Course)
+@api_router.post("/courses", response_model=Course, status_code=status.HTTP_201_CREATED)
 async def create_course(course_data: CourseBase, current_user: dict = Depends(require_admin)):
     course = Course(**course_data.model_dump())
     await db.courses.insert_one(course.model_dump())
