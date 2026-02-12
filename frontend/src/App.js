@@ -42,8 +42,8 @@ const AuthRedirect = ({ children }) => {
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<LandingPage />} />
+      {/* Public Routes - Redirect root to login */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route 
         path="/login" 
         element={
