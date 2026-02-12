@@ -688,8 +688,8 @@ async def get_courses_with_college(
 @api_router.get("/courses/{course_id}")
 async def get_course_detail(course_id: str):
     """Get course details with college and fee information"""
-    # Try MySQL first for mysql- prefixed IDs
-    if course_id.startswith("mysql-"):
+    # Try MySQL first for cc- or c- prefixed IDs (also handle legacy mysql- prefix)
+    if course_id.startswith("cc-") or course_id.startswith("c-") or course_id.startswith("mysql-"):
         try:
             result = await get_course_by_id(course_id)
             if result:
