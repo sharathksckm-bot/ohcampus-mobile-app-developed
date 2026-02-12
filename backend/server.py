@@ -771,6 +771,17 @@ async def update_seat_status(course_id: str, status_data: SeatStatusUpdate, curr
     if status_data.seat_status not in VALID_SEAT_STATUSES:
         raise HTTPException(status_code=400, detail=f"Invalid seat status. Must be one of: {', '.join(VALID_SEAT_STATUSES)}")
     
+    # Handle MySQL courses (cc- prefix) - store status in a separate collection
+    if course_id.startswith("cc-") or course_id.startswith("mysql-"):
+        # Store/update seat status in course_seat_status collection
+        await db.course_seat_status.update_one(
+            {"course_id": course_id},
+            {"$set": {"course_id": course_id, "seat_status": status_data.seat_status, "updated_at": datetime.now(timezone.utc).isoformat()}},
+            upsert=True
+        )
+        return {"id": course_id, "seat_status": status_data.seat_status}
+    
+    # Handle MongoDB courses
     course = await db.courses.find_one({"id": course_id})
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
