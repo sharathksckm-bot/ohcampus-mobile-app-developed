@@ -1116,7 +1116,7 @@ async def get_faqs(college_id: Optional[str] = None, include_global: bool = True
     faqs = await db.faqs.find(query, {"_id": 0}).sort("order", 1).to_list(100)
     return faqs
 
-@api_router.post("/faqs", response_model=FAQ)
+@api_router.post("/faqs", response_model=FAQ, status_code=status.HTTP_201_CREATED)
 async def create_faq(faq_data: FAQBase, current_user: dict = Depends(require_admin)):
     faq = FAQ(**faq_data.model_dump())
     if faq.college_id:
