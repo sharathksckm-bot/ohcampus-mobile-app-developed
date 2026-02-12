@@ -551,8 +551,8 @@ async def compare_colleges(college_ids: str):
 @api_router.get("/colleges/{college_id}")
 async def get_college(college_id: str):
     """Get single college by ID - supports both MySQL and MongoDB"""
-    # Try MySQL first for mysql- prefixed IDs
-    if college_id.startswith("mysql-"):
+    # Try MySQL first for c- prefixed IDs (also handle legacy mysql- prefix)
+    if college_id.startswith("c-") or college_id.startswith("mysql-"):
         try:
             college = await get_college_by_id(college_id)
             if college:
