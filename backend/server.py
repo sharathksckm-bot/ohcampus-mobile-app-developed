@@ -420,9 +420,9 @@ async def get_colleges_endpoint(
     level: Optional[str] = None,
     fee_range: Optional[str] = None  # "below_100000", "100000_to_200000", "above_200000"
 ):
-    """Fetch featured colleges from MySQL database"""
+    """Fetch featured colleges from MySQL database - optimized for speed"""
     try:
-        # Fetch from MySQL
+        # Fetch from MySQL - course counts included in query
         colleges = await get_featured_colleges(
             state=state,
             city=city,
@@ -430,28 +430,32 @@ async def get_colleges_endpoint(
             search=search
         )
         
-        # Fetch courses for each college
-        result = []
-        for college in colleges:
-            courses = await get_courses_for_college(college["id"])
+        # Only fetch courses if filtering by course name or level
+        if course or level:
+            result = []
+            for college in colleges:
+                courses = await get_courses_for_college(college["id"])
+                
+                # Filter courses by level if specified
+                if level:
+                    courses = [c for c in courses if c.get("level") == level]
+                
+                # Filter by course name if specified
+                if course:
+                    courses = [c for c in courses if course.lower() in c.get("name", "").lower()]
+                
+                # Skip college if no matching courses after filtering
+                if not courses:
+                    continue
+                
+                college["courses"] = courses
+                college["course_count"] = len(courses)
+                result.append(college)
             
-            # Filter courses by level if specified
-            if level:
-                courses = [c for c in courses if c.get("level") == level]
-            
-            # Filter by course name if specified
-            if course:
-                courses = [c for c in courses if course.lower() in c.get("name", "").lower()]
-            
-            # Skip college if no matching courses after filtering
-            if (level or course) and not courses:
-                continue
-            
-            college["courses"] = courses
-            college["course_count"] = len(courses)
-            result.append(college)
+            return result
         
-        return result
+        # No course filtering - return colleges directly (fast!)
+        return colleges
         
     except Exception as e:
         logging.error(f"Error fetching colleges from MySQL: {e}")
