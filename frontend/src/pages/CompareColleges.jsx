@@ -451,7 +451,7 @@ export default function CompareColleges() {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-[#475569]">
                     <Calendar className="h-4 w-4" />
-                    <span>Est. {compareData[activeIndex].college.established}</span>
+                    <span>Est. {compareData[activeIndex].college.established_year || compareData[activeIndex].college.established || '—'}</span>
                   </div>
                 </CardContent>
               </Card>
