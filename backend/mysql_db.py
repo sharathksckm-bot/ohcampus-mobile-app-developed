@@ -203,13 +203,13 @@ async def get_college_by_id(college_id: str) -> Optional[Dict[str, Any]]:
     
     # Fetch highlights from college_highlights table
     highlights_query = """
-        SELECT highlights FROM college_highlights WHERE college_id = %s
+        SELECT text FROM college_highlights WHERE collegeid = %s
     """
     highlights_result = await execute_query(highlights_query, (mysql_id,))
     highlights = []
     if highlights_result:
         # Highlights may be stored as comma-separated or line-separated text
-        raw_highlights = highlights_result[0].get('highlights', '')
+        raw_highlights = highlights_result[0].get('text', '')
         if raw_highlights:
             # Split by common delimiters and filter empty strings
             for delim in ['\n', '|', ';']:
