@@ -1004,7 +1004,7 @@ async def get_college_admission_charges(college_id: str):
     charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(100)
     return charges
 
-@api_router.post("/admission-charges", response_model=AdmissionCharges)
+@api_router.post("/admission-charges", response_model=AdmissionCharges, status_code=status.HTTP_201_CREATED)
 async def create_admission_charges(data: AdmissionChargesBase, current_user: dict = Depends(require_admin)):
     # Check if already exists for this college-course combo
     existing = await db.admission_charges.find_one({
