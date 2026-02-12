@@ -384,7 +384,8 @@ async def get_filters():
         states = await get_states()
         cities_list = await get_cities()
         categories = await get_categories()
-        return FiltersResponse(states=sorted(states), cities=sorted(cities_list), categories=sorted(categories), courses=[])
+        courses = await get_course_names()
+        return FiltersResponse(states=sorted(states), cities=sorted(cities_list), categories=sorted(categories), courses=courses)
     except Exception as e:
         logging.error(f"Error fetching filters from MySQL: {e}")
         # Fallback to MongoDB
@@ -393,6 +394,16 @@ async def get_filters():
         categories = await db.colleges.distinct("category", {"is_featured": True})
         courses = await db.courses.distinct("name")
         return FiltersResponse(states=sorted(states), cities=sorted(cities_list), categories=sorted(categories), courses=sorted(courses))
+
+@api_router.get("/filters/course-levels")
+async def get_course_levels_endpoint():
+    """Get all available course levels from featured colleges"""
+    try:
+        levels = await get_course_levels()
+        return {"levels": levels}
+    except Exception as e:
+        logging.error(f"Error fetching course levels from MySQL: {e}")
+        return {"levels": ["UG", "PG", "Diploma", "Doctorial"]}
 
 @api_router.get("/filters/cities")
 async def get_cities_by_state(state: Optional[str] = None):
