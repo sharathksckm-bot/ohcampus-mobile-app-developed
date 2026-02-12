@@ -655,7 +655,10 @@ async def get_categories() -> List[str]:
 
 async def get_fee_structure(college_id: str, course_id: Optional[str] = None) -> List[Dict[str, Any]]:
     """Get fee structure for a college/course from MySQL"""
-    mysql_college_id = college_id.replace('mysql-', '') if college_id.startswith('mysql-') else college_id
+    # Handle c- prefix
+    mysql_college_id = college_id.replace('c-', '') if college_id.startswith('c-') else college_id
+    # Also handle legacy mysql- prefix for backward compatibility
+    mysql_college_id = mysql_college_id.replace('mysql-', '') if mysql_college_id.startswith('mysql-') else mysql_college_id
     
     query = """
         SELECT 
@@ -672,7 +675,10 @@ async def get_fee_structure(college_id: str, course_id: Optional[str] = None) ->
     params = [mysql_college_id]
     
     if course_id:
-        mysql_course_id = course_id.replace('mysql-cc-', '').replace('mysql-', '') if course_id.startswith('mysql') else course_id
+        # Handle cc- prefix
+        mysql_course_id = course_id.replace('cc-', '').replace('c-', '')
+        # Also handle legacy mysql- prefix for backward compatibility
+        mysql_course_id = mysql_course_id.replace('mysql-cc-', '').replace('mysql-', '') if mysql_course_id.startswith('mysql') else mysql_course_id
         query += " AND fs.course_id = %s"
         params.append(mysql_course_id)
     
@@ -681,8 +687,8 @@ async def get_fee_structure(college_id: str, course_id: Optional[str] = None) ->
     fees = []
     for row in results:
         fees.append({
-            "id": f"mysql-fee-{row['id']}",
-            "college_id": f"mysql-{row['college_id']}",
+            "id": f"fee-{row['id']}",
+            "college_id": f"c-{row['college_id']}",
             "course_id": row['course_id'],
             "course_name": row['course_name'] or '',
             "details": row['details'] or '',
