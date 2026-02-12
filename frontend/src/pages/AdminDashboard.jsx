@@ -50,8 +50,11 @@ export default function AdminDashboard() {
         coursesAPI.getAll({}),
       ]);
       
-      const courses = coursesRes.data;
-      const colleges = collegesRes.data;
+      // Handle both array and object responses for courses
+      const courses = Array.isArray(coursesRes.data) 
+        ? coursesRes.data 
+        : (coursesRes.data?.courses || []);
+      const colleges = collegesRes.data || [];
       
       setAllCourses(courses);
       setAllColleges(colleges);
