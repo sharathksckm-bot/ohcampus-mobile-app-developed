@@ -237,6 +237,12 @@ Create a web-based counseling platform for OhCampus counselors with:
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Latest Updates (Feb 2026)
+### Iteration 14 - URL Cleanup & Production Deployment (Feb 13, 2026)
+1. **Removed "mysql" from URLs**: Changed ID prefixes from `mysql-` to cleaner `c-` for colleges and `cc-` for courses
+2. **Production Deployment Complete**: Deployed all fixes to counselor.ohcampus.com
+3. **Fixed MySQL Schema Differences**: Updated queries to handle production database column names (`text` instead of `highlights` in college_highlights table)
+4. **Backward Compatibility**: Added support for legacy `mysql-` prefix IDs to avoid breaking existing bookmarks
+
 ### Iteration 13 - UI Size Fixes & Logo Updates (Feb 12, 2026)
 1. **Compare Courses Layout Fixed**: Clean, compact dialog with proper layout
 2. **College Cards Reduced Size**: Now shows 4 cards per row on large screens (xl:grid-cols-4)
