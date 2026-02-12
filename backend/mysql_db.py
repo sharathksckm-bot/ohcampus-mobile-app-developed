@@ -90,7 +90,7 @@ async def get_featured_colleges(
     
     results = await execute_query(query, tuple(params) if params else None)
     
-    # Convert to expected format
+    # Convert to expected format (simplified - no heavy fields)
     colleges = []
     for row in results:
         college = {
@@ -98,7 +98,6 @@ async def get_featured_colleges(
             "mysql_id": row['id'],
             "name": row['name'] or '',
             "slug": row['slug'] or '',
-            "description": row['description'] or '',
             "address": row['address'] or '',
             "phone": row['phone'] or '',
             "email": row['email'] or '',
@@ -106,13 +105,12 @@ async def get_featured_colleges(
             "accreditation": row['accreditation'] or '',
             "established_year": row['established_year'] or 0,
             "logo": f"https://ohcampus.com/assets/images/colleges/{row['logo']}" if row['logo'] else None,
-            "banner": f"https://ohcampus.com/assets/images/colleges/{row['banner']}" if row['banner'] else None,
             "state": row['state'] or '',
             "city": row['city'] or '',
             "category": row['category'] or '',
             "is_featured": True,
             "package_type": row['package_type'],
-            "map_location": row['map_location'] or ''
+            "course_count": row['course_count'] or 0
         }
         colleges.append(college)
     
