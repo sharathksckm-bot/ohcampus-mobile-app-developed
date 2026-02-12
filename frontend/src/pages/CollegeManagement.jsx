@@ -122,10 +122,15 @@ export default function CollegeManagement() {
         coursesAPI.getAll(),
         filtersAPI.getAll(),
       ]);
-      setColleges(collegesRes.data);
-      setCourses(coursesRes.data);
-      setFilters(filtersRes.data);
+      setColleges(collegesRes.data || []);
+      // Handle both array and paginated object responses
+      const coursesData = Array.isArray(coursesRes.data) 
+        ? coursesRes.data 
+        : (coursesRes.data?.courses || []);
+      setCourses(coursesData);
+      setFilters(filtersRes.data || { states: [], cities: [], categories: [], courses: [] });
     } catch (error) {
+      console.error('Failed to load data:', error);
       toast.error('Failed to load data');
     } finally {
       setLoading(false);
