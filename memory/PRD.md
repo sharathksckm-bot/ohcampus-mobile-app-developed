@@ -237,16 +237,24 @@ Create a web-based counseling platform for OhCampus counselors with:
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Latest Updates (Feb 2026)
-### Iteration 15 - Bug Fixes & REST API Best Practices (Feb 12, 2026)
-1. **Fixed "Manage Courses" Dialog Bug**: 
-   - Issue: Dialog was empty when clicking "Manage Courses" on /admin/colleges page
-   - Root Cause: Courses were filtered from limited local cache of 100 courses instead of fetching from API
-   - Fix: Added API call to `/api/colleges/{college_id}/courses` when dialog opens
-   - Added loading state with spinner while fetching courses
-   - Added empty state message if no courses found
-2. **Fixed HTTP Status Codes (REST API Best Practices)**:
+### Iteration 15 - Bug Fixes & Production Deployment (Feb 12, 2026)
+1. **Fixed "Manage Courses" Dialog Bug (Production)**: 
+   - Issue: Dialog was empty for most colleges on counselor.ohcampus.com
+   - Root Causes: 
+     a) Courses were filtered from limited local cache instead of API call
+     b) Production nginx was serving OLD frontend build from wrong directory
+   - Fixes Applied:
+     - Added API call to `/api/colleges/{college_id}/courses` when dialog opens
+     - Fixed frontend deployment to correct nginx root directory
+     - Added loading spinner and empty state message
+2. **Fixed Duplicate Symbols in Seat Status Dropdown**:
+   - Removed extra icon from SelectTrigger, now only shows via SelectValue
+3. **Fixed Seat Status Not Saving**:
+   - Added `course_seat_status` MongoDB collection for MySQL courses
+   - Backend now stores/retrieves seat status separately for MySQL courses (cc- prefix)
+   - Frontend now updates `selectedCollegeCourses` state after save
+4. **Fixed HTTP Status Codes (REST API Best Practices)**:
    - Updated all POST endpoints to return HTTP 201 Created instead of 200 OK
-   - Affected endpoints: `/colleges`, `/courses`, `/fees`, `/fees/import-csv`, `/admission-charges`, `/faqs`
 
 ### Iteration 14 - URL Cleanup & Production Deployment (Feb 13, 2026)
 1. **Removed "mysql" from URLs**: Changed ID prefixes from `mysql-` to cleaner `c-` for colleges and `cc-` for courses
