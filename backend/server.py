@@ -19,7 +19,7 @@ import io
 from mysql_db import (
     get_featured_colleges, get_college_by_id, get_courses_for_college,
     get_all_courses_with_colleges, get_states, get_cities, get_categories,
-    get_fee_structure, close_mysql_pool
+    get_fee_structure, close_mysql_pool, get_course_levels, get_course_names
 )
 
 ROOT_DIR = Path(__file__).parent
