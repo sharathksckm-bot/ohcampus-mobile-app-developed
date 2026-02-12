@@ -1,4 +1,4 @@
-<analysis>original_problem_statement:
+<analysis>**original_problem_statement:**
 **Initial Request:**
 Create a web-based counseling platform for OhCampus counselors.
 -   **Counselor Features:** Filter colleges, view featured colleges, and see detailed college information including fees, highlights, and news.
@@ -6,84 +6,64 @@ Create a web-based counseling platform for OhCampus counselors.
 -   **Technical Guidelines:** Use existing OhCampus database, ensure fast filtering, mobile-friendly UI, and secure admin authentication.
 
 **Subsequent Feature Requests & Bug Reports:**
-1.  **Comparison Feature:** Allow counselors to select and compare multiple colleges and courses.
-2.  **PDF/CSV:** Export fee structures to PDF and import via CSV.
-3.  **UI/UX:**
-    -   Fix search bar width on the Courses page.
-    -   Redesign the landing page to be more attractive, remove registration flows, and apply OhCampus branding.
-    -   Redirect the root URL () to the login page.
-    -   Remove demo credentials and Made with Emergent branding from the login page.
-4.  **Admissions & Performance:**
-    -   Manage admitted candidates with dynamic installments, remarks, and scholarships.
-    -   Role-based dashboards and performance tracking.
-    -   Admin-driven user management and password resets.
-5.  **Deployment & Infrastructure:**
-    -   Deploy the application to a custom subdomain ().
-    -   Enable SSL (HTTPS) for the deployed application.
-    -   Fix the main admin panel (), which was broken, and enable SSL for it.
-6.  **Database Integration:**
-    -   Connect the platform to the existing OhCampus.com production **MySQL** database.
-    -   Fetch Featured Colleges, Courses, States, Cities, and other related data from the MySQL database instead of the initial MongoDB test data.
-7.  **Performance & Bug Fixes (Latest):**
-    -   The counselor platform (especially the admin panel) is very slow.
-    -   **Colleges Page:** Established Year, Highlights, Courses, and What's New sections are not displaying content.
-    -   **Courses Page:** State and City filters are not fetching data. Course Details modal doesn't show Job Profiles, renders raw HTML, and needs better styling. All filters are not listing all available options. The page should list all courses from featured colleges with pagination.
-    -   **Comparison Features:** Not fetching Established Year, Highlights, or Placement Statistics. Content needs to be complete.
-    -   **Admin Panel:** Dashboard and other features are not working.
+1.  **UI/UX & Data Display:**
+    -   Fix multiple pages where data from the MySQL database was not displaying correctly (College Details, Course Details, Compare Colleges). This included missing highlights, courses, established year, placement stats, and job profiles.
+    -   Fix HTML content rendering as raw text in modals.
+    -   Fix State and City filters not fetching data on the Courses page.
+    -   Fix the Admin Panel Dashboard, which was failing to load data.
+    -   Fix the Admin College Management page (), which was not opening.
+    -   Address layout issues: Search bar width, Compare Courses button position, and cramped filters on the Courses page.
+    -   Reduce the size of college/course cards on the Dashboard and Courses pages.
+    -   Ensure college course counts are accurate across the admin panel (sidebar, analytics, college list).
+    -   Fix the Fee Management search to be more user-friendly by displaying results in a list.
+2.  **Branding & URLs:**
+    -   Add the official OhCampus.com logo and favicon throughout the application.
+    -   Remove the mysql- prefix from API URLs for cleaner routing.
+3.  **Main Site ():**
+    -   Fix the main website, which was inaccessible over HTTPS.
+    -   Add SEO-friendly meta descriptions to the main site's homepage and implement a strategy for dynamic meta tags on other pages (e.g., college, course pages).
+4.  **Deployment:**
+    -   Deploy all fixes to the production server.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application (React, FastAPI) deployed on the user's server at .
--   **Live Deployment:** The application is fully deployed via SSH on the user's server () with Nginx as a reverse proxy, a systemd service for the backend, and a valid SSL certificate.
--   **Database Integration:** The backend now connects to the user's production **MySQL** database () to fetch all college and course data. MongoDB is still used for user management, admissions, and other platform-specific data.
--   **Dual-Site Configuration:** The server also hosts the main OhCampus admin panel (), which is an Angular/PHP application. Its Nginx configuration and backend API (via PHP-FPM) have been fixed and secured with SSL.
--   **Core Features:**
-    -   **Counselor Dashboard:** Displays featured colleges fetched from MySQL.
-    -   **Courses Page:** Displays a paginated list of all courses from featured colleges, also fetched from MySQL.
-    -   **Admin Panel:** Includes pages for User Management, Fee Management, Performance Dashboards, etc.
-    -   **Authentication:** JWT-based login for both Admins and Counselors. The login page is clean, branded, and redirects from the root URL.
--   **Performance:** Backend queries for colleges and courses have been optimized, significantly improving page load times.
+A full-stack application (React, FastAPI) is fully deployed and operational on the user's production server at .
+-   **Live Deployment:** The application is deployed via SSH on the user's server (), served by Nginx with a systemd service managing the backend.
+-   **Hybrid Database:** The backend is connected to the user's production MySQL database for all college and course data, while MongoDB is used for user management and other platform-specific data.
+-   **Functionality:**
+    -   Most reported bugs related to data display from MySQL have been fixed. College details, course details, highlights, and comparison features now show the correct information.
+    -   The Admin Dashboard and College Management pages are functional and display correct statistics by fetching data from both MySQL and MongoDB.
+    -   UI/UX has been significantly improved with layout corrections, card size adjustments, and branding updates (logo/favicon).
+    -   API URLs have been refactored to be cleaner (e.g.,  instead of ).
+-   **Main Site ():** The main OhCampus website is now accessible over HTTPS, with its Nginx configuration fixed and a new SSL certificate installed. The homepage meta description has been updated.
 
 **Last working item**:
-- Last item agent was working: Addressing a large batch of bug reports and feature requests from the user concerning data display, filtering, and performance across the platform. The agent began by investigating the MySQL database schema to understand the data structure for fields like  (for highlights), , and .
-- Status: IN PROGRESS
-- Agent Testing Done: N
-- Which testing method agent to use? Both frontend and backend testing agents are recommended after all fixes are implemented due to the broad scope. Individual fixes can be tested with  and screenshots.
-- User Testing Done: N
+-   Last item agent was working: Investigating why the Manage Courses dialog on the  page does not display the list of courses for a selected college, even though the Manage Courses button is clicked. The dialog appears, but the table is empty.
+-   Status: IN PROGRESS
+-   Agent Testing Done: N
+-   Which testing method agent to use? Frontend testing agent or screenshot tool. The issue is likely on the frontend in , as the backend API for fetching courses per college has been verified.
+-   User Testing Done: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1 (P0): Multi-Part Bug Fixes & Feature Enhancements**
-    -   **Description:** The user reported a list of critical bugs related to data not appearing correctly after the migration to MySQL and performance issues. This is the top priority.
-    -   **Status:** IN PROGRESS
--   **Issue 2 (P1): Incorrect HTTP Status Codes**
-    -   **Description:**  and  endpoints return  instead of the more appropriate  or  for updates. This is a carry-over from a previous session.
-    -   **Status:** NOT STARTED
+-   **Issue 1: Manage Courses dialog is empty on the Admin College Management page (P0)**
+-   **Issue 2: Incorrect HTTP Status Codes (P2)**
 
 Issues Detail:
--   **Issue 1: Multi-Part Bug Fixes & Feature Enhancements**
-    -   **Attempted fixes:** The agent has investigated the MySQL schema to locate the necessary data tables (, , etc.) but has not yet implemented code changes for this batch of issues.
+-   **Issue 1: Manage Courses dialog is empty on the Admin College Management page**
+    -   **Attempted fixes:** The agent confirmed via screenshot that the dialog opens but the course list is empty. The investigation pointed to .
     -   **Next debug checklist:**
-        1.  **Backend (, ):**
-            -   Update  to fetch  (for highlights) and placement data.
-            -   Update  to fetch  and ensure all description content is returned.
-            -   Update the  endpoint to correctly fetch all States and Cities for the Courses tab.
-            -   Investigate why the admin panel dashboard and features are not working. Check API calls and backend logic for , , etc.
-        2.  **Frontend (React Components):**
-            -   In , use a library like  and  to render HTML content safely. Improve the modal's styling.
-            -   In  (or the equivalent page), ensure the , , , and  sections are mapped to the correct data from the API response.
-            -   In , add fields for , , and .
-            -   In , ensure the State and City filter dropdowns are populated correctly from the  API endpoint.
-    -   **Why fix this issue and what will be achieved with the fix?** This will resolve major data discrepancies, fix broken UI components, and make the platform functional and reliable for users after the database migration.
+        1.  Examine .
+        2.  Check the state management for the Manage Courses dialog.
+        3.  Verify how the  for the selected college are being fetched and passed to the dialog's table component. The API call  might be filtering from a limited, already-loaded list of courses instead of making a fresh API call for the specific college's full course list.
+    -   **Why fix this issue and what will be achieved with the fix?** Admins need to be able to see and manage all courses associated with a specific college directly from the management page.
     -   **Status:** IN PROGRESS
     -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Both.
+    -   **Should Test frontend/backend/both after fix?** Frontend.
     -   **Blocked on other issue:** None.
 -   **Issue 2: Incorrect HTTP Status Codes**
     -   **Attempted fixes:** None.
-    -   **Next debug checklist:**
-        1.  Review  and  endpoints in .
-        2.  Set  in decorators for resource creation () and ensure  for updates.
+    -   **Next debug checklist:** Review  endpoints in  and add .
     -   **Why fix this issue and what will be achieved with the fix?** To adhere to REST API best practices.
     -   **Status:** NOT STARTED
     -   **Is recurring issue?** Y
@@ -91,45 +71,46 @@ Issues Detail:
     -   **Blocked on other issue:** None.
 
 **In progress Task List**:
--   **Task 1: Fix All Reported Bugs and UI Issues**
-    -   **Where to resume:** Continue with the backend and frontend fixes outlined in the  for Issue 1. Start with the backend changes in  and  to provide the necessary data to the frontend.
-    -   **What will be achieved with this?** A fully functional and data-accurate application that meets the user's latest requirements.
+-   **Task 1: Resolve all outstanding bugs**
+    -   **Where to resume:** Resume debugging the Manage Courses dialog in .
+    -   **What will be achieved with this?** A fully functional admin panel where all features work as expected.
     -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** Both.
+    -   **Should Test frontend/backend/both after fix?** Frontend.
     -   **Blocked on something:** None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
+    -   **P1: Implement dynamic meta tags for **. The user requested this for individual college, course, and exam pages to improve SEO. Since the Angular source code is not on the server, a solution like a pre-rendering service needs to be implemented.
     -   **P1: Email notifications for admission deadlines.**
 -   **Future Tasks:**
     -   **P2: Advanced analytics dashboard.**
-    -   **P3: Refactor  into a modular structure** (e.g., , , ).
+    -   **P3: Refactor ** into a modular structure (e.g., , , ).
 
 **Completed work in this session**
--   **Full Application Deployment:**
-    -   Deployed the application to the user's server () using SSH.
-    -   Configured Nginx, systemd, and installed all necessary server dependencies.
-    -   Enabled SSL for .
--   **Database Migration to MySQL:**
-    -   Connected the backend to the user's production MySQL database.
-    -   Refactored all college and course-related endpoints (, , ) to fetch live data from MySQL.
--   **Main Admin Panel () Restoration:**
-    -   Fixed the non-functional main OhCampus admin panel by configuring Nginx to serve its Angular frontend and PHP backend (via PHP-FPM).
-    -   Enabled SSL for  and resolved CORS issues to make it fully operational.
--   **Performance Optimization:**
-    -   Drastically improved API response times by optimizing MySQL queries in  (reducing N+1 queries) and adding database indexes on the server.
--   **Frontend Features & Fixes:**
-    -   Implemented server-side pagination on the Courses page.
-    -   Fixed the search bar width on the Courses page.
-    -   Added  and  to the Course Comparison dialog.
-    -   Redesigned the landing page with OhCampus branding and removed registration CTAs.
-    -   Implemented a redirect from the root URL () to .
-    -   Removed hardcoded demo credentials and the Made with Emergent badge.
-    -   Fixed the login flow by rebuilding the frontend with the correct production API URL.
-    -   Fixed data display issues like  on college cards.
+-   **Production Deployment & Bug Fixes:**
+    -   Deployed all frontend and backend changes to the user's production server.
+    -   Fixed a critical bug where the college detail page was failing on production due to a mismatch in API ID prefixes ( vs ).
+    -   Fixed production-specific database schema errors by adapting queries in  to handle  instead of  columns and a missing  table.
+-   **Data Integrity & Display Fixes:**
+    -   Fixed Admin Dashboard to show correct stats (e.g., 2082 total courses) by fetching from the correct API endpoints.
+    -   Fixed  to fetch and display the complete list of highlights and courses from MySQL.
+    -   Fixed the  page to display correct course counts for each college in the list.
+-   **UI/UX Enhancements:**
+    -   Corrected the OhCampus logo and favicon across the login page, navbar, and admin panel.
+    -   Improved the Fee Management search UI to show a clickable list of colleges.
+    -   Reorganized the filters on the Courses page into two lines for a cleaner layout.
+    -   Adjusted card sizes on the Dashboard and Courses pages for a more compact view.
+    -   Fixed the layout of the Compare Courses button.
+-   **URL & Routing:**
+    -   Successfully refactored all college and course IDs to use  and  prefixes, removing  from all user-facing URLs.
+-   **Main Site Restoration ():**
+    -   Diagnosed and fixed the main  website by creating a new Nginx configuration and installing an SSL certificate, making it accessible over HTTPS.
+    -   Updated the  of the main site with the user-provided meta description for the homepage.
+-   **Testing:**
+    -   Used the testing agent twice (, ) to run comprehensive regression tests after major batches of fixes.
 
 **Earlier issues found/mentioned but not fixed**
--   **Incorrect HTTP Status Codes:**  endpoints return  instead of . This was noted in the previous handoff and remains unresolved.
+-   **Incorrect HTTP Status Codes:**  and  endpoints return  instead of .
 
 **Known issue recurrence from previous fork**
 -   None.
@@ -138,95 +119,95 @@ Issues Detail:
 
 
 **Key Technical Concepts**
--   **Backend:** FastAPI, Pydantic, Motor (for MongoDB data), **MySQL Connector/Python**, JWT.
+-   **Backend:** FastAPI, Pydantic, Motor (MongoDB), MySQL Connector/Python, aiomysql, JWT.
 -   **Frontend:** React, React Router, Tailwind CSS, Shadcn/UI, Axios, Context API.
--   **Database:** Hybrid model using **MySQL** (for core OhCampus data like colleges/courses) and **MongoDB** (for platform-specific data like users/admissions).
--   **Deployment:** Live server management via **SSH**, with **Nginx** as a reverse proxy and **Systemd** for service management.
+-   **Database:** Hybrid model: **MySQL** for core OhCampus data (colleges, courses) and **MongoDB** for platform-specific data (users, fees, admissions).
+-   **Deployment:** Live server management via **SSH**, with **Nginx** as a reverse proxy and **Systemd** for service management. The server also runs **cPanel/Apache** for the main  site.
 
 **key DB schema**
 -   **MySQL ( database):**
-    -   : Contains college details. Featured colleges are identified by  = 'feature_listing'.
-    -   : Links colleges and courses. Contains eligibility, scope, job profiles.
-    -   , : Additional college data.
-    -   , , , : Master data tables for filtering.
+    -   : Main college details.
+    -   : Links colleges and courses.
+    -   : Contains highlight text (column is ).
+    -   **Note:**  table does not exist in production.
 -   **MongoDB ():**
-    -   : Stores counselor/admin accounts, roles, and hierarchy.
-    -   , , : Store platform-specific operational data.
+    -   : Counselor/admin accounts.
+    -   , , : Platform-specific data.
 
 **changes in tech stack**
--   The application now uses a hybrid database approach, integrating **MySQL** as the primary source for college and course information, while retaining MongoDB for user and operational data.
--   Added  and  to the backend dependencies.
+-   None in this session.
 
 **All files of reference**
--   **/app/backend/mysql_db.py**: New file created to handle all MySQL database logic, including connection pooling and query functions.
--   **/app/backend/server.py**: Heavily modified to replace MongoDB calls with calls to functions in  for all college and course endpoints. New endpoints for MySQL-driven filters and details were added.
--   **/app/frontend/src/pages/Courses.jsx**: Significantly refactored to support server-side pagination, fetch filters from a dedicated API, and display total counts.
--   **/app/frontend/src/pages/Dashboard.jsx**: Updated to render  correctly and populate the Select Course filter from the new API response.
--   **/app/frontend/src/pages/Login.jsx**: Modified to remove hardcoded demo credentials.
--   **/app/frontend/public/index.html**: Modified to remove the Made with Emergent badge and update page metadata.
--   **/app/frontend/src/App.js**: Updated to redirect the root path  to .
+-   : Heavily modified to fix queries for fetching all highlights, handle schema differences in production, and use new ID prefixes (, ).
+-   : Updated all endpoints to handle new / ID prefixes. Fixed  endpoint to correctly use MySQL.
+-   : Updated to fetch and display correct course counts from MySQL. **This file is central to the current bug.**
+-   : Updated API calls to fetch total course count for accurate stats.
+-   : Major layout changes to the filter section for better responsiveness.
+-   : Fixed logic to correctly render lists of highlights and courses.
+-   : Reworked the search component UI.
+-   : Added the correct logo and total course count to the sidebar.
+-   : Updated with the correct favicon link.
 
 **Areas that need refactoring**:
--    is now even larger after integrating MySQL logic. It urgently needs to be broken down into separate files for routes, models, and services to improve maintainability.
+-    remains a very large monolithic file. It should be broken down into separate files for routes, models, and services.
+-    and  are both very large and could be broken down into smaller, more manageable components.
 
 **key api endpoints**
--   : (Rewritten) Fetches featured colleges from MySQL.
--   : (Rewritten & Optimized) Fetches a paginated list of courses from MySQL.
--   : (Rewritten) Fetches all filter options (states, cities, courses, etc.) from MySQL.
--   : (New) Fetches detailed information for a single course from MySQL.
+-   : (New/Modified) Fetches colleges with their respective course counts from MySQL.
+-   : Fetches a paginated list of all courses from MySQL, including a  count.
+-   : Fetches details for a single college from MySQL.
+-   : (Fixed) Fetches all courses for a specific college from MySQL.
+-   : Endpoint for dashboard statistics.
 
 **Critical Info for New Agent**
--   **LIVE DEPLOYMENT:** You are working on a live, user-facing server. All changes to the backend or frontend require deployment to the server () via SSH to take effect. The agent has SSH access and has established a workflow for this.
--   **DUAL DATABASE:** Be mindful of the two databases. All college/course data comes from **MySQL**. All user/admissions/activity data comes from **MongoDB**. Do not mix them up.
--   **SERVER ENVIRONMENT:** The server runs Nginx, which proxies two sites:  (this app) and  (the main site's admin panel). Do not alter Nginx configurations without understanding the impact on both sites.
--   **PERFORMANCE:** Query performance is critical. The user has reported slowness. Any new queries added to  must be efficient. Use s carefully and ensure indexes are leveraged.
--   **HTML RENDERING:** The database contains fields with raw HTML. When displaying this on the frontend, it must be sanitized (e.g., using ) before rendering to prevent XSS vulnerabilities.
+-   **LIVE DEPLOYMENT:** All work is done on a live production server. The workflow is: edit code locally -> build frontend (yarn run v1.22.22
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.) -> use  to transfer  files and the  directory to  -> restart the backend service ().
+-   **DUAL DATABASE:** Be extremely mindful of the data sources. College/course information is from **MySQL**. User/fee/admission/FAQ data is from **MongoDB**. Errors often occur when an endpoint or component tries to query the wrong database.
+-   **SERVER ENVIRONMENT:** The server () is complex. **Nginx** acts as a reverse proxy for the counselor app. The main site, , is a separate Angular application hosted under cPanel and served by Apache, but its port 80/443 traffic is now also managed by a dedicated Nginx config file.
+-   **PRODUCTION DB SCHEMA:** The production MySQL database () has schema differences from what might be expected. For example, the  table has a  column, not a  column, and the  table is missing. Code must handle these differences.
 
 **documents and test reports created in this job**
--   : A complete deployment package was created but is now outdated as subsequent changes were made directly on the server.
+-   
+-   
+-    (updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Test the full login flow on admin.ohcampus.com and fix the slow performance of the counselor platform.
-2.  **Agent:** Confirmed admin login works and identified slow API endpoints. Optimized MySQL queries and deployed the fix.
-3.  **User:** The counselor admin panel is still very slow.
-4.  **Agent:** Investigated further, found a slow course endpoint, added MySQL indexes, and optimized the query logic, which significantly improved performance.
-5.  **User:** Reported a new, long list of bugs: broken course filters, missing course details (job profiles, established year), HTML rendering issues, and broken admin panel features.
-6.  **Agent:** Acknowledged the issues and started investigating the MySQL database schema to find the required data.
-7.  **User:** (Provided admin credentials)
-8.  **Agent:** Used credentials to test the main admin login and continued investigating counselor platform performance.
-9.  **User:** My main admin panel () is not working and doesn't have SSL.
-10. **Agent:** Fixed the main admin panel by setting up Nginx to serve the Angular app and its PHP backend, enabled SSL, and fixed CORS/permission issues.
+10. **User:** Fix course counts in admin, search bar width, and move course filters to two lines. Fix logo. (Resolved)
+9. **Agent:** Implemented all the requested UI fixes and deployed.
+8. **User:** Manage Courses button on the admin college page doesn't list any courses. (Current Issue)
+7. **Agent:** Investigated and confirmed the Manage Courses dialog is empty.
+6. **User:** (Implied) The Courses page filters are too cramped. (Resolved in step 10)
+5. **Agent:** Took screenshot of the fixed Admin Colleges page showing correct counts and wider search bar.
+4. **User:** Test all pages and functionalities. Also,  page isn't opening, and college details are incomplete. (Resolved)
+3. **Agent:** Fixed all issues, deployed to production, and verified with screenshots.
+2. **User:** Logo and favicon are not added, total course count is wrong, and college details are incomplete. (Resolved)
+1. **Agent:** Investigated API responses and frontend code to identify the root causes of data discrepancies.
 
 **Project Health Check:**
 -   **Broken:**
-    -   Several key data display features on the College and Course pages are not working or showing incomplete data.
-    -   Filters on the Courses page are not working correctly.
-    -   The course details modal renders raw HTML and is missing information.
-    -   The admin panel dashboard and features within the counselor platform are reportedly not working.
+    -   The Manage Courses dialog in the Admin College Management page () does not display courses when opened.
 -   **Mocked:** None.
 
 **3rd Party Integrations**
--    / : For PDF generation.
+-    / : For potential PDF generation (not recently used).
 -    / : For connecting to the user's production MySQL database.
 
 **Testing status**
--   **Testing agent used after significant changes:** NO
+-   **Testing agent used after significant changes:** YES (used twice to validate large batches of fixes)
 -   **Troubleshoot agent used after agent stuck in loop:** NO
 -   **Test files created:** None.
--   **Known regressions:** Several features broke after the migration to the MySQL database, as listed in the user's latest bug report.
+-   **Known regressions:** The Manage Courses dialog appears to be a newly discovered bug or regression.
 
 **Credentials to test flow:**
 -   **Counselor Platform ():**
     -   **Admin:**  / 
     -   **Counselor:**  / 
--   **Main Admin Panel ():**
-    -   **Username:** 
-    -   **Password:** 
--   **Server SSH / cPanel:**
+-   **Server SSH:**
     -   **Host:** 
-    -   **Port:**  (SSH),  (WHM/cPanel)
+    -   **Port:** 
     -   **Username:** 
     -   **Password:** 
 
 **What agent forgot to execute**
--   The agent has consistently forgotten to address the issue of incorrect HTTP status codes for  requests, which has been carried over from the previous session.</analysis>
+-   The agent has consistently deferred fixing the incorrect HTTP status codes ( instead of  for  requests).
+-   The implementation of dynamic meta tags for  (beyond the homepage) was started but interrupted and has not been completed.</analysis>
