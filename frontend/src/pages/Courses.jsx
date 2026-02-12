@@ -676,16 +676,16 @@ export default function Courses() {
             <div className="space-y-6 py-4">
               {/* Quick Info */}
               <div className="flex flex-wrap gap-3">
-                <Badge variant="secondary" className="font-body text-sm">
+                <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-body text-sm">
                   <Clock className="h-3 w-3 mr-1" />
                   {courseDetail.course.duration}
                 </Badge>
-                <Badge variant="secondary" className="font-body text-sm">
+                <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white font-body text-sm">
                   <GraduationCap className="h-3 w-3 mr-1" />
                   {courseDetail.course.level}
                 </Badge>
                 {courseDetail.course.category && (
-                  <Badge variant="outline" className="font-body text-sm">
+                  <Badge variant="outline" className="font-body text-sm border-orange-300 text-orange-600">
                     {courseDetail.course.category}
                   </Badge>
                 )}
@@ -694,57 +694,83 @@ export default function Courses() {
 
               {/* Description */}
               {courseDetail.course.description && (
-                <div>
-                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-[#0066CC]" />
+                <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 border border-blue-100">
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
+                      <FileText className="h-4 w-4 text-white" />
+                    </div>
                     Description
                   </h4>
-                  <p className="text-[#475569] font-body text-sm leading-relaxed">
-                    {courseDetail.course.description}
-                  </p>
+                  <div 
+                    className="text-[#475569] font-body text-sm leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ 
+                      __html: courseDetail.course.description.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                    }}
+                  />
                 </div>
               )}
 
               {/* Eligibility */}
               {courseDetail.course.eligibility && (
-                <div>
-                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 flex items-center gap-2">
-                    <Users className="h-4 w-4 text-[#0066CC]" />
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center">
+                      <Users className="h-4 w-4 text-white" />
+                    </div>
                     Course Eligibility
                   </h4>
-                  <p className="text-[#475569] font-body text-sm leading-relaxed bg-slate-50 p-3 rounded-lg">
-                    {courseDetail.course.eligibility}
-                  </p>
+                  <div 
+                    className="text-[#475569] font-body text-sm leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ 
+                      __html: courseDetail.course.eligibility.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                    }}
+                  />
                 </div>
               )}
 
               {/* Scope */}
               {courseDetail.course.scope && (
-                <div>
-                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 flex items-center gap-2">
-                    <Target className="h-4 w-4 text-[#0066CC]" />
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-4 border border-purple-100">
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center">
+                      <Target className="h-4 w-4 text-white" />
+                    </div>
                     Scope & Career Opportunities
                   </h4>
-                  <p className="text-[#475569] font-body text-sm leading-relaxed">
-                    {courseDetail.course.scope}
-                  </p>
+                  <div 
+                    className="text-[#475569] font-body text-sm leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ 
+                      __html: courseDetail.course.scope.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                    }}
+                  />
                 </div>
               )}
 
-              {/* Job Profiles */}
-              {courseDetail.course.job_profiles && courseDetail.course.job_profiles.length > 0 && (
-                <div>
-                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-[#0066CC]" />
+              {/* Job Profiles - Show either parsed array or raw HTML */}
+              {(courseDetail.course.job_profiles?.length > 0 || courseDetail.course.job_profile) && (
+                <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-100">
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center">
+                      <Briefcase className="h-4 w-4 text-white" />
+                    </div>
                     Job Profiles
                   </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {courseDetail.course.job_profiles.map((job, i) => (
-                      <Badge key={i} variant="secondary" className="font-body">
-                        {job}
-                      </Badge>
-                    ))}
-                  </div>
+                  {courseDetail.course.job_profiles?.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {courseDetail.course.job_profiles.map((job, i) => (
+                        <Badge key={i} className="bg-white border border-orange-200 text-orange-700 font-body hover:bg-orange-100 transition-colors">
+                          {job}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : courseDetail.course.job_profile && (
+                    <div 
+                      className="text-[#475569] font-body text-sm leading-relaxed prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ 
+                        __html: courseDetail.course.job_profile.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                      }}
+                    />
+                  )}
                 </div>
               )}
 
@@ -821,9 +847,11 @@ export default function Courses() {
 
               {/* College Info */}
               {courseDetail.college && (
-                <div className="p-4 bg-blue-50 rounded-lg">
+                <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                   <h4 className="font-heading font-semibold text-[#0F172A] mb-2 flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-[#0066CC]" />
+                    <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+                      <Building2 className="h-4 w-4 text-white" />
+                    </div>
                     About the College
                   </h4>
                   <p className="text-sm font-body text-[#475569] mb-2">{courseDetail.college.name}</p>
