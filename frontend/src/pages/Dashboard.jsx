@@ -741,7 +741,7 @@ export default function Dashboard() {
                     </div>
                     <div className="bg-slate-50 rounded-lg p-2.5">
                       <p className="text-xs text-[#94A3B8] font-body">Established</p>
-                      <p className="text-sm font-body font-medium text-[#0F172A]">{college.established}</p>
+                      <p className="text-sm font-body font-medium text-[#0F172A]">{college.established_year || college.established || 'N/A'}</p>
                     </div>
                   </div>
 
