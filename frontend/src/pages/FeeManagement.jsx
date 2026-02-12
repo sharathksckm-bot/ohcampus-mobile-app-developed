@@ -593,19 +593,10 @@ export default function FeeManagement() {
                     data-testid="college-search-input"
                   />
                 </div>
-                
-                {/* College Dropdown */}
-                <Select 
-                  value={selectedCollege?.id || ''} 
-                  onValueChange={handleCollegeSelect}
-                >
-                  <SelectTrigger 
-                    className="w-full h-12 font-body"
-                    data-testid="college-select"
-                  >
-                    <SelectValue placeholder="Choose a featured college" />
-                  </SelectTrigger>
-                  <SelectContent>
+
+                {/* Filtered Colleges List - Shows when searching */}
+                {collegeSearchQuery && (
+                  <div className="border rounded-lg max-h-64 overflow-y-auto">
                     {colleges
                       .filter(college => 
                         college.name.toLowerCase().includes(collegeSearchQuery.toLowerCase()) ||
@@ -613,6 +604,56 @@ export default function FeeManagement() {
                         college.category?.toLowerCase().includes(collegeSearchQuery.toLowerCase())
                       )
                       .map((college) => (
+                        <div
+                          key={college.id}
+                          onClick={() => {
+                            handleCollegeSelect(college.id);
+                            setCollegeSearchQuery('');
+                          }}
+                          className={`flex items-center justify-between p-3 hover:bg-slate-50 cursor-pointer border-b last:border-b-0 transition-colors ${
+                            selectedCollege?.id === college.id ? 'bg-blue-50 border-l-4 border-l-[#0066CC]' : ''
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0066CC] to-[#0052A3] flex items-center justify-center flex-shrink-0">
+                              <Building2 className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                              <p className="font-body font-medium text-[#0F172A]">{college.name}</p>
+                              <p className="text-xs text-[#94A3B8] font-body">{college.city}, {college.state}</p>
+                            </div>
+                          </div>
+                          <Badge variant="secondary" className="text-xs">
+                            {college.category}
+                          </Badge>
+                        </div>
+                      ))}
+                    {colleges.filter(college => 
+                      college.name.toLowerCase().includes(collegeSearchQuery.toLowerCase()) ||
+                      college.city?.toLowerCase().includes(collegeSearchQuery.toLowerCase()) ||
+                      college.category?.toLowerCase().includes(collegeSearchQuery.toLowerCase())
+                    ).length === 0 && (
+                      <div className="p-4 text-center text-[#94A3B8] font-body">
+                        No colleges found matching "{collegeSearchQuery}"
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* College Dropdown - Shows when not searching */}
+                {!collegeSearchQuery && (
+                  <Select 
+                    value={selectedCollege?.id || ''} 
+                    onValueChange={handleCollegeSelect}
+                  >
+                    <SelectTrigger 
+                      className="w-full h-12 font-body"
+                      data-testid="college-select"
+                    >
+                      <SelectValue placeholder="Choose a featured college" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {colleges.map((college) => (
                         <SelectItem key={college.id} value={college.id}>
                           <div className="flex items-center gap-2">
                             <Building2 className="h-4 w-4 text-[#0066CC]" />
@@ -623,8 +664,9 @@ export default function FeeManagement() {
                           </div>
                         </SelectItem>
                       ))}
-                  </SelectContent>
-                </Select>
+                    </SelectContent>
+                  </Select>
+                )}
                 
                 {/* Results count */}
                 {collegeSearchQuery && (
