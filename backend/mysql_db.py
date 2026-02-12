@@ -232,21 +232,25 @@ async def get_college_by_id(college_id: str) -> Optional[Dict[str, Any]]:
             lines = desc.replace('•', '\n').replace('- ', '\n').split('\n')
             highlights = [line.strip() for line in lines if line.strip() and len(line.strip()) > 10][:6]
     
-    # Fetch placement statistics
-    placements_query = """
-        SELECT * FROM college_placement_statistics WHERE college_id = %s ORDER BY year DESC LIMIT 5
-    """
-    placements_result = await execute_query(placements_query, (mysql_id,))
+    # Fetch placement statistics (table may not exist in all DBs)
     placements = []
-    for p in placements_result:
-        placements.append({
-            "year": p.get('year', ''),
-            "highest_package": p.get('highest_package') or p.get('highest_salary'),
-            "average_package": p.get('average_package') or p.get('average_salary'),
-            "placement_rate": p.get('placement_rate') or p.get('placement_percentage'),
-            "total_offers": p.get('total_offers') or p.get('students_placed'),
-            "top_recruiters": []
-        })
+    try:
+        placements_query = """
+            SELECT * FROM college_placement_statistics WHERE college_id = %s ORDER BY year DESC LIMIT 5
+        """
+        placements_result = await execute_query(placements_query, (mysql_id,))
+        for p in placements_result:
+            placements.append({
+                "year": p.get('year', ''),
+                "highest_package": p.get('highest_package') or p.get('highest_salary'),
+                "average_package": p.get('average_package') or p.get('average_salary'),
+                "placement_rate": p.get('placement_rate') or p.get('placement_percentage'),
+                "total_offers": p.get('total_offers') or p.get('students_placed'),
+                "top_recruiters": []
+            })
+    except Exception as e:
+        # Table may not exist - ignore
+        pass
     
     # Parse what's new - can be stored in different formats
     whats_new = []
