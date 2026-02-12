@@ -268,7 +268,7 @@ class TestFiltersAPI:
     def test_get_categories(self, auth_token):
         """Test getting categories filter"""
         headers = {"Authorization": f"Bearer {auth_token}"}
-        response = requests.get(f"{BASE_URL}/api/courses/categories", headers=headers)
+        response = requests.get(f"{BASE_URL}/api/courses/categories/list", headers=headers)
         assert response.status_code == 200
         data = response.json()
         
@@ -305,7 +305,7 @@ class TestCompareCollegesAPI:
         college_ids = f"{colleges[0]['id']},{colleges[1]['id']}"
         
         # Compare colleges
-        response = requests.get(f"{BASE_URL}/api/colleges/compare?colleges={college_ids}", headers=headers)
+        response = requests.get(f"{BASE_URL}/api/colleges/compare?college_ids={college_ids}", headers=headers)
         assert response.status_code == 200
         compare_data = response.json()
         
