@@ -43,32 +43,61 @@ async def get_featured_colleges(
     limit: int = 200
 ) -> List[Dict[str, Any]]:
     """Fetch featured colleges from MySQL with course counts in single query"""
-    query = """
-        SELECT 
-            c.id,
-            c.title as name,
-            c.slug,
-            c.address,
-            c.phone,
-            c.email,
-            c.web as website,
-            c.accreditation,
-            c.estd as established_year,
-            c.logo,
-            c.package_type,
-            s.statename as state,
-            ct.city as city,
-            cat.catname as category,
-            (SELECT COUNT(*) FROM college_course cc WHERE cc.collegeid = c.id AND cc.is_deleted = 0) as course_count
-        FROM college c
-        LEFT JOIN state s ON c.stateid = s.id
-        LEFT JOIN city ct ON c.cityid = ct.id
-        LEFT JOIN category cat ON cat.id = SUBSTRING_INDEX(c.categoryid, ',', 1)
-        WHERE (c.package_type = 'feature_listing' OR c.package_type = 'featured_listing')
-        AND c.status = 1 
-        AND c.is_deleted = 0
-    """
-    params = []
+    # Handle multi-category filtering using FIND_IN_SET
+    if category:
+        query = """
+            SELECT DISTINCT
+                c.id,
+                c.title as name,
+                c.slug,
+                c.address,
+                c.phone,
+                c.email,
+                c.web as website,
+                c.accreditation,
+                c.estd as established_year,
+                c.logo,
+                c.package_type,
+                c.categoryid,
+                s.statename as state,
+                ct.city as city,
+                (SELECT COUNT(*) FROM college_course cc WHERE cc.collegeid = c.id AND cc.is_deleted = 0) as course_count
+            FROM college c
+            LEFT JOIN state s ON c.stateid = s.id
+            LEFT JOIN city ct ON c.cityid = ct.id
+            JOIN category cat ON FIND_IN_SET(cat.id, c.categoryid) > 0
+            WHERE (c.package_type = 'feature_listing' OR c.package_type = 'featured_listing')
+            AND c.status = 1 
+            AND c.is_deleted = 0
+            AND cat.catname = %s
+        """
+        params = [category]
+    else:
+        query = """
+            SELECT 
+                c.id,
+                c.title as name,
+                c.slug,
+                c.address,
+                c.phone,
+                c.email,
+                c.web as website,
+                c.accreditation,
+                c.estd as established_year,
+                c.logo,
+                c.package_type,
+                c.categoryid,
+                s.statename as state,
+                ct.city as city,
+                (SELECT COUNT(*) FROM college_course cc WHERE cc.collegeid = c.id AND cc.is_deleted = 0) as course_count
+            FROM college c
+            LEFT JOIN state s ON c.stateid = s.id
+            LEFT JOIN city ct ON c.cityid = ct.id
+            WHERE (c.package_type = 'feature_listing' OR c.package_type = 'featured_listing')
+            AND c.status = 1 
+            AND c.is_deleted = 0
+        """
+        params = []
     
     if state:
         query += " AND s.statename = %s"
@@ -78,10 +107,6 @@ async def get_featured_colleges(
         query += " AND ct.city = %s"
         params.append(city)
     
-    if category:
-        query += " AND cat.catname = %s"
-        params.append(category)
-    
     if search:
         query += " AND (c.title LIKE %s OR c.address LIKE %s)"
         params.extend([f"%{search}%", f"%{search}%"])
@@ -90,9 +115,18 @@ async def get_featured_colleges(
     
     results = await execute_query(query, tuple(params) if params else None)
     
-    # Convert to expected format (simplified - no heavy fields)
+    # Fetch category names for each college (handle multiple categories)
     colleges = []
     for row in results:
+        # Get the first category name for display
+        category_name = ''
+        if row.get('categoryid'):
+            cat_query = "SELECT catname FROM category WHERE id = %s"
+            first_cat_id = str(row['categoryid']).split(',')[0].strip()
+            cat_result = await execute_query(cat_query, (first_cat_id,))
+            if cat_result:
+                category_name = cat_result[0]['catname']
+        
         college = {
             "id": f"mysql-{row['id']}",
             "mysql_id": row['id'],
@@ -107,7 +141,7 @@ async def get_featured_colleges(
             "logo": f"https://ohcampus.com/assets/images/colleges/{row['logo']}" if row['logo'] else None,
             "state": row['state'] or '',
             "city": row['city'] or '',
-            "category": row['category'] or '',
+            "category": category_name,
             "is_featured": True,
             "package_type": row['package_type'],
             "course_count": row['course_count'] or 0
