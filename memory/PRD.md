@@ -237,24 +237,30 @@ Create a web-based counseling platform for OhCampus counselors with:
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Latest Updates (Feb 2026)
-### Iteration 15 - Bug Fixes & Production Deployment (Feb 12, 2026)
-1. **Fixed "Manage Courses" Dialog Bug (Production)**: 
-   - Issue: Dialog was empty for most colleges on counselor.ohcampus.com
-   - Root Causes: 
-     a) Courses were filtered from limited local cache instead of API call
-     b) Production nginx was serving OLD frontend build from wrong directory
-   - Fixes Applied:
-     - Added API call to `/api/colleges/{college_id}/courses` when dialog opens
-     - Fixed frontend deployment to correct nginx root directory
-     - Added loading spinner and empty state message
-2. **Fixed Duplicate Symbols in Seat Status Dropdown**:
+### Iteration 15 - Critical Production Bug Fix (Feb 12, 2026)
+**Root Cause Identified**: Frontend was built with preview environment URL (`college-counsel.preview.emergentagent.com`) and deployed to production, causing all API calls to hit the wrong server (preview with demo data).
+
+**Fixes Applied**:
+1. **Fixed Frontend Deployment Process**:
+   - Rebuilt frontend with correct production URL (`https://counselor.ohcampus.com`)
+   - Deployed correct build to production server
+   - All 141 colleges and 2082 courses now loading from MySQL database
+
+2. **Fixed "Manage Courses" Dialog**:
+   - Added API call to `/api/colleges/{college_id}/courses` when dialog opens
+   - Added loading spinner and empty state message
+   - Courses now correctly fetched for each college
+
+3. **Fixed Duplicate Symbols in Seat Status Dropdown**:
    - Removed extra icon from SelectTrigger, now only shows via SelectValue
-3. **Fixed Seat Status Not Saving**:
-   - Added `course_seat_status` MongoDB collection for MySQL courses
-   - Backend now stores/retrieves seat status separately for MySQL courses (cc- prefix)
-   - Frontend now updates `selectedCollegeCourses` state after save
-4. **Fixed HTTP Status Codes (REST API Best Practices)**:
-   - Updated all POST endpoints to return HTTP 201 Created instead of 200 OK
+
+4. **Fixed Seat Status Saving for MySQL Courses**:
+   - Created `course_seat_status` MongoDB collection for MySQL courses
+   - Backend stores/retrieves seat status for `cc-` prefixed courses
+   - UI updates immediately after save with success toast
+
+5. **Fixed HTTP Status Codes (REST API Best Practices)**:
+   - Updated all POST endpoints to return HTTP 201 Created
 
 ### Iteration 14 - URL Cleanup & Production Deployment (Feb 13, 2026)
 1. **Removed "mysql" from URLs**: Changed ID prefixes from `mysql-` to cleaner `c-` for colleges and `cc-` for courses
