@@ -759,54 +759,70 @@ export default function CollegeManagement() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {getCollegeCourses(selectedCollege.id).map(course => {
-                        const statusConfig = getSeatStatusConfig(course.seat_status);
-                        const StatusIcon = statusConfig.icon;
+                      {loadingCollegeCourses ? (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center py-8">
+                            <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#0066CC]" />
+                            <p className="text-sm text-[#475569] mt-2">Loading courses...</p>
+                          </TableCell>
+                        </TableRow>
+                      ) : selectedCollegeCourses.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={4} className="text-center py-8">
+                            <BookOpen className="h-8 w-8 mx-auto text-[#94A3B8] mb-2" />
+                            <p className="text-sm text-[#475569]">No courses found for this college</p>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        selectedCollegeCourses.map(course => {
+                          const statusConfig = getSeatStatusConfig(course.seat_status);
+                          const StatusIcon = statusConfig.icon;
 
-                        return (
-                          <TableRow key={course.id}>
-                            <TableCell className="font-body font-medium">{course.name}</TableCell>
-                            <TableCell className="font-body">{course.duration}</TableCell>
-                            <TableCell>
-                              <Badge variant="secondary">{course.level}</Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Select
-                                value={course.seat_status || 'Available'}
-                                onValueChange={(value) => handleUpdateSeatStatus(course.id, value)}
-                                disabled={updatingCourse === course.id}
-                              >
-                                <SelectTrigger 
-                                  className={`w-40 h-9 ${statusConfig.color}`}
-                                  data-testid={`seat-status-${course.id}`}
+                          return (
+                            <TableRow key={course.id}>
+                              <TableCell className="font-body font-medium">{course.name}</TableCell>
+                              <TableCell className="font-body">{course.duration}</TableCell>
+                              <TableCell>
+                                <Badge variant="secondary">{course.level}</Badge>
+                              </TableCell>
+                              <TableCell>
+                                <Select
+                                  value={course.seat_status || 'Available'}
+                                  onValueChange={(value) => handleUpdateSeatStatus(course.id, value)}
+                                  disabled={updatingCourse === course.id}
                                 >
-                                  {updatingCourse === course.id ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  ) : (
-                                    <>
-                                      <StatusIcon className="h-4 w-4 mr-2" />
-                                      <SelectValue />
-                                    </>
-                                  )}
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {SEAT_STATUSES.map(status => {
-                                    const Icon = status.icon;
-                                    return (
-                                      <SelectItem key={status.value} value={status.value}>
-                                        <div className="flex items-center gap-2">
-                                          <Icon className="h-4 w-4" />
-                                          {status.label}
-                                        </div>
-                                      </SelectItem>
-                                    );
-                                  })}
-                                </SelectContent>
-                              </Select>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
+                                  <SelectTrigger 
+                                    className={`w-40 h-9 ${statusConfig.color}`}
+                                    data-testid={`seat-status-${course.id}`}
+                                  >
+                                    {updatingCourse === course.id ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <>
+                                        <StatusIcon className="h-4 w-4 mr-2" />
+                                        <SelectValue />
+                                      </>
+                                    )}
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {SEAT_STATUSES.map(status => {
+                                      const Icon = status.icon;
+                                      return (
+                                        <SelectItem key={status.value} value={status.value}>
+                                          <div className="flex items-center gap-2">
+                                            <Icon className="h-4 w-4" />
+                                            {status.label}
+                                          </div>
+                                        </SelectItem>
+                                      );
+                                    })}
+                                  </SelectContent>
+                                </Select>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
+                      )}
                     </TableBody>
                   </Table>
                 </div>
