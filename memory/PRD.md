@@ -329,5 +329,6 @@ Create a web-based counseling platform for OhCampus counselors with:
    - Changes are saved to the backend and reflected immediately
 
 ## Next Action Items
-1. Add email notifications for admission deadlines
-2. Implement advanced analytics dashboard
+1. **Deploy to Production**: Deploy the updated code to counselor.ohcampus.com server via SSH
+2. Add email notifications for admission deadlines
+3. Implement advanced analytics dashboard
