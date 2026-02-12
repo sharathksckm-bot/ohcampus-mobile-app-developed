@@ -353,8 +353,10 @@ async def get_courses_for_college(college_id: str) -> List[Dict[str, Any]]:
 
 async def get_course_by_id(course_id: str) -> Optional[Dict[str, Any]]:
     """Fetch a single course by its college_course ID with full details"""
-    # Extract the mysql ID from the course_id (format: mysql-cc-123)
-    mysql_id = course_id.replace('mysql-cc-', '').replace('mysql-', '')
+    # Extract the mysql ID from the course_id (format: cc-123)
+    mysql_id = course_id.replace('cc-', '').replace('c-', '')
+    # Also handle legacy mysql- prefix for backward compatibility
+    mysql_id = mysql_id.replace('mysql-cc-', '').replace('mysql-', '')
     
     query = """
         SELECT 
