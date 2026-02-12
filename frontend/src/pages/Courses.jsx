@@ -93,11 +93,17 @@ export default function Courses() {
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [compareDialogOpen, setCompareDialogOpen] = useState(false);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCourses, setTotalCourses] = useState(0);
+  const [pageSize] = useState(50);
+
   // Fee range options (First Year fees only)
   const feeRangeOptions = [
     { value: 'all', label: 'All Fee Ranges' },
     { value: 'below_100000', label: '1st Year < ₹1L' },
-    { value: '100000_to_200000', label: '1st Year ₹1L-₹2L' },
+    { value: 'below_200000', label: '1st Year < ₹2L' },
     { value: 'above_200000', label: '1st Year > ₹2L' }
   ];
 
@@ -125,37 +131,68 @@ export default function Courses() {
     return fees.reduce((sum, f) => sum + (f.amount || 0), 0);
   };
 
-  // Fetch courses and categories
-  const fetchData = useCallback(async () => {
+  // Fetch filters separately
+  const fetchFilters = useCallback(async () => {
+    try {
+      const [categoriesRes, levelsRes] = await Promise.all([
+        coursesAPI.getCategories(),
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/filters/course-levels`).then(r => r.json()),
+      ]);
+      setCategories(categoriesRes.data.categories || []);
+      setLevels(levelsRes.levels || ['UG', 'PG', 'Diploma', 'Doctorial']);
+      setStates(categoriesRes.data.states || []);
+      setCities(categoriesRes.data.cities || []);
+    } catch (error) {
+      console.error('Failed to load filters:', error);
+    }
+  }, []);
+
+  // Fetch courses with pagination
+  const fetchCourses = useCallback(async (page = 1) => {
     try {
       setLoading(true);
-      const [coursesRes, categoriesRes] = await Promise.all([
-        coursesAPI.getAllWithCollege({}),
-        coursesAPI.getCategories(),
-      ]);
-      const coursesData = coursesRes.data;
-      setCourses(coursesData);
-      setCategories(categoriesRes.data.categories || []);
+      const params = {
+        page,
+        limit: pageSize,
+      };
+      if (searchQuery) params.search = searchQuery;
+      if (selectedLevel && selectedLevel !== 'all') params.level = selectedLevel;
       
-      // Extract unique levels
-      const uniqueLevels = [...new Set(coursesData.map(c => c.level).filter(Boolean))];
-      setLevels(uniqueLevels);
+      const response = await coursesAPI.getAllWithCollege(params);
+      const data = response.data;
       
-      // Extract unique states and cities from college info
-      const uniqueStates = [...new Set(coursesData.map(c => c.college?.state).filter(Boolean))];
-      const uniqueCities = [...new Set(coursesData.map(c => c.college?.city).filter(Boolean))];
-      setStates(uniqueStates);
-      setCities(uniqueCities);
+      // Handle paginated response
+      if (data.courses) {
+        setCourses(data.courses);
+        setTotalCourses(data.total);
+        setTotalPages(data.total_pages);
+        setCurrentPage(data.page);
+      } else {
+        // Fallback for non-paginated response
+        setCourses(Array.isArray(data) ? data : []);
+      }
     } catch (error) {
       toast.error('Failed to load courses');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [searchQuery, selectedLevel, pageSize]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchFilters();
+  }, [fetchFilters]);
+
+  useEffect(() => {
+    fetchCourses(1);
+    setCurrentPage(1);
+  }, [searchQuery, selectedLevel]);
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    fetchCourses(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Filter courses
   const filteredCourses = useMemo(() => {
