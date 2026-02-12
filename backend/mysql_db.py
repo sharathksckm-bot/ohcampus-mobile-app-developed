@@ -395,6 +395,34 @@ async def get_course_by_id(course_id: str) -> Optional[Dict[str, Any]]:
         return None
     
     row = results[0]
+    
+    # Parse job_profile - can be stored as comma-separated, pipe-separated, or HTML list
+    job_profiles = []
+    job_profile_raw = row.get('job_profile') or ''
+    if job_profile_raw:
+        # Check for HTML content
+        if '<li>' in job_profile_raw.lower():
+            import re
+            li_items = re.findall(r'<li[^>]*>(.*?)</li>', job_profile_raw, re.IGNORECASE | re.DOTALL)
+            job_profiles = [re.sub(r'<[^>]+>', '', item).strip() for item in li_items if item.strip()]
+        elif '<p>' in job_profile_raw.lower():
+            import re
+            p_items = re.findall(r'<p[^>]*>(.*?)</p>', job_profile_raw, re.IGNORECASE | re.DOTALL)
+            job_profiles = [re.sub(r'<[^>]+>', '', item).strip() for item in p_items if item.strip()]
+        else:
+            # Try different delimiters
+            for delim in [',', '|', '\n', ';']:
+                if delim in job_profile_raw:
+                    job_profiles = [j.strip() for j in job_profile_raw.split(delim) if j.strip()]
+                    break
+            if not job_profiles and job_profile_raw.strip():
+                job_profiles = [job_profile_raw.strip()]
+    
+    # Clean up description - remove HTML tags for plain text
+    description = row.get('course_description') or row.get('master_description') or ''
+    scope = row.get('scope') or ''
+    eligibility = row.get('course_eligibility') or row.get('eligibility') or ''
+    
     return {
         "course": {
             "id": f"mysql-cc-{row['college_course_id']}",
@@ -405,10 +433,11 @@ async def get_course_by_id(course_id: str) -> Optional[Dict[str, Any]]:
             "slug": row['slug'] or '',
             "level": row['level'] or row['academic_level'] or 'UG',
             "duration": row['duration'] or '4 Years',
-            "eligibility": row['course_eligibility'] or row['eligibility'] or '',
-            "description": row['course_description'] or row['master_description'] or '',
-            "scope": row['scope'] or '',
-            "job_profile": row['job_profile'] or '',
+            "eligibility": eligibility,
+            "description": description,
+            "scope": scope,
+            "job_profile": job_profile_raw,  # Keep raw for HTML rendering
+            "job_profiles": job_profiles,  # Parsed array for badges
             "entrance_exams": row['entrance_exams'] or '',
             "total_fees": row['total_fees'] or '',
             "total_intake": row['total_intake'] or 0
