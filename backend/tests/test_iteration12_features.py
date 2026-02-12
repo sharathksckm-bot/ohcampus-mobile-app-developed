@@ -17,11 +17,11 @@ BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 class TestHealthAndAuth:
     """Basic health and authentication tests"""
     
-    def test_api_health(self):
-        """Test API is accessible"""
-        response = requests.get(f"{BASE_URL}/api/health")
+    def test_api_root(self):
+        """Test API root is accessible"""
+        response = requests.get(f"{BASE_URL}/api/")
         assert response.status_code == 200
-        print("SUCCESS: API health check passed")
+        print("SUCCESS: API root accessible")
     
     def test_counselor_login(self):
         """Test counselor login"""
@@ -31,10 +31,10 @@ class TestHealthAndAuth:
         })
         assert response.status_code == 200
         data = response.json()
-        assert "token" in data
+        assert "access_token" in data
         assert data["user"]["email"] == "counselor@ohcampus.com"
         print(f"SUCCESS: Counselor login works - user: {data['user']['name']}")
-        return data["token"]
+        return data["access_token"]
     
     def test_admin_login(self):
         """Test admin login"""
@@ -44,10 +44,10 @@ class TestHealthAndAuth:
         })
         assert response.status_code == 200
         data = response.json()
-        assert "token" in data
+        assert "access_token" in data
         assert data["user"]["role"] == "admin"
         print(f"SUCCESS: Admin login works - user: {data['user']['name']}")
-        return data["token"]
+        return data["access_token"]
 
 
 class TestCollegesAPI:
@@ -60,7 +60,7 @@ class TestCollegesAPI:
             "email": "counselor@ohcampus.com",
             "password": "counselor123"
         })
-        return response.json()["token"]
+        return response.json()["access_token"]
     
     def test_get_colleges_list(self, auth_token):
         """Test getting list of colleges"""
@@ -150,7 +150,7 @@ class TestCoursesAPI:
             "email": "counselor@ohcampus.com",
             "password": "counselor123"
         })
-        return response.json()["token"]
+        return response.json()["access_token"]
     
     def test_get_courses_list(self, auth_token):
         """Test getting list of courses"""
@@ -232,7 +232,7 @@ class TestFiltersAPI:
             "email": "counselor@ohcampus.com",
             "password": "counselor123"
         })
-        return response.json()["token"]
+        return response.json()["access_token"]
     
     def test_get_filters(self, auth_token):
         """Test getting filters (states, cities)"""
@@ -288,7 +288,7 @@ class TestCompareCollegesAPI:
             "email": "counselor@ohcampus.com",
             "password": "counselor123"
         })
-        return response.json()["token"]
+        return response.json()["access_token"]
     
     def test_compare_colleges(self, auth_token):
         """Test comparing colleges returns established_year, highlights, placements"""
@@ -344,7 +344,7 @@ class TestAdminDashboardAPI:
             "email": "admin@ohcampus.com",
             "password": "admin123"
         })
-        return response.json()["token"]
+        return response.json()["access_token"]
     
     def test_admin_stats(self, admin_token):
         """Test admin can get dashboard statistics"""
