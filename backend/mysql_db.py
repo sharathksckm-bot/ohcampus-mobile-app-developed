@@ -450,7 +450,7 @@ async def get_course_by_id(course_id: str) -> Optional[Dict[str, Any]]:
             "total_intake": row['total_intake'] or 0
         },
         "college": {
-            "id": f"mysql-{row['collegeid']}",
+            "id": f"c-{row['collegeid']}",
             "name": row['college_name'] or '',
             "accreditation": row['accreditation'] or '',
             "address": row['college_address'] or '',
