@@ -297,7 +297,10 @@ async def get_college_by_id(college_id: str) -> Optional[Dict[str, Any]]:
 
 async def get_courses_for_college(college_id: str) -> List[Dict[str, Any]]:
     """Fetch courses for a specific college"""
-    mysql_id = college_id.replace('mysql-', '') if college_id.startswith('mysql-') else college_id
+    # Handle c- prefix
+    mysql_id = college_id.replace('c-', '') if college_id.startswith('c-') else college_id
+    # Also handle legacy mysql- prefix for backward compatibility
+    mysql_id = mysql_id.replace('mysql-', '') if mysql_id.startswith('mysql-') else mysql_id
     
     query = """
         SELECT 
