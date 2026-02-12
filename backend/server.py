@@ -616,6 +616,20 @@ async def get_courses(college_id: str):
         try:
             courses = await get_courses_for_college(college_id)
             if courses:
+                # Fetch seat statuses from MongoDB and merge
+                course_ids = [c["id"] for c in courses]
+                seat_statuses = await db.course_seat_status.find(
+                    {"course_id": {"$in": course_ids}}, 
+                    {"_id": 0}
+                ).to_list(500)
+                
+                # Create a lookup map
+                status_map = {s["course_id"]: s["seat_status"] for s in seat_statuses}
+                
+                # Merge seat status into courses
+                for course in courses:
+                    course["seat_status"] = status_map.get(course["id"], "Available")
+                
                 return courses
         except Exception as e:
             logging.error(f"Error fetching courses from MySQL: {e}")
