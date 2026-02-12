@@ -128,7 +128,7 @@ async def get_featured_colleges(
                 category_name = cat_result[0]['catname']
         
         college = {
-            "id": f"mysql-{row['id']}",
+            "id": f"c-{row['id']}",
             "mysql_id": row['id'],
             "name": row['name'] or '',
             "slug": row['slug'] or '',
@@ -152,8 +152,10 @@ async def get_featured_colleges(
 
 async def get_college_by_id(college_id: str) -> Optional[Dict[str, Any]]:
     """Fetch a single college by ID with highlights, placements, and what's new"""
-    # Handle mysql- prefix
-    mysql_id = college_id.replace('mysql-', '') if college_id.startswith('mysql-') else college_id
+    # Handle c- prefix
+    mysql_id = college_id.replace('c-', '') if college_id.startswith('c-') else college_id
+    # Also handle legacy mysql- prefix for backward compatibility
+    mysql_id = mysql_id.replace('mysql-', '') if mysql_id.startswith('mysql-') else mysql_id
     
     query = """
         SELECT 
