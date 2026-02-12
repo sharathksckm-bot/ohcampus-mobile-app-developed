@@ -15,7 +15,10 @@ import {
   BookOpen,
   Receipt,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  TrendingUp,
+  Sparkles,
+  Briefcase
 } from 'lucide-react';
 import { toast } from 'sonner';
 
