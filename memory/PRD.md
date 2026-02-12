@@ -237,6 +237,13 @@ Create a web-based counseling platform for OhCampus counselors with:
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Latest Updates (Feb 2026)
+### Iteration 13 - UI Size Fixes & Logo Updates (Feb 12, 2026)
+1. **Compare Courses Layout Fixed**: Clean, compact dialog with proper layout
+2. **College Cards Reduced Size**: Now shows 4 cards per row on large screens (xl:grid-cols-4)
+3. **Course Cards Reduced Size**: Now shows 4 cards per row on large screens (xl:grid-cols-4)
+4. **Admin Panel OhCampus Logo**: Updated sidebar to show official OhCampus logo
+5. **Fee Management Search**: Verified working - filters colleges by name and shows results with count
+
 ### Iteration 12 - Bug Fixes & UI Improvements (Feb 12, 2026)
 1. **OhCampus Logo Updated**: Changed to official logo from https://ohcampus.com/assets/images/logo/ohCampusLogo.png
    - Login page displays logo correctly
