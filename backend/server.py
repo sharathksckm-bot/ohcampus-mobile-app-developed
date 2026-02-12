@@ -603,21 +603,42 @@ async def create_course(course_data: CourseBase, current_user: dict = Depends(re
     await db.courses.insert_one(course.model_dump())
     return course
 
-@api_router.get("/courses", response_model=List[Course])
-async def get_all_courses(category: Optional[str] = None, search: Optional[str] = None):
-    query = {}
-    if category:
-        query["category"] = category
-    if search:
-        query["name"] = {"$regex": search, "$options": "i"}
-    courses = await db.courses.find(query, {"_id": 0}).to_list(500)
-    return courses
+@api_router.get("/courses")
+async def get_all_courses(category: Optional[str] = None, search: Optional[str] = None, level: Optional[str] = None):
+    """Get all courses from featured colleges - MySQL"""
+    try:
+        courses = await get_all_courses_with_colleges(
+            search=search,
+            level=level,
+            category=category
+        )
+        return courses
+    except Exception as e:
+        logging.error(f"Error fetching courses from MySQL: {e}")
+        # Fallback to MongoDB
+        query = {}
+        if category:
+            query["category"] = category
+        if search:
+            query["name"] = {"$regex": search, "$options": "i"}
+        courses = await db.courses.find(query, {"_id": 0}).to_list(500)
+        return courses
 
 @api_router.get("/courses/with-college")
-async def get_courses_with_college(category: Optional[str] = None, search: Optional[str] = None):
-    """Get all courses with their college information and fees"""
-    query = {}
-    if category:
+async def get_courses_with_college(category: Optional[str] = None, search: Optional[str] = None, level: Optional[str] = None):
+    """Get all courses with their college information - MySQL"""
+    try:
+        courses = await get_all_courses_with_colleges(
+            search=search,
+            level=level,
+            category=category
+        )
+        return courses
+    except Exception as e:
+        logging.error(f"Error fetching courses from MySQL: {e}")
+        # Fallback to MongoDB
+        query = {}
+        if category:
         query["category"] = category
     if search:
         query["name"] = {"$regex": search, "$options": "i"}
