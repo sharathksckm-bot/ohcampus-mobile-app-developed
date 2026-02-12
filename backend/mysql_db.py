@@ -273,8 +273,6 @@ async def get_all_courses_with_colleges(
         AND col.is_deleted = 0
         AND cc.is_deleted = 0
     """
-        AND cc.is_deleted = 0
-    """
     params = []
     
     if search:
