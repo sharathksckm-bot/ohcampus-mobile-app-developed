@@ -361,63 +361,121 @@ export default function Courses() {
       {/* Search and Filters */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
         <Card className="shadow-lg border-0">
-          <CardContent className="p-6">
-            <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap xl:flex-nowrap">
+          <CardContent className="p-4 lg:p-6">
+            {/* First Row - Search and Primary Filters */}
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
               {/* Search */}
-              <div className="relative w-full lg:flex-1 lg:min-w-[280px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#94A3B8]" />
+              <div className="relative w-full lg:flex-1 lg:max-w-sm">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
                 <Input
-                  placeholder="Search courses or colleges..."
+                  placeholder="Search courses..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-12 font-body border-slate-300 w-full"
+                  className="pl-9 h-10 font-body border-slate-300 w-full text-sm"
                   data-testid="course-search"
                 />
               </div>
 
-              {/* Category Filter */}
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full lg:w-48 h-12" data-testid="category-filter">
-                  <GraduationCap className="h-4 w-4 mr-2 text-[#94A3B8]" />
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map(cat => (
-                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Filters Row */}
+              <div className="flex flex-wrap gap-2 lg:gap-3 items-center">
+                {/* Category Filter */}
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger className="w-[140px] h-10 text-sm" data-testid="category-filter">
+                    <GraduationCap className="h-3.5 w-3.5 mr-1.5 text-[#94A3B8]" />
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map(cat => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-              {/* Level Filter */}
-              <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-                <SelectTrigger className="w-full lg:w-36 h-12" data-testid="level-filter">
-                  <BookOpen className="h-4 w-4 mr-2 text-[#94A3B8]" />
-                  <SelectValue placeholder="Level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Levels</SelectItem>
-                  {levels.map(level => (
-                    <SelectItem key={level} value={level}>{level}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                {/* Level Filter */}
+                <Select value={selectedLevel} onValueChange={setSelectedLevel}>
+                  <SelectTrigger className="w-[110px] h-10 text-sm" data-testid="level-filter">
+                    <BookOpen className="h-3.5 w-3.5 mr-1.5 text-[#94A3B8]" />
+                    <SelectValue placeholder="Level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Levels</SelectItem>
+                    {levels.map(level => (
+                      <SelectItem key={level} value={level}>{level}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-              {/* State Filter */}
-              <Select value={selectedState} onValueChange={(value) => {
-                setSelectedState(value);
-                setSelectedCity('all'); // Reset city when state changes
-              }}>
-                <SelectTrigger className="w-full lg:w-40 h-12" data-testid="state-filter">
-                  <MapPin className="h-4 w-4 mr-2 text-[#94A3B8]" />
-                  <SelectValue placeholder="State" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All States</SelectItem>
-                  {states.map(state => (
-                    <SelectItem key={state} value={state}>{state}</SelectItem>
-                  ))}
-                </SelectContent>
+                {/* State Filter */}
+                <Select value={selectedState} onValueChange={(value) => {
+                  setSelectedState(value);
+                  setSelectedCity('all');
+                }}>
+                  <SelectTrigger className="w-[120px] h-10 text-sm" data-testid="state-filter">
+                    <MapPin className="h-3.5 w-3.5 mr-1.5 text-[#94A3B8]" />
+                    <SelectValue placeholder="State" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All States</SelectItem>
+                    {states.map(state => (
+                      <SelectItem key={state} value={state}>{state}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* City Filter */}
+                <Select value={selectedCity} onValueChange={setSelectedCity}>
+                  <SelectTrigger className="w-[110px] h-10 text-sm" data-testid="city-filter">
+                    <Building2 className="h-3.5 w-3.5 mr-1.5 text-[#94A3B8]" />
+                    <SelectValue placeholder="City" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Cities</SelectItem>
+                    {filteredCities.map(city => (
+                      <SelectItem key={city} value={city}>{city}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Fee Range Filter */}
+                <Select value={selectedFeeRange} onValueChange={setSelectedFeeRange}>
+                  <SelectTrigger className="w-[130px] h-10 text-sm" data-testid="fee-range-filter">
+                    <IndianRupee className="h-3.5 w-3.5 mr-1.5 text-[#94A3B8]" />
+                    <SelectValue placeholder="Fee Range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {feeRangeOptions.map(opt => (
+                      <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Clear Button */}
+                {hasActiveFilters && (
+                  <Button
+                    variant="outline"
+                    onClick={clearFilters}
+                    className="h-10 px-3 text-sm"
+                  >
+                    <X className="h-3.5 w-3.5 mr-1" />
+                    Clear
+                  </Button>
+                )}
+
+                {/* Compare Courses Button */}
+                {!compareMode && (
+                  <Button
+                    onClick={() => setCompareMode(true)}
+                    variant="outline"
+                    className="h-10 px-3 text-sm border-[#FF6B35] text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white whitespace-nowrap"
+                    data-testid="enable-compare-mode-btn"
+                  >
+                    <GitCompare className="h-3.5 w-3.5 mr-1.5" />
+                    Compare
+                  </Button>
+                )}
+              </div>
+            </div>
               </Select>
 
               {/* City Filter */}
