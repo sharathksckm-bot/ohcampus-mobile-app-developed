@@ -230,9 +230,9 @@ class TestCompareCollegesAPI:
         colleges = response.json()
         college_ids = [colleges[0]["id"], colleges[1]["id"]]
         
-        # Compare colleges
+        # Compare colleges - API uses college_ids parameter
         response = requests.get(f"{BASE_URL}/api/colleges/compare", params={
-            "ids": ",".join(college_ids)
+            "college_ids": ",".join(college_ids)
         })
         assert response.status_code == 200
         data = response.json()
