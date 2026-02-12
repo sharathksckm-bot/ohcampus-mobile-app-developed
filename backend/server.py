@@ -411,7 +411,7 @@ async def get_cities_by_state(state: Optional[str] = None):
 # ===================== COLLEGES ENDPOINTS =====================
 
 @api_router.get("/colleges")
-async def get_colleges(
+async def get_colleges_endpoint(
     state: Optional[str] = None,
     city: Optional[str] = None,
     category: Optional[str] = None,
@@ -420,73 +420,59 @@ async def get_colleges(
     level: Optional[str] = None,
     fee_range: Optional[str] = None  # "below_100000", "100000_to_200000", "above_200000"
 ):
-    query = {"is_featured": True}
-    if state:
-        query["state"] = state
-    if city:
-        query["city"] = city
-    if category:
-        query["category"] = category
-    if search:
-        query["name"] = {"$regex": search, "$options": "i"}
-    
-    # Build course filter query
-    course_query = {}
-    if course:
-        course_query["name"] = {"$regex": course, "$options": "i"}
-    if level:
-        course_query["level"] = level
-    
-    # If course or level filter is applied, get college IDs that have matching courses
-    if course_query:
-        course_docs = await db.courses.find(course_query, {"college_id": 1}).to_list(500)
-        college_ids = list(set([c["college_id"] for c in course_docs]))
-        if college_ids:
-            if "id" in query:
-                # Combine with existing filter
-                query["id"] = {"$in": list(set(query["id"]["$in"]) & set(college_ids))}
-            else:
-                query["id"] = {"$in": college_ids}
-        else:
-            return []
-    
-    # If fee range filter is applied, get college IDs with courses in that range
-    # Only considers First Year fees (annual year_or_semester=1 OR semester year_or_semester=1,2)
-    if fee_range:
-        fee_query = {"$or": [
-            {"fee_type": "annual", "year_or_semester": 1},
-            {"fee_type": "semester", "year_or_semester": {"$in": [1, 2]}}
-        ]}
+    """Fetch featured colleges from MySQL database"""
+    try:
+        # Fetch from MySQL
+        colleges = await get_featured_colleges(
+            state=state,
+            city=city,
+            category=category,
+            search=search
+        )
         
-        if fee_range == "below_100000":
-            fee_query["amount"] = {"$lt": 100000}
-        elif fee_range == "100000_to_200000":
-            fee_query["amount"] = {"$gte": 100000, "$lte": 200000}
-        elif fee_range == "above_200000":
-            fee_query["amount"] = {"$gt": 200000}
+        # Fetch courses for each college
+        result = []
+        for college in colleges:
+            courses = await get_courses_for_college(college["id"])
+            
+            # Filter courses by level if specified
+            if level:
+                courses = [c for c in courses if c.get("level") == level]
+            
+            # Filter by course name if specified
+            if course:
+                courses = [c for c in courses if course.lower() in c.get("name", "").lower()]
+            
+            # Skip college if no matching courses after filtering
+            if (level or course) and not courses:
+                continue
+            
+            college["courses"] = courses
+            college["course_count"] = len(courses)
+            result.append(college)
         
-        if fee_query.get("amount"):
-            fee_docs = await db.fees.find(fee_query, {"college_id": 1}).to_list(500)
-            fee_college_ids = list(set([f["college_id"] for f in fee_docs]))
-            if fee_college_ids:
-                if "id" in query:
-                    # Combine with existing filter
-                    existing_ids = query["id"]["$in"] if isinstance(query["id"], dict) else [query["id"]]
-                    query["id"] = {"$in": list(set(existing_ids) & set(fee_college_ids))}
-                else:
-                    query["id"] = {"$in": fee_college_ids}
-            else:
-                return []
-    
-    colleges = await db.colleges.find(query, {"_id": 0}).to_list(100)
-    
-    # Fetch courses for each college (optionally filtered by level)
-    result = []
-    for college in colleges:
-        course_filter = {"college_id": college["id"]}
-        if level:
-            course_filter["level"] = level
-        courses = await db.courses.find(course_filter, {"_id": 0}).to_list(100)
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error fetching colleges from MySQL: {e}")
+        # Fallback to MongoDB
+        query = {"is_featured": True}
+        if state:
+            query["state"] = state
+        if city:
+            query["city"] = city
+        if category:
+            query["category"] = category
+        if search:
+            query["name"] = {"$regex": search, "$options": "i"}
+        
+        colleges = await db.colleges.find(query, {"_id": 0}).to_list(100)
+        for college in colleges:
+            courses = await db.courses.find({"college_id": college["id"]}, {"_id": 0}).to_list(100)
+            college["courses"] = courses
+            college["course_count"] = len(courses)
+        
+        return colleges
         
         # If fee_range filter, also get min/max first year fees for display
         if fee_range:
