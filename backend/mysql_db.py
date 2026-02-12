@@ -304,20 +304,15 @@ async def get_all_courses_with_colleges(
             "slug": row['slug'] or '',
             "level": row['level'] or row['academic_level'] or 'UG',
             "duration": row['duration'] or '4 Years',
-            "eligibility": row['course_eligibility'] or row['eligibility'] or '',
-            "description": row['course_description'] or row['master_description'] or '',
+            "eligibility": row['eligibility'] or '',
             "scope": row['scope'] or '',
-            "job_profile": row['job_profile'] or '',
-            "entrance_exams": row['entrance_exams'] or '',
             "total_fees": row['total_fees'] or '',
-            "total_intake": row['total_intake'] or 0,
             "college": {
                 "id": f"mysql-{row['collegeid']}",
                 "name": row['college_name'] or '',
                 "accreditation": row['accreditation'] or '',
                 "state": row['state'] or '',
-                "city": row['city'] or '',
-                "category": row['category'] or ''
+                "city": row['city'] or ''
             }
         }
         courses.append(course)
