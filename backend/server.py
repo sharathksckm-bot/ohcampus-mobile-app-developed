@@ -379,19 +379,34 @@ async def get_me(current_user: dict = Depends(get_current_user)):
 
 @api_router.get("/filters", response_model=FiltersResponse)
 async def get_filters():
-    states = await db.colleges.distinct("state", {"is_featured": True})
-    cities = await db.colleges.distinct("city", {"is_featured": True})
-    categories = await db.colleges.distinct("category", {"is_featured": True})
-    courses = await db.courses.distinct("name")
-    return FiltersResponse(states=sorted(states), cities=sorted(cities), categories=sorted(categories), courses=sorted(courses))
+    """Get filter options from MySQL database"""
+    try:
+        states = await get_states()
+        cities_list = await get_cities()
+        categories = await get_categories()
+        return FiltersResponse(states=sorted(states), cities=sorted(cities_list), categories=sorted(categories), courses=[])
+    except Exception as e:
+        logging.error(f"Error fetching filters from MySQL: {e}")
+        # Fallback to MongoDB
+        states = await db.colleges.distinct("state", {"is_featured": True})
+        cities_list = await db.colleges.distinct("city", {"is_featured": True})
+        categories = await db.colleges.distinct("category", {"is_featured": True})
+        courses = await db.courses.distinct("name")
+        return FiltersResponse(states=sorted(states), cities=sorted(cities_list), categories=sorted(categories), courses=sorted(courses))
 
 @api_router.get("/filters/cities")
 async def get_cities_by_state(state: Optional[str] = None):
-    query = {"is_featured": True}
-    if state:
-        query["state"] = state
-    cities = await db.colleges.distinct("city", query)
-    return {"cities": sorted(cities)}
+    """Get cities filtered by state from MySQL"""
+    try:
+        cities_list = await get_cities(state)
+        return {"cities": sorted(cities_list)}
+    except Exception as e:
+        logging.error(f"Error fetching cities from MySQL: {e}")
+        query = {"is_featured": True}
+        if state:
+            query["state"] = state
+        cities_list = await db.colleges.distinct("city", query)
+        return {"cities": sorted(cities_list)}
 
 # ===================== COLLEGES ENDPOINTS =====================
 
