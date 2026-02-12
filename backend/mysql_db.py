@@ -557,7 +557,7 @@ async def get_all_courses_with_colleges(
             "job_profile": row['job_profile'] or '',
             "total_fees": row['total_fees'] or '',
             "college": {
-                "id": f"mysql-{row['collegeid']}",
+                "id": f"c-{row['collegeid']}",
                 "name": row['college_name'] or '',
                 "accreditation": row['accreditation'] or '',
                 "state": row['state'] or '',
