@@ -593,6 +593,62 @@ export default function Courses() {
             ))}
           </div>
         )}
+
+        {/* Pagination */}
+        {!loading && totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-8">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="font-body"
+            >
+              Previous
+            </Button>
+            
+            <div className="flex items-center gap-1">
+              {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                let pageNum;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = currentPage - 2 + i;
+                }
+                
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={currentPage === pageNum ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(pageNum)}
+                    className={`font-body min-w-[40px] ${currentPage === pageNum ? 'bg-[#0066CC]' : ''}`}
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+            </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="font-body"
+            >
+              Next
+            </Button>
+            
+            <span className="text-sm text-[#475569] font-body ml-4">
+              Page {currentPage} of {totalPages} ({totalCourses} total courses)
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Course Detail Dialog */}
