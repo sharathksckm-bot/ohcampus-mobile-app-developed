@@ -367,6 +367,53 @@ export default function CompareColleges() {
                     </td>
                   ))}
                 </tr>
+
+                {/* Placement Statistics Row */}
+                <tr>
+                  <td className="p-4 font-body font-medium text-[#475569] bg-slate-50 border border-slate-200 sticky left-0 z-10 align-top">
+                    <div className="flex items-center gap-2">
+                      <Briefcase className="h-4 w-4 text-green-600" />
+                      Placements
+                    </div>
+                  </td>
+                  {compareData.map(({ college }) => (
+                    <td key={college.id} className="p-4 border border-slate-200 bg-white align-top">
+                      {college.placements && college.placements.length > 0 ? (
+                        <div className="space-y-2">
+                          {college.placements.slice(0, 2).map((placement, idx) => (
+                            <div key={idx} className="p-2 bg-green-50 rounded text-xs">
+                              <p className="font-medium text-[#0F172A] mb-1">{placement.year}</p>
+                              {placement.highest_package && (
+                                <div className="flex justify-between">
+                                  <span className="text-[#475569]">Highest:</span>
+                                  <span className="font-semibold text-green-700">
+                                    {formatCurrency(placement.highest_package)}
+                                  </span>
+                                </div>
+                              )}
+                              {placement.average_package && (
+                                <div className="flex justify-between">
+                                  <span className="text-[#475569]">Average:</span>
+                                  <span className="text-[#0F172A]">
+                                    {formatCurrency(placement.average_package)}
+                                  </span>
+                                </div>
+                              )}
+                              {placement.placement_rate && (
+                                <div className="flex justify-between">
+                                  <span className="text-[#475569]">Rate:</span>
+                                  <Badge className="bg-blue-100 text-blue-700 text-xs">{placement.placement_rate}%</Badge>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-[#94A3B8]">—</p>
+                      )}
+                    </td>
+                  ))}
+                </tr>
               </tbody>
             </table>
           </div>
