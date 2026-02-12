@@ -36,7 +36,7 @@ export const Navbar = () => {
           {/* Logo */}
           <Link to={isAdmin() ? '/admin' : '/dashboard'} className="flex items-center gap-2">
             <img 
-              src="https://ohcampus.com/assets/images/logo/logo.png" 
+              src="https://ohcampus.com/assets/images/logo/ohCampusLogo.png" 
               alt="OhCampus" 
               className="h-10"
             />

@@ -42,7 +42,7 @@ export default function Login() {
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-3">
             <img 
-              src="https://ohcampus.com/assets/images/logo/logo.png" 
+              src="https://ohcampus.com/assets/images/logo/ohCampusLogo.png" 
               alt="OhCampus" 
               className="h-12"
             />
