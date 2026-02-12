@@ -42,13 +42,12 @@ async def get_featured_colleges(
     search: Optional[str] = None,
     limit: int = 200
 ) -> List[Dict[str, Any]]:
-    """Fetch featured colleges from MySQL"""
+    """Fetch featured colleges from MySQL with course counts in single query"""
     query = """
         SELECT 
             c.id,
             c.title as name,
             c.slug,
-            c.description,
             c.address,
             c.phone,
             c.email,
@@ -56,12 +55,11 @@ async def get_featured_colleges(
             c.accreditation,
             c.estd as established_year,
             c.logo,
-            c.banner,
             c.package_type,
-            c.map_location,
             s.statename as state,
             ct.city as city,
-            cat.catname as category
+            cat.catname as category,
+            (SELECT COUNT(*) FROM college_course cc WHERE cc.collegeid = c.id AND cc.is_deleted = 0) as course_count
         FROM college c
         LEFT JOIN state s ON c.stateid = s.id
         LEFT JOIN city ct ON c.cityid = ct.id
