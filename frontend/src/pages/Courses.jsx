@@ -455,10 +455,10 @@ export default function Courses() {
                   <Button
                     variant="outline"
                     onClick={clearFilters}
-                    className="h-10 px-3 text-sm"
+                    className="h-10 px-4"
                   >
-                    <X className="h-3.5 w-3.5 mr-1" />
-                    Clear
+                    <X className="h-4 w-4 mr-1" />
+                    Clear Filters
                   </Button>
                 )}
 
@@ -467,15 +467,14 @@ export default function Courses() {
                   <Button
                     onClick={() => setCompareMode(true)}
                     variant="outline"
-                    className="h-10 px-3 text-sm border-[#FF6B35] text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white whitespace-nowrap"
+                    className="h-10 px-4 border-[#FF6B35] text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white"
                     data-testid="enable-compare-mode-btn"
                   >
-                    <GitCompare className="h-3.5 w-3.5 mr-1.5" />
-                    Compare
+                    <GitCompare className="h-4 w-4 mr-2" />
+                    Compare Courses
                   </Button>
                 )}
               </div>
-            </div>
           </CardContent>
         </Card>
       </div>
