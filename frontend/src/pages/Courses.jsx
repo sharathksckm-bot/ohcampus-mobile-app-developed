@@ -871,28 +871,28 @@ export default function Courses() {
 
       {/* Compare Courses Dialog */}
       <Dialog open={compareDialogOpen} onOpenChange={setCompareDialogOpen}>
-        <DialogContent className="sm:max-w-[95vw] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[90vw] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="font-heading text-xl flex items-center gap-2">
+            <DialogTitle className="font-heading text-lg flex items-center gap-2">
               <GitCompare className="h-5 w-5 text-[#FF6B35]" />
               Compare Courses ({selectedForCompare.length})
             </DialogTitle>
-            <DialogDescription className="font-body">
+            <DialogDescription className="font-body text-sm">
               Side-by-side comparison of selected courses
             </DialogDescription>
           </DialogHeader>
           
           {selectedForCompare.length > 0 && (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto -mx-6 px-6">
+              <Table className="min-w-full">
                 <TableHeader>
                   <TableRow className="bg-slate-50">
-                    <TableHead className="font-heading min-w-[150px] sticky left-0 bg-slate-50">Criteria</TableHead>
+                    <TableHead className="font-heading text-xs min-w-[120px] sticky left-0 bg-slate-50 z-10">Criteria</TableHead>
                     {selectedForCompare.map(course => (
-                      <TableHead key={course.id} className="font-heading min-w-[200px] text-center">
-                        <div className="space-y-1">
-                          <p className="text-[#0066CC]">{course.name}</p>
-                          <p className="text-xs text-[#94A3B8] font-normal">{course.college?.name}</p>
+                      <TableHead key={course.id} className="font-heading text-xs min-w-[160px] max-w-[200px] text-center p-2">
+                        <div className="space-y-0.5">
+                          <p className="text-[#0066CC] text-xs font-semibold line-clamp-2">{course.name}</p>
+                          <p className="text-[10px] text-[#94A3B8] font-normal line-clamp-1">{course.college?.name}</p>
                         </div>
                       </TableHead>
                     ))}
@@ -901,29 +901,29 @@ export default function Courses() {
                 <TableBody>
                   {/* Level */}
                   <TableRow>
-                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
-                      <div className="flex items-center gap-2">
-                        <GraduationCap className="h-4 w-4 text-[#0066CC]" />
+                    <TableCell className="font-body text-xs font-medium bg-slate-50 sticky left-0 z-10 p-2">
+                      <div className="flex items-center gap-1.5">
+                        <GraduationCap className="h-3 w-3 text-[#0066CC]" />
                         Level
                       </div>
                     </TableCell>
                     {selectedForCompare.map(course => (
-                      <TableCell key={course.id} className="text-center">
-                        <Badge variant="secondary">{course.level}</Badge>
+                      <TableCell key={course.id} className="text-center p-2">
+                        <Badge variant="secondary" className="text-xs">{course.level}</Badge>
                       </TableCell>
                     ))}
                   </TableRow>
 
                   {/* Duration */}
                   <TableRow>
-                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-[#0066CC]" />
+                    <TableCell className="font-body text-xs font-medium bg-slate-50 sticky left-0 z-10 p-2">
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="h-3 w-3 text-[#0066CC]" />
                         Duration
                       </div>
                     </TableCell>
                     {selectedForCompare.map(course => (
-                      <TableCell key={course.id} className="text-center font-body">
+                      <TableCell key={course.id} className="text-center font-body text-xs p-2">
                         {course.duration || '—'}
                       </TableCell>
                     ))}
@@ -931,14 +931,14 @@ export default function Courses() {
 
                   {/* Category */}
                   <TableRow>
-                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="h-4 w-4 text-[#0066CC]" />
+                    <TableCell className="font-body text-xs font-medium bg-slate-50 sticky left-0 z-10 p-2">
+                      <div className="flex items-center gap-1.5">
+                        <BookOpen className="h-3 w-3 text-[#0066CC]" />
                         Category
                       </div>
                     </TableCell>
                     {selectedForCompare.map(course => (
-                      <TableCell key={course.id} className="text-center font-body">
+                      <TableCell key={course.id} className="text-center font-body text-xs p-2">
                         {course.category || '—'}
                       </TableCell>
                     ))}
@@ -946,14 +946,14 @@ export default function Courses() {
 
                   {/* Location */}
                   <TableRow>
-                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-[#0066CC]" />
+                    <TableCell className="font-body text-xs font-medium bg-slate-50 sticky left-0 z-10 p-2">
+                      <div className="flex items-center gap-1.5">
+                        <MapPin className="h-3 w-3 text-[#0066CC]" />
                         Location
                       </div>
                     </TableCell>
                     {selectedForCompare.map(course => (
-                      <TableCell key={course.id} className="text-center font-body text-sm">
+                      <TableCell key={course.id} className="text-center font-body text-xs p-2">
                         {course.college ? `${course.college.city}, ${course.college.state}` : '—'}
                       </TableCell>
                     ))}
@@ -961,14 +961,14 @@ export default function Courses() {
 
                   {/* First Year Fees */}
                   <TableRow>
-                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
-                      <div className="flex items-center gap-2">
-                        <IndianRupee className="h-4 w-4 text-[#0066CC]" />
+                    <TableCell className="font-body text-xs font-medium bg-slate-50 sticky left-0 z-10 p-2">
+                      <div className="flex items-center gap-1.5">
+                        <IndianRupee className="h-3 w-3 text-[#0066CC]" />
                         1st Year Fees
                       </div>
                     </TableCell>
                     {selectedForCompare.map(course => (
-                      <TableCell key={course.id} className="text-center font-body font-semibold text-green-600">
+                      <TableCell key={course.id} className="text-center font-body text-xs font-semibold text-green-600 p-2">
                         {course.fees && course.fees.length > 0 ? formatCurrency(getFirstYearFees(course.fees)) : '—'}
                       </TableCell>
                     ))}
@@ -976,14 +976,14 @@ export default function Courses() {
 
                   {/* Total Fees */}
                   <TableRow>
-                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
-                      <div className="flex items-center gap-2">
-                        <IndianRupee className="h-4 w-4 text-[#0066CC]" />
+                    <TableCell className="font-body text-xs font-medium bg-slate-50 sticky left-0 z-10 p-2">
+                      <div className="flex items-center gap-1.5">
+                        <IndianRupee className="h-3 w-3 text-[#0066CC]" />
                         Total Fees
                       </div>
                     </TableCell>
                     {selectedForCompare.map(course => (
-                      <TableCell key={course.id} className="text-center font-body font-semibold">
+                      <TableCell key={course.id} className="text-center font-body text-xs font-semibold p-2">
                         {course.fees && course.fees.length > 0 ? formatCurrency(getTotalFees(course.fees)) : '—'}
                       </TableCell>
                     ))}
@@ -991,14 +991,14 @@ export default function Courses() {
 
                   {/* Seat Status */}
                   <TableRow>
-                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-[#0066CC]" />
+                    <TableCell className="font-body text-xs font-medium bg-slate-50 sticky left-0 z-10 p-2">
+                      <div className="flex items-center gap-1.5">
+                        <Users className="h-3 w-3 text-[#0066CC]" />
                         Seat Status
                       </div>
                     </TableCell>
                     {selectedForCompare.map(course => (
-                      <TableCell key={course.id} className="text-center">
+                      <TableCell key={course.id} className="text-center p-2">
                         {getSeatStatusBadge(course.seat_status || 'Available')}
                       </TableCell>
                     ))}
@@ -1006,16 +1006,16 @@ export default function Courses() {
 
                   {/* Description */}
                   <TableRow>
-                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-[#0066CC]" />
+                    <TableCell className="font-body text-xs font-medium bg-slate-50 sticky left-0 z-10 p-2 align-top">
+                      <div className="flex items-center gap-1.5">
+                        <FileText className="h-3 w-3 text-[#0066CC]" />
                         Description
                       </div>
                     </TableCell>
                     {selectedForCompare.map(course => (
-                      <TableCell key={course.id} className="text-center font-body text-sm">
+                      <TableCell key={course.id} className="text-center font-body text-xs p-2 align-top">
                         {course.description ? (
-                          <span className="line-clamp-4">{course.description}</span>
+                          <span className="line-clamp-3 text-left">{course.description}</span>
                         ) : '—'}
                       </TableCell>
                     ))}
@@ -1023,16 +1023,16 @@ export default function Courses() {
 
                   {/* Scope */}
                   <TableRow>
-                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
-                      <div className="flex items-center gap-2">
-                        <Target className="h-4 w-4 text-[#0066CC]" />
-                        Scope & Career
+                    <TableCell className="font-body text-xs font-medium bg-slate-50 sticky left-0 z-10 p-2 align-top">
+                      <div className="flex items-center gap-1.5">
+                        <Target className="h-3 w-3 text-[#0066CC]" />
+                        Scope
                       </div>
                     </TableCell>
                     {selectedForCompare.map(course => (
-                      <TableCell key={course.id} className="text-center font-body text-sm">
+                      <TableCell key={course.id} className="text-center font-body text-xs p-2 align-top">
                         {course.scope ? (
-                          <span className="line-clamp-4">{course.scope}</span>
+                          <span className="line-clamp-3 text-left">{course.scope}</span>
                         ) : '—'}
                       </TableCell>
                     ))}
@@ -1040,14 +1040,26 @@ export default function Courses() {
 
                   {/* Eligibility */}
                   <TableRow>
-                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-[#0066CC]" />
+                    <TableCell className="font-body text-xs font-medium bg-slate-50 sticky left-0 z-10 p-2 align-top">
+                      <div className="flex items-center gap-1.5">
+                        <Users className="h-3 w-3 text-[#0066CC]" />
                         Eligibility
                       </div>
                     </TableCell>
                     {selectedForCompare.map(course => (
-                      <TableCell key={course.id} className="text-center font-body text-sm">
+                      <TableCell key={course.id} className="text-center font-body text-xs p-2 align-top">
+                        {course.eligibility ? (
+                          <span className="line-clamp-3 text-left">{course.eligibility}</span>
+                        ) : '—'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
                         {course.eligibility ? (
                           <span className="line-clamp-3">{course.eligibility}</span>
                         ) : '—'}
