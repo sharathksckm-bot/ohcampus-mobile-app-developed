@@ -515,7 +515,7 @@ export default function Courses() {
             </p>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredCourses.map((course, index) => (
               <Card
                 key={course.id}
@@ -526,67 +526,67 @@ export default function Courses() {
                 onClick={() => compareMode ? toggleCompareSelection(course) : handleViewCourse(course)}
                 data-testid={`course-card-${course.id}`}
               >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <Badge variant="secondary" className="font-body">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <Badge variant="secondary" className="font-body text-xs">
                       {course.category || course.level}
                     </Badge>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       {getSeatStatusBadge(course.seat_status || 'Available')}
                       {compareMode && (
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                           selectedForCompare.find(c => c.id === course.id) 
                             ? 'bg-[#FF6B35] border-[#FF6B35]' 
                             : 'bg-white border-slate-300'
                         }`}>
                           {selectedForCompare.find(c => c.id === course.id) && (
-                            <Check className="w-4 h-4 text-white" />
+                            <Check className="w-3 h-3 text-white" />
                           )}
                         </div>
                       )}
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-heading font-semibold text-[#0F172A] mb-2 line-clamp-2 group-hover:text-[#0066CC] transition-colors">
+                  <h3 className="text-sm font-heading font-semibold text-[#0F172A] mb-1.5 line-clamp-2 group-hover:text-[#0066CC] transition-colors leading-tight">
                     {course.name}
                   </h3>
 
                   {course.college && (
-                    <div className="flex items-center gap-2 text-sm text-[#475569] font-body mb-2">
-                      <Building2 className="h-4 w-4 flex-shrink-0" />
+                    <div className="flex items-center gap-1.5 text-xs text-[#475569] font-body mb-1">
+                      <Building2 className="h-3 w-3 flex-shrink-0" />
                       <span className="line-clamp-1">{course.college.name}</span>
                     </div>
                   )}
 
                   {course.college && (
-                    <div className="flex items-center gap-2 text-sm text-[#94A3B8] font-body mb-3">
-                      <MapPin className="h-4 w-4 flex-shrink-0" />
+                    <div className="flex items-center gap-1.5 text-xs text-[#94A3B8] font-body mb-2">
+                      <MapPin className="h-3 w-3 flex-shrink-0" />
                       <span>{course.college.city}, {course.college.state}</span>
                     </div>
                   )}
 
                   {/* Show First Year Fee */}
                   {course.fees && course.fees.length > 0 && (
-                    <div className="flex items-center gap-2 text-sm text-[#475569] font-body mb-3">
-                      <IndianRupee className="h-4 w-4 flex-shrink-0" />
+                    <div className="flex items-center gap-1.5 text-xs text-[#475569] font-body mb-2">
+                      <IndianRupee className="h-3 w-3 flex-shrink-0" />
                       <span className="font-medium">{formatCurrency(getFirstYearFees(course.fees))} (1st Year)</span>
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                    <div className="flex items-center gap-1 text-sm text-[#475569] font-body">
-                      <Clock className="h-4 w-4" />
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                    <div className="flex items-center gap-1 text-xs text-[#475569] font-body">
+                      <Clock className="h-3 w-3" />
                       <span>{course.duration}</span>
                     </div>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs px-1.5 py-0">
                       {course.level}
                     </Badge>
                   </div>
 
                   {!compareMode && (
-                    <div className="mt-4 flex items-center text-[#0066CC] font-body text-sm font-semibold group-hover:gap-2 transition-all">
+                    <div className="mt-2 flex items-center text-[#0066CC] font-body text-xs font-semibold group-hover:gap-1 transition-all">
                       View Details
-                      <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      <ChevronRight className="h-3 w-3 ml-0.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                   )}
                 </CardContent>
