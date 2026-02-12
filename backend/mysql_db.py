@@ -238,6 +238,85 @@ async def get_courses_for_college(college_id: str) -> List[Dict[str, Any]]:
     
     return courses
 
+async def get_course_by_id(course_id: str) -> Optional[Dict[str, Any]]:
+    """Fetch a single course by its college_course ID with full details"""
+    # Extract the mysql ID from the course_id (format: mysql-cc-123)
+    mysql_id = course_id.replace('mysql-cc-', '').replace('mysql-', '')
+    
+    query = """
+        SELECT 
+            cc.id as college_course_id,
+            cc.collegeid,
+            cc.courseid,
+            cc.total_fees,
+            cc.total_intake,
+            cc.duration,
+            cc.level,
+            cc.eligibility as course_eligibility,
+            cc.description as course_description,
+            cc.entrance_exams,
+            c.name as course_name,
+            c.slug,
+            c.eligibility,
+            c.scope,
+            c.job_profile,
+            c.course_description as master_description,
+            ac.name as academic_level,
+            col.title as college_name,
+            col.accreditation,
+            col.address as college_address,
+            col.phone as college_phone,
+            col.email as college_email,
+            col.web as college_website,
+            s.statename as state,
+            ct.city as city
+        FROM college_course cc
+        INNER JOIN courses c ON cc.courseid = c.id
+        INNER JOIN college col ON cc.collegeid = col.id
+        LEFT JOIN academic_categories ac ON c.academic_category = ac.category_id
+        LEFT JOIN state s ON col.stateid = s.id
+        LEFT JOIN city ct ON col.cityid = ct.id
+        WHERE cc.id = %s
+    """
+    
+    results = await execute_query(query, (mysql_id,))
+    if not results:
+        return None
+    
+    row = results[0]
+    return {
+        "course": {
+            "id": f"mysql-cc-{row['college_course_id']}",
+            "mysql_id": row['college_course_id'],
+            "college_id": f"mysql-{row['collegeid']}",
+            "course_id": row['courseid'],
+            "name": row['course_name'] or '',
+            "slug": row['slug'] or '',
+            "level": row['level'] or row['academic_level'] or 'UG',
+            "duration": row['duration'] or '4 Years',
+            "eligibility": row['course_eligibility'] or row['eligibility'] or '',
+            "description": row['course_description'] or row['master_description'] or '',
+            "scope": row['scope'] or '',
+            "job_profile": row['job_profile'] or '',
+            "entrance_exams": row['entrance_exams'] or '',
+            "total_fees": row['total_fees'] or '',
+            "total_intake": row['total_intake'] or 0
+        },
+        "college": {
+            "id": f"mysql-{row['collegeid']}",
+            "name": row['college_name'] or '',
+            "accreditation": row['accreditation'] or '',
+            "address": row['college_address'] or '',
+            "phone": row['college_phone'] or '',
+            "email": row['college_email'] or '',
+            "website": row['college_website'] or '',
+            "state": row['state'] or '',
+            "city": row['city'] or ''
+        },
+        "fees": [],  # MySQL fee structure can be added later
+        "admission_charges": None
+    }
+
 async def get_all_courses_with_colleges(
     search: Optional[str] = None,
     level: Optional[str] = None,
