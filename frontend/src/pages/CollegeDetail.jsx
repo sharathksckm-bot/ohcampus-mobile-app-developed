@@ -891,51 +891,83 @@ export default function CollegeDetail() {
 
               {/* Description */}
               {courseDetail.course.description && (
-                <div>
-                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm">Description</h4>
-                  <p className="text-[#475569] font-body text-sm leading-relaxed">
-                    {courseDetail.course.description}
-                  </p>
+                <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 border border-blue-100">
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-blue-500 flex items-center justify-center">
+                      <BookOpen className="h-3 w-3 text-white" />
+                    </div>
+                    Description
+                  </h4>
+                  <div 
+                    className="text-[#475569] font-body text-sm leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ 
+                      __html: courseDetail.course.description.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                    }}
+                  />
                 </div>
               )}
 
               {/* Eligibility */}
               {courseDetail.course.eligibility && (
-                <div>
-                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm flex items-center gap-1">
-                    <Users className="h-4 w-4 text-[#0066CC]" />
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-green-500 flex items-center justify-center">
+                      <Users className="h-3 w-3 text-white" />
+                    </div>
                     Eligibility
                   </h4>
-                  <p className="text-[#475569] font-body text-sm bg-slate-50 p-3 rounded-lg">
-                    {courseDetail.course.eligibility}
-                  </p>
+                  <div 
+                    className="text-[#475569] font-body text-sm leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ 
+                      __html: courseDetail.course.eligibility.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                    }}
+                  />
                 </div>
               )}
 
               {/* Scope */}
               {courseDetail.course.scope && (
-                <div>
-                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm">Scope & Career</h4>
-                  <p className="text-[#475569] font-body text-sm leading-relaxed">
-                    {courseDetail.course.scope}
-                  </p>
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-4 border border-purple-100">
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-purple-500 flex items-center justify-center">
+                      <TrendingUp className="h-3 w-3 text-white" />
+                    </div>
+                    Scope & Career
+                  </h4>
+                  <div 
+                    className="text-[#475569] font-body text-sm leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ 
+                      __html: courseDetail.course.scope.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                    }}
+                  />
                 </div>
               )}
 
               {/* Job Profiles */}
-              {courseDetail.course.job_profiles && courseDetail.course.job_profiles.length > 0 && (
-                <div>
-                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm flex items-center gap-1">
-                    <Briefcase className="h-4 w-4 text-[#0066CC]" />
+              {(courseDetail.course.job_profiles?.length > 0 || courseDetail.course.job_profile) && (
+                <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-100">
+                  <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-orange-500 flex items-center justify-center">
+                      <Briefcase className="h-3 w-3 text-white" />
+                    </div>
                     Job Profiles
                   </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {courseDetail.course.job_profiles.map((job, i) => (
-                      <Badge key={i} variant="secondary" className="font-body text-xs">
-                        {job}
-                      </Badge>
-                    ))}
-                  </div>
+                  {courseDetail.course.job_profiles?.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {courseDetail.course.job_profiles.map((job, i) => (
+                        <Badge key={i} className="bg-white border border-orange-200 text-orange-700 font-body text-xs">
+                          {job}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : courseDetail.course.job_profile && (
+                    <div 
+                      className="text-[#475569] font-body text-sm leading-relaxed prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ 
+                        __html: courseDetail.course.job_profile.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                      }}
+                    />
+                  )}
                 </div>
               )}
 
