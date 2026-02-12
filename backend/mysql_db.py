@@ -285,10 +285,6 @@ async def get_all_courses_with_colleges(
         query += " AND (cc.level = %s OR ac.name = %s)"
         params.extend([level, level])
     
-    if category:
-        query += " AND cat.catname = %s"
-        params.append(category)
-    
     query += f" ORDER BY c.name LIMIT {limit}"
     
     results = await execute_query(query, tuple(params) if params else None)
