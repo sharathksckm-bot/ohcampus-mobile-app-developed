@@ -489,10 +489,11 @@ export default function CollegeDetail() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {placements && placements.stats && placements.stats.length > 0 ? (
+                {/* First try to show placements from MySQL (college.placements), then from MongoDB */}
+                {((college.placements && college.placements.length > 0) || (placements && placements.stats && placements.stats.length > 0)) ? (
                   <div className="space-y-6">
                     {/* Description */}
-                    {placements.description && (
+                    {placements?.description && (
                       <p className="text-[#475569] font-body bg-slate-50 p-4 rounded-lg">
                         {placements.description}
                       </p>
@@ -516,19 +517,21 @@ export default function CollegeDetail() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {placements.stats.map((stat, i) => (
+                          {(college.placements?.length > 0 ? college.placements : placements?.stats || []).map((stat, i) => (
                             <TableRow key={i}>
-                              <TableCell className="font-body font-semibold">{stat.year}</TableCell>
+                              <TableCell className="font-body font-semibold">{stat.year || '—'}</TableCell>
                               <TableCell className="font-body text-green-600 font-semibold">
                                 {formatCurrency(stat.highest_package)}
                               </TableCell>
                               <TableCell className="font-body">{formatCurrency(stat.average_package)}</TableCell>
                               <TableCell>
-                                <Badge className="bg-blue-100 text-blue-700 font-body">
-                                  {stat.placement_rate}%
-                                </Badge>
+                                {stat.placement_rate ? (
+                                  <Badge className="bg-blue-100 text-blue-700 font-body">
+                                    {stat.placement_rate}%
+                                  </Badge>
+                                ) : '—'}
                               </TableCell>
-                              <TableCell className="font-body">{stat.total_offers}</TableCell>
+                              <TableCell className="font-body">{stat.total_offers || '—'}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
@@ -536,7 +539,7 @@ export default function CollegeDetail() {
                     </div>
                     
                     {/* Top Recruiters */}
-                    {placements.stats[0]?.top_recruiters && placements.stats[0].top_recruiters.length > 0 && (
+                    {placements?.stats?.[0]?.top_recruiters && placements.stats[0].top_recruiters.length > 0 && (
                       <div>
                         <h4 className="font-heading font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
                           <Award className="h-5 w-5 text-[#FF6B35]" />
