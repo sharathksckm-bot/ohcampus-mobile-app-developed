@@ -201,23 +201,18 @@ async def get_college_by_id(college_id: str) -> Optional[Dict[str, Any]]:
         if cat_result:
             category_name = cat_result[0]['catname']
     
-    # Fetch highlights from college_highlights table
+    # Fetch highlights from college_highlights table (multiple rows)
     highlights_query = """
-        SELECT text FROM college_highlights WHERE collegeid = %s
+        SELECT text FROM college_highlights WHERE collegeid = %s ORDER BY id
     """
     highlights_result = await execute_query(highlights_query, (mysql_id,))
     highlights = []
     if highlights_result:
-        # Highlights may be stored as comma-separated or line-separated text
-        raw_highlights = highlights_result[0].get('text', '')
-        if raw_highlights:
-            # Split by common delimiters and filter empty strings
-            for delim in ['\n', '|', ';']:
-                if delim in raw_highlights:
-                    highlights = [h.strip() for h in raw_highlights.split(delim) if h.strip()]
-                    break
-            if not highlights:
-                highlights = [raw_highlights.strip()] if raw_highlights.strip() else []
+        # Each row is a separate highlight
+        for row_h in highlights_result:
+            text = row_h.get('text', '')
+            if text and text.strip():
+                highlights.append(text.strip())
     
     # Use description as highlights if no highlights table data
     if not highlights and row.get('description'):
