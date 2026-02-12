@@ -484,7 +484,7 @@ export default function Courses() {
               Available Courses
             </h2>
             <p className="text-[#475569] font-body mt-1">
-              {loading ? 'Loading...' : `${filteredCourses.length} courses found`}
+              {loading ? 'Loading...' : `Showing ${filteredCourses.length} of ${totalCourses} courses`}
             </p>
           </div>
         </div>
