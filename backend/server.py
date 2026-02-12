@@ -688,6 +688,16 @@ async def get_courses_with_college(
 @api_router.get("/courses/{course_id}")
 async def get_course_detail(course_id: str):
     """Get course details with college and fee information"""
+    # Try MySQL first for mysql- prefixed IDs
+    if course_id.startswith("mysql-"):
+        try:
+            result = await get_course_by_id(course_id)
+            if result:
+                return result
+        except Exception as e:
+            logging.error(f"Error fetching course from MySQL: {e}")
+    
+    # Fallback to MongoDB
     course = await db.courses.find_one({"id": course_id}, {"_id": 0})
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
