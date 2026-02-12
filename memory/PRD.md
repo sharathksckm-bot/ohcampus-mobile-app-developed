@@ -237,6 +237,17 @@ Create a web-based counseling platform for OhCampus counselors with:
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Latest Updates (Feb 2026)
+### Iteration 15 - Bug Fixes & REST API Best Practices (Feb 12, 2026)
+1. **Fixed "Manage Courses" Dialog Bug**: 
+   - Issue: Dialog was empty when clicking "Manage Courses" on /admin/colleges page
+   - Root Cause: Courses were filtered from limited local cache of 100 courses instead of fetching from API
+   - Fix: Added API call to `/api/colleges/{college_id}/courses` when dialog opens
+   - Added loading state with spinner while fetching courses
+   - Added empty state message if no courses found
+2. **Fixed HTTP Status Codes (REST API Best Practices)**:
+   - Updated all POST endpoints to return HTTP 201 Created instead of 200 OK
+   - Affected endpoints: `/colleges`, `/courses`, `/fees`, `/fees/import-csv`, `/admission-charges`, `/faqs`
+
 ### Iteration 14 - URL Cleanup & Production Deployment (Feb 13, 2026)
 1. **Removed "mysql" from URLs**: Changed ID prefixes from `mysql-` to cleaner `c-` for colleges and `cc-` for courses
 2. **Production Deployment Complete**: Deployed all fixes to counselor.ohcampus.com
