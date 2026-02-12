@@ -501,8 +501,8 @@ async def compare_colleges(college_ids: str):
     
     result = []
     for college_id in ids:
-        # Try MySQL first for mysql- prefixed IDs
-        if college_id.startswith("mysql-"):
+        # Try MySQL first for c- prefixed IDs (also handle legacy mysql- prefix)
+        if college_id.startswith("c-") or college_id.startswith("mysql-"):
             try:
                 college = await get_college_by_id(college_id)
                 if college:
