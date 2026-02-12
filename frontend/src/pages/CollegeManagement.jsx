@@ -119,15 +119,15 @@ export default function CollegeManagement() {
       setLoading(true);
       const [collegesRes, coursesRes, filtersRes] = await Promise.all([
         collegesAPI.getAll({}),
-        coursesAPI.getAll(),
+        coursesAPI.getAllWithCollege({ limit: 100 }), // Get more courses for analytics
         filtersAPI.getAll(),
       ]);
       setColleges(collegesRes.data || []);
-      // Handle both array and paginated object responses
-      const coursesData = Array.isArray(coursesRes.data) 
-        ? coursesRes.data 
-        : (coursesRes.data?.courses || []);
+      // Handle paginated response
+      const coursesData = coursesRes.data?.courses || [];
+      const totalCourses = coursesRes.data?.total || coursesData.length;
       setCourses(coursesData);
+      setTotalCoursesCount(totalCourses);
       setFilters(filtersRes.data || { states: [], cities: [], categories: [], courses: [] });
     } catch (error) {
       console.error('Failed to load data:', error);
