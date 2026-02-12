@@ -640,15 +640,23 @@ async def get_all_courses(category: Optional[str] = None, search: Optional[str] 
         return courses
 
 @api_router.get("/courses/with-college")
-async def get_courses_with_college(category: Optional[str] = None, search: Optional[str] = None, level: Optional[str] = None):
-    """Get all courses with their college information - MySQL"""
+async def get_courses_with_college(
+    category: Optional[str] = None, 
+    search: Optional[str] = None, 
+    level: Optional[str] = None,
+    page: int = 1,
+    limit: int = 50
+):
+    """Get all courses with their college information - MySQL with pagination"""
     try:
-        courses = await get_all_courses_with_colleges(
+        result = await get_all_courses_with_colleges(
             search=search,
             level=level,
-            category=category
+            category=category,
+            page=page,
+            limit=limit
         )
-        return courses
+        return result
     except Exception as e:
         logging.error(f"Error fetching courses from MySQL: {e}")
         # Fallback to MongoDB
@@ -672,12 +680,9 @@ async def get_courses_with_college(category: Optional[str] = None, search: Optio
                     "state": college["state"],
                     "category": college["category"]
                 }
-                # Get fees for this course
-                fees = await db.fees.find({"course_id": course["id"]}, {"_id": 0}).to_list(20)
-                course["fees"] = fees
                 result.append(course)
         
-        return result
+        return {"courses": result, "total": len(result), "page": 1, "limit": 500, "total_pages": 1}
 
 @api_router.get("/courses/{course_id}")
 async def get_course_detail(course_id: str):
