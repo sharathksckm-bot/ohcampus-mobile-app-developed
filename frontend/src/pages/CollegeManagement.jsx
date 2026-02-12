@@ -798,10 +798,7 @@ export default function CollegeManagement() {
                                     {updatingCourse === course.id ? (
                                       <Loader2 className="h-4 w-4 animate-spin" />
                                     ) : (
-                                      <>
-                                        <StatusIcon className="h-4 w-4 mr-2" />
-                                        <SelectValue />
-                                      </>
+                                      <SelectValue placeholder="Select status" />
                                     )}
                                   </SelectTrigger>
                                   <SelectContent>
