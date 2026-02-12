@@ -216,7 +216,7 @@ export default function CompareColleges() {
                     <td key={college.id} className="p-4 border border-slate-200 bg-white">
                       <div className="flex items-center gap-2 text-sm text-[#475569]">
                         <Calendar className="h-4 w-4" />
-                        <span>{college.established}</span>
+                        <span>{college.established_year || college.established || '—'}</span>
                       </div>
                     </td>
                   ))}
