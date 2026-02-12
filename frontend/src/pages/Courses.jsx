@@ -476,58 +476,9 @@ export default function Courses() {
                 )}
               </div>
             </div>
-              </Select>
-
-              {/* City Filter */}
-              <Select value={selectedCity} onValueChange={setSelectedCity}>
-                <SelectTrigger className="w-full lg:w-40 h-12" data-testid="city-filter">
-                  <Building2 className="h-4 w-4 mr-2 text-[#94A3B8]" />
-                  <SelectValue placeholder="City" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Cities</SelectItem>
-                  {filteredCities.map(city => (
-                    <SelectItem key={city} value={city}>{city}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              {/* Fee Range Filter */}
-              <Select value={selectedFeeRange} onValueChange={setSelectedFeeRange}>
-                <SelectTrigger className="w-full lg:w-44 h-12" data-testid="fee-range-filter">
-                  <IndianRupee className="h-4 w-4 mr-2 text-[#94A3B8]" />
-                  <SelectValue placeholder="Fee Range" />
-                </SelectTrigger>
-                <SelectContent>
-                  {feeRangeOptions.map(opt => (
-                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              {/* Clear */}
-              {hasActiveFilters && (
-                <Button
-                  variant="outline"
-                  onClick={clearFilters}
-                  className="h-12"
-                >
-                  <X className="h-4 w-4 mr-1" />
-                  Clear
-                </Button>
-              )}
-
-              {/* Compare Courses Button */}
-              {!compareMode && (
-                <Button
-                  onClick={() => setCompareMode(true)}
-                  variant="outline"
-                  className="h-12 border-[#FF6B35] text-[#FF6B35] hover:bg-[#FF6B35] hover:text-white"
-                  data-testid="enable-compare-mode-btn"
-                >
-                  <GitCompare className="h-4 w-4 mr-2" />
-                  Compare Courses
-                </Button>
+          </CardContent>
+        </Card>
+      </div>
               )}
             </div>
           </CardContent>
