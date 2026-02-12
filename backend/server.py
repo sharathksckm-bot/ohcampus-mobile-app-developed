@@ -896,7 +896,7 @@ async def delete_fee(fee_id: str, current_user: dict = Depends(require_admin)):
 
 # ===================== BULK CSV IMPORT ENDPOINT =====================
 
-@api_router.post("/fees/import-csv")
+@api_router.post("/fees/import-csv", status_code=status.HTTP_201_CREATED)
 async def import_fees_csv(file: UploadFile = File(...), current_user: dict = Depends(require_admin)):
     """
     Import fees from CSV file.
