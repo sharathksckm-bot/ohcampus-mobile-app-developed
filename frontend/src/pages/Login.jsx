@@ -122,15 +122,6 @@ export default function Login() {
                 Contact your administrator for account access
               </p>
             </div>
-
-            {/* Demo Credentials */}
-            <div className="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-              <p className="text-xs text-[#475569] font-body font-semibold mb-2">Demo Credentials:</p>
-              <div className="space-y-1 text-xs text-[#64748B] font-body">
-                <p><strong>Admin:</strong> admin@ohcampus.com / admin123</p>
-                <p><strong>Counselor:</strong> counselor@ohcampus.com / counselor123</p>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
