@@ -633,11 +633,11 @@ async def get_cities(state: Optional[str] = None) -> List[str]:
     return [r['city'] for r in results if r['city']]
 
 async def get_categories() -> List[str]:
-    """Get all categories with featured colleges"""
+    """Get all categories with featured colleges - handles multiple categories per college"""
     query = """
         SELECT DISTINCT cat.catname
         FROM college c
-        JOIN category cat ON cat.id = SUBSTRING_INDEX(c.categoryid, ',', 1)
+        JOIN category cat ON FIND_IN_SET(cat.id, c.categoryid) > 0
         WHERE (c.package_type = 'feature_listing' OR c.package_type = 'featured_listing')
         AND c.status = 1 AND c.is_deleted = 0
         AND cat.catname IS NOT NULL AND cat.catname != ''
