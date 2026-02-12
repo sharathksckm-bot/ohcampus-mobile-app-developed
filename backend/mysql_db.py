@@ -151,7 +151,7 @@ async def get_featured_colleges(
     return colleges
 
 async def get_college_by_id(college_id: str) -> Optional[Dict[str, Any]]:
-    """Fetch a single college by ID"""
+    """Fetch a single college by ID with highlights, placements, and what's new"""
     # Handle mysql- prefix
     mysql_id = college_id.replace('mysql-', '') if college_id.startswith('mysql-') else college_id
     
@@ -175,13 +175,12 @@ async def get_college_by_id(college_id: str) -> Optional[Dict[str, Any]]:
             c.terms,
             c.what_new,
             c.notification,
+            c.categoryid,
             s.statename as state,
-            ct.city as city,
-            cat.catname as category
+            ct.city as city
         FROM college c
         LEFT JOIN state s ON c.stateid = s.id
         LEFT JOIN city ct ON c.cityid = ct.id
-        LEFT JOIN category cat ON cat.id = SUBSTRING_INDEX(c.categoryid, ',', 1)
         WHERE c.id = %s
     """
     
@@ -190,6 +189,81 @@ async def get_college_by_id(college_id: str) -> Optional[Dict[str, Any]]:
         return None
     
     row = results[0]
+    
+    # Get category name
+    category_name = ''
+    if row.get('categoryid'):
+        cat_query = "SELECT catname FROM category WHERE id = %s"
+        first_cat_id = str(row['categoryid']).split(',')[0].strip()
+        cat_result = await execute_query(cat_query, (first_cat_id,))
+        if cat_result:
+            category_name = cat_result[0]['catname']
+    
+    # Fetch highlights from college_highlights table
+    highlights_query = """
+        SELECT highlights FROM college_highlights WHERE college_id = %s
+    """
+    highlights_result = await execute_query(highlights_query, (mysql_id,))
+    highlights = []
+    if highlights_result:
+        # Highlights may be stored as comma-separated or line-separated text
+        raw_highlights = highlights_result[0].get('highlights', '')
+        if raw_highlights:
+            # Split by common delimiters and filter empty strings
+            for delim in ['\n', '|', ';']:
+                if delim in raw_highlights:
+                    highlights = [h.strip() for h in raw_highlights.split(delim) if h.strip()]
+                    break
+            if not highlights:
+                highlights = [raw_highlights.strip()] if raw_highlights.strip() else []
+    
+    # Use description as highlights if no highlights table data
+    if not highlights and row.get('description'):
+        # Try to extract bullet points from description
+        desc = row['description']
+        # If description contains list markers, extract them
+        if '<li>' in desc.lower():
+            import re
+            li_items = re.findall(r'<li[^>]*>(.*?)</li>', desc, re.IGNORECASE | re.DOTALL)
+            highlights = [re.sub(r'<[^>]+>', '', item).strip() for item in li_items if item.strip()][:6]
+        elif '•' in desc or '-' in desc:
+            lines = desc.replace('•', '\n').replace('- ', '\n').split('\n')
+            highlights = [line.strip() for line in lines if line.strip() and len(line.strip()) > 10][:6]
+    
+    # Fetch placement statistics
+    placements_query = """
+        SELECT * FROM college_placement_statistics WHERE college_id = %s ORDER BY year DESC LIMIT 5
+    """
+    placements_result = await execute_query(placements_query, (mysql_id,))
+    placements = []
+    for p in placements_result:
+        placements.append({
+            "year": p.get('year', ''),
+            "highest_package": p.get('highest_package') or p.get('highest_salary'),
+            "average_package": p.get('average_package') or p.get('average_salary'),
+            "placement_rate": p.get('placement_rate') or p.get('placement_percentage'),
+            "total_offers": p.get('total_offers') or p.get('students_placed'),
+            "top_recruiters": []
+        })
+    
+    # Parse what's new - can be stored in different formats
+    whats_new = []
+    what_new_raw = row.get('what_new', '') or ''
+    if what_new_raw:
+        # Check for HTML list items
+        if '<li>' in what_new_raw.lower():
+            import re
+            li_items = re.findall(r'<li[^>]*>(.*?)</li>', what_new_raw, re.IGNORECASE | re.DOTALL)
+            whats_new = [re.sub(r'<[^>]+>', '', item).strip() for item in li_items if item.strip()]
+        else:
+            # Split by common delimiters
+            for delim in ['\n', '|', ';']:
+                if delim in what_new_raw:
+                    whats_new = [w.strip() for w in what_new_raw.split(delim) if w.strip()]
+                    break
+            if not whats_new and what_new_raw.strip():
+                whats_new = [what_new_raw.strip()]
+    
     return {
         "id": f"mysql-{row['id']}",
         "mysql_id": row['id'],
@@ -202,17 +276,20 @@ async def get_college_by_id(college_id: str) -> Optional[Dict[str, Any]]:
         "website": row['website'] or '',
         "accreditation": row['accreditation'] or '',
         "established_year": row['established_year'] or 0,
+        "established": row['established_year'] or 0,  # Alias for frontend compatibility
         "logo": f"https://ohcampus.com/assets/images/colleges/{row['logo']}" if row['logo'] else None,
         "banner": f"https://ohcampus.com/assets/images/colleges/{row['banner']}" if row['banner'] else None,
         "state": row['state'] or '',
         "city": row['city'] or '',
-        "category": row['category'] or '',
+        "category": category_name,
         "is_featured": True,
         "package_type": row['package_type'],
         "map_location": row['map_location'] or '',
         "scholarship": row['scholarship'] or '',
         "terms": row['terms'] or '',
-        "what_new": row['what_new'] or '',
+        "highlights": highlights,
+        "whats_new": whats_new,
+        "placements": placements,
         "notification": row['notification'] or ''
     }
 
