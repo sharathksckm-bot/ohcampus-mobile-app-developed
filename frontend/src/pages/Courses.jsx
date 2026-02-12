@@ -194,24 +194,13 @@ export default function Courses() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Filter courses
+  // Filter courses (client-side for additional filters not handled by server)
   const filteredCourses = useMemo(() => {
     let result = courses;
 
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(c =>
-        c.name.toLowerCase().includes(query) ||
-        (c.college?.name && c.college.name.toLowerCase().includes(query))
-      );
-    }
-
+    // Client-side filtering for category/state/city (server handles search and level)
     if (selectedCategory !== 'all') {
       result = result.filter(c => c.category === selectedCategory);
-    }
-    
-    if (selectedLevel !== 'all') {
-      result = result.filter(c => c.level === selectedLevel);
     }
     
     if (selectedState !== 'all') {
@@ -228,8 +217,8 @@ export default function Courses() {
         const firstYearFees = getFirstYearFees(c.fees);
         if (selectedFeeRange === 'below_100000') {
           return firstYearFees > 0 && firstYearFees < 100000;
-        } else if (selectedFeeRange === '100000_to_200000') {
-          return firstYearFees >= 100000 && firstYearFees <= 200000;
+        } else if (selectedFeeRange === 'below_200000') {
+          return firstYearFees > 0 && firstYearFees < 200000;
         } else if (selectedFeeRange === 'above_200000') {
           return firstYearFees > 200000;
         }
