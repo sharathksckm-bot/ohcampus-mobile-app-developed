@@ -252,9 +252,24 @@ export default function CollegeManagement() {
   };
 
   // Open course management dialog
-  const handleManageCourses = (college) => {
+  const handleManageCourses = async (college) => {
     setSelectedCollege(college);
     setCourseDialogOpen(true);
+    setLoadingCollegeCourses(true);
+    setSelectedCollegeCourses([]);
+    
+    try {
+      // Fetch courses specifically for this college from the API
+      const response = await coursesAPI.getByCollege(college.id);
+      setSelectedCollegeCourses(response.data || []);
+    } catch (error) {
+      console.error('Failed to fetch courses for college:', error);
+      toast.error('Failed to load courses');
+      // Fallback to filtering from local courses
+      setSelectedCollegeCourses(courses.filter(c => c.college_id === college.id));
+    } finally {
+      setLoadingCollegeCourses(false);
+    }
   };
 
   // Open alerts management dialog
