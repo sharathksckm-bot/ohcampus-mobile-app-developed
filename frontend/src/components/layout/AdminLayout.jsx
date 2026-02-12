@@ -70,13 +70,13 @@ export const AdminLayout = ({ children }) => {
         collegesAPI.getAll({}),
         feesAPI.getAll({}),
         faqsAPI.getAll({}),
-        coursesAPI.getAll(),
+        coursesAPI.getAllWithCollege({ limit: 1 }), // Just need total count
       ]);
       setStats({
-        colleges: collegesRes.data.length,
-        fees: feesRes.data.length,
-        faqs: faqsRes.data.length,
-        courses: coursesRes.data.length,
+        colleges: (collegesRes.data || []).length,
+        fees: (feesRes.data || []).length,
+        faqs: (faqsRes.data || []).length,
+        courses: coursesRes.data?.total || 0,
       });
     } catch (error) {
       console.error('Failed to fetch stats:', error);
