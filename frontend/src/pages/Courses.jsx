@@ -1060,52 +1060,6 @@ export default function Courses() {
           )}
         </DialogContent>
       </Dialog>
-                        {course.eligibility ? (
-                          <span className="line-clamp-3">{course.eligibility}</span>
-                        ) : '—'}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-
-                  {/* College */}
-                  <TableRow>
-                    <TableCell className="font-body font-medium bg-slate-50 sticky left-0">
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-[#0066CC]" />
-                        College
-                      </div>
-                    </TableCell>
-                    {selectedForCompare.map(course => (
-                      <TableCell key={course.id} className="text-center font-body text-sm">
-                        <p className="font-medium">{course.college?.name || '—'}</p>
-                        <p className="text-xs text-[#94A3B8]">{course.college?.category}</p>
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-          )}
-
-          <div className="flex justify-end gap-2 mt-4">
-            <Button
-              variant="outline"
-              onClick={() => setCompareDialogOpen(false)}
-            >
-              Close
-            </Button>
-            <Button
-              onClick={() => {
-                setCompareDialogOpen(false);
-                exitCompareMode();
-              }}
-              className="bg-[#0066CC] hover:bg-[#0052A3]"
-            >
-              Done Comparing
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
