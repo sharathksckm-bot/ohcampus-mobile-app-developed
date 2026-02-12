@@ -328,6 +328,8 @@ export default function CollegeManagement() {
 
   // Render college card
   const renderCollegeCard = (college, showCategory = true) => {
+    // Use course_count from API if available, otherwise count from loaded courses
+    const courseCount = college.course_count || college.courses?.length || 0;
     const collegeCourses = getCollegeCourses(college.id);
     const availableCourses = collegeCourses.filter(c => c.seat_status === 'Available').length;
     const closingCourses = collegeCourses.filter(c => c.seat_status === 'Closing').length;
@@ -357,7 +359,7 @@ export default function CollegeManagement() {
                 )}
                 <span className="flex items-center gap-1">
                   <BookOpen className="h-3 w-3" />
-                  {collegeCourses.length} courses
+                  {courseCount} courses
                 </span>
               </div>
               {/* Quick seat status summary */}
