@@ -242,43 +242,37 @@ async def get_all_courses_with_colleges(
     search: Optional[str] = None,
     level: Optional[str] = None,
     category: Optional[str] = None,
-    limit: int = 500
+    limit: int = 100
 ) -> List[Dict[str, Any]]:
-    """Fetch all courses from featured colleges with their college info"""
+    """Fetch courses from featured colleges - optimized query"""
     query = """
         SELECT 
             cc.id as college_course_id,
             cc.collegeid,
             cc.courseid,
             cc.total_fees,
-            cc.total_intake,
             cc.duration,
             cc.level,
-            cc.eligibility as course_eligibility,
-            cc.description as course_description,
-            cc.entrance_exams,
             c.name as course_name,
             c.slug,
             c.eligibility,
             c.scope,
-            c.job_profile,
-            c.course_description as master_description,
             ac.name as academic_level,
             col.title as college_name,
             col.accreditation,
             s.statename as state,
-            ct.city as city,
-            cat.catname as category
+            ct.city as city
         FROM college_course cc
-        JOIN courses c ON cc.courseid = c.id
-        JOIN college col ON cc.collegeid = col.id
+        INNER JOIN courses c ON cc.courseid = c.id
+        INNER JOIN college col ON cc.collegeid = col.id
         LEFT JOIN academic_categories ac ON c.academic_category = ac.category_id
         LEFT JOIN state s ON col.stateid = s.id
         LEFT JOIN city ct ON col.cityid = ct.id
-        LEFT JOIN category cat ON cat.id = SUBSTRING_INDEX(col.categoryid, ',', 1)
         WHERE (col.package_type = 'feature_listing' OR col.package_type = 'featured_listing')
         AND col.status = 1 
         AND col.is_deleted = 0
+        AND cc.is_deleted = 0
+    """
         AND cc.is_deleted = 0
     """
     params = []
