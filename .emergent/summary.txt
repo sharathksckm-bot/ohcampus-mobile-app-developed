@@ -1,93 +1,135 @@
 <analysis>original_problem_statement:
 **Initial Request:**
 Create a web-based counseling platform for OhCampus counselors.
-- **Counselor Features:** Filter colleges, view featured colleges, and see detailed college information including fees, highlights, and news.
-- **Admin Panel Features:** Manage admission fees, course-wise fee structures, and FAQs.
-- **Technical Guidelines:** Use existing OhCampus database, ensure fast filtering, mobile-friendly UI, and secure admin authentication.
+-   **Counselor Features:** Filter colleges, view featured colleges, and see detailed college information including fees, highlights, and news.
+-   **Admin Panel Features:** Manage admission fees, course-wise fee structures, and FAQs.
+-   **Technical Guidelines:** Use existing OhCampus database, ensure fast filtering, mobile-friendly UI, and secure admin authentication.
 
-**Subsequent Feature Requests:**
+**Subsequent Feature Requests & Bug Reports:**
 1.  **Comparison Feature:** Allow counselors to select and compare multiple colleges and courses.
-2.  **PDF Export:** Export fee structures to PDF.
-3.  **CSV Import:** Bulk import fee details via CSV.
-4.  **UI/UX:** Fix UI overlaps, add various search bars and filters (including by fee range and course level), remove registration flows, and make the college listing page attractive without images.
-5.  **Admissions & Performance:**
-    -   Counselors can add/edit admitted candidate details (name, college, course, fees, dynamic installments with dates, remarks, and scholarship amount).
-    -   Admins/Team Leads/Managers can edit complete details of admitted candidates.
-    -   Admins can create counselor accounts with specific designations (Counselor, Team Lead, Manager) and assign Team Leads.
-    -   Role-based performance dashboards with admission/revenue targets.
-    -   Scholarship summary reports (per month/college).
-6.  **User & Security:**
-    -   Admin-driven password reset.
-    -   User profile management (name, phone, password change).
-    -   Activity logging for key actions.
-    -   Automated alerts for counselors falling behind on targets.
+2.  **PDF/CSV:** Export fee structures to PDF and import via CSV.
+3.  **UI/UX:**
+    -   Fix search bar width on the Courses page.
+    -   Redesign the landing page to be more attractive, remove registration flows, and apply OhCampus branding.
+    -   Redirect the root URL () to the login page.
+    -   Remove demo credentials and Made with Emergent branding from the login page.
+4.  **Admissions & Performance:**
+    -   Manage admitted candidates with dynamic installments, remarks, and scholarships.
+    -   Role-based dashboards and performance tracking.
+    -   Admin-driven user management and password resets.
+5.  **Deployment & Infrastructure:**
+    -   Deploy the application to a custom subdomain ().
+    -   Enable SSL (HTTPS) for the deployed application.
+    -   Fix the main admin panel (), which was broken, and enable SSL for it.
+6.  **Database Integration:**
+    -   Connect the platform to the existing OhCampus.com production **MySQL** database.
+    -   Fetch Featured Colleges, Courses, States, Cities, and other related data from the MySQL database instead of the initial MongoDB test data.
+7.  **Performance & Bug Fixes (Latest):**
+    -   The counselor platform (especially the admin panel) is very slow.
+    -   **Colleges Page:** Established Year, Highlights, Courses, and What's New sections are not displaying content.
+    -   **Courses Page:** State and City filters are not fetching data. Course Details modal doesn't show Job Profiles, renders raw HTML, and needs better styling. All filters are not listing all available options. The page should list all courses from featured colleges with pagination.
+    -   **Comparison Features:** Not fetching Established Year, Highlights, or Placement Statistics. Content needs to be complete.
+    -   **Admin Panel:** Dashboard and other features are not working.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application (FastAPI, React, MongoDB) for OhCampus counselors and admins. The platform includes:
--   **Counselor Platform:** A dashboard to filter colleges (by fee range, level, location, etc.), compare colleges, and view detailed college/course information. A Compare Courses feature has just been added.
--   **Admissions Management:** Counselors can manage admitted students, including dynamic fee installments, remarks, and scholarship amounts. Admins, Team Leads, and Managers have full edit permissions.
--   **Admin & Manager Features:**
-    -   Secure login with management pages for Fees, FAQs, and Colleges.
-    -   A User Management page with role creation and admin-driven password resets.
-    -   A Performance Dashboard with platform-wide stats, target tracking, automated alerts for underperforming counselors, and a scholarship summary report.
-    -   An Activity Log page to monitor key user actions.
--   **User Features:** A dedicated  page for users to update their name, phone, and password.
+A full-stack application (React, FastAPI) deployed on the user's server at .
+-   **Live Deployment:** The application is fully deployed via SSH on the user's server () with Nginx as a reverse proxy, a systemd service for the backend, and a valid SSL certificate.
+-   **Database Integration:** The backend now connects to the user's production **MySQL** database () to fetch all college and course data. MongoDB is still used for user management, admissions, and other platform-specific data.
+-   **Dual-Site Configuration:** The server also hosts the main OhCampus admin panel (), which is an Angular/PHP application. Its Nginx configuration and backend API (via PHP-FPM) have been fixed and secured with SSL.
+-   **Core Features:**
+    -   **Counselor Dashboard:** Displays featured colleges fetched from MySQL.
+    -   **Courses Page:** Displays a paginated list of all courses from featured colleges, also fetched from MySQL.
+    -   **Admin Panel:** Includes pages for User Management, Fee Management, Performance Dashboards, etc.
+    -   **Authentication:** JWT-based login for both Admins and Counselors. The login page is clean, branded, and redirects from the root URL.
+-   **Performance:** Backend queries for colleges and courses have been optimized, significantly improving page load times.
 
 **Last working item**:
-- Last item agent was working: Implementing the Compare Courses feature on the Courses page (). The agent added the UI for entering compare mode, selecting courses, and a dialog to display the comparison table. The final step was to take a screenshot of the comparison dialog to verify its contents.
-- Status: USER VERIFICATION PENDING
-- Agent Testing Done: Y
-- Which testing method agent to use? frontend testing agent
+- Last item agent was working: Addressing a large batch of bug reports and feature requests from the user concerning data display, filtering, and performance across the platform. The agent began by investigating the MySQL database schema to understand the data structure for fields like  (for highlights), , and .
+- Status: IN PROGRESS
+- Agent Testing Done: N
+- Which testing method agent to use? Both frontend and backend testing agents are recommended after all fixes are implemented due to the broad scope. Individual fixes can be tested with  and screenshots.
 - User Testing Done: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1 (P1): Incorrect HTTP Status Codes**
+-   **Issue 1 (P0): Multi-Part Bug Fixes & Feature Enhancements**
+    -   **Description:** The user reported a list of critical bugs related to data not appearing correctly after the migration to MySQL and performance issues. This is the top priority.
+    -   **Status:** IN PROGRESS
+-   **Issue 2 (P1): Incorrect HTTP Status Codes**
+    -   **Description:**  and  endpoints return  instead of the more appropriate  or  for updates. This is a carry-over from a previous session.
+    -   **Status:** NOT STARTED
+
+Issues Detail:
+-   **Issue 1: Multi-Part Bug Fixes & Feature Enhancements**
+    -   **Attempted fixes:** The agent has investigated the MySQL schema to locate the necessary data tables (, , etc.) but has not yet implemented code changes for this batch of issues.
+    -   **Next debug checklist:**
+        1.  **Backend (, ):**
+            -   Update  to fetch  (for highlights) and placement data.
+            -   Update  to fetch  and ensure all description content is returned.
+            -   Update the  endpoint to correctly fetch all States and Cities for the Courses tab.
+            -   Investigate why the admin panel dashboard and features are not working. Check API calls and backend logic for , , etc.
+        2.  **Frontend (React Components):**
+            -   In , use a library like  and  to render HTML content safely. Improve the modal's styling.
+            -   In  (or the equivalent page), ensure the , , , and  sections are mapped to the correct data from the API response.
+            -   In , add fields for , , and .
+            -   In , ensure the State and City filter dropdowns are populated correctly from the  API endpoint.
+    -   **Why fix this issue and what will be achieved with the fix?** This will resolve major data discrepancies, fix broken UI components, and make the platform functional and reliable for users after the database migration.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Both.
+    -   **Blocked on other issue:** None.
+-   **Issue 2: Incorrect HTTP Status Codes**
     -   **Attempted fixes:** None.
     -   **Next debug checklist:**
         1.  Review  and  endpoints in .
-        2.  In the FastAPI route decorators, set  for resource creation () and  for updates (). For example, change  to .
-    -   **Why fix this issue and what will be achieved with the fix?** To adhere to REST API best practices and provide more meaningful status codes to clients.
+        2.  Set  in decorators for resource creation () and ensure  for updates.
+    -   **Why fix this issue and what will be achieved with the fix?** To adhere to REST API best practices.
     -   **Status:** NOT STARTED
     -   **Is recurring issue?** Y
     -   **Should Test frontend/backend/both after fix?** Backend.
     -   **Blocked on other issue:** None.
 
 **In progress Task List**:
-- None.
+-   **Task 1: Fix All Reported Bugs and UI Issues**
+    -   **Where to resume:** Continue with the backend and frontend fixes outlined in the  for Issue 1. Start with the backend changes in  and  to provide the necessary data to the frontend.
+    -   **What will be achieved with this?** A fully functional and data-accurate application that meets the user's latest requirements.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Both.
+    -   **Blocked on something:** None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
     -   **P1: Email notifications for admission deadlines.**
 -   **Future Tasks:**
     -   **P2: Advanced analytics dashboard.**
-    -   **P3: Refactor  into a modular structure** (e.g., break into , ,  directories) to improve maintainability.
+    -   **P3: Refactor  into a modular structure** (e.g., , , ).
 
 **Completed work in this session**
--   **User Profile & Security Features:**
-    -   Implemented a  page for users to update their name, phone, and password.
-    -   Created an  page to display user actions.
-    -   Added an admin-driven password reset feature in .
--   **Scholarship Feature:**
-    -   Added a  field to the  model and related endpoints.
-    -   Enabled adding and editing scholarships in the admission dialog on , , and .
-    -   Implemented role-based permissions allowing Admins, Team Leads, and Managers to edit all admission details.
--   **Dashboard & Performance Enhancements:**
-    -   Implemented a **Scholarship Summary Report** and **Target Alerts** tabs in .
-    -   Redesigned college cards on  to be more attractive without images.
--   **Filtering & Comparison:**
-    -   Added **Fee Range (First Year)** and **Course Level (UG/PG)** filters to the college .
-    -   Added a **Fee Range (First Year)** filter to .
-    -   Implemented a **Compare Courses** feature on , including selection UI and a comparison dialog.
--   **Bug Fixes:**
-    -   Fixed a bug causing a  course count on college cards by updating the  endpoint.
-    -   Resolved a  error in the course details modal on .
-    -   Fixed an issue preventing the user's name in the navbar from updating after a profile change by exporting  from .
-    -   Fixed an error on the Activity Log page where  was called on an object instead of an array.
+-   **Full Application Deployment:**
+    -   Deployed the application to the user's server () using SSH.
+    -   Configured Nginx, systemd, and installed all necessary server dependencies.
+    -   Enabled SSL for .
+-   **Database Migration to MySQL:**
+    -   Connected the backend to the user's production MySQL database.
+    -   Refactored all college and course-related endpoints (, , ) to fetch live data from MySQL.
+-   **Main Admin Panel () Restoration:**
+    -   Fixed the non-functional main OhCampus admin panel by configuring Nginx to serve its Angular frontend and PHP backend (via PHP-FPM).
+    -   Enabled SSL for  and resolved CORS issues to make it fully operational.
+-   **Performance Optimization:**
+    -   Drastically improved API response times by optimizing MySQL queries in  (reducing N+1 queries) and adding database indexes on the server.
+-   **Frontend Features & Fixes:**
+    -   Implemented server-side pagination on the Courses page.
+    -   Fixed the search bar width on the Courses page.
+    -   Added  and  to the Course Comparison dialog.
+    -   Redesigned the landing page with OhCampus branding and removed registration CTAs.
+    -   Implemented a redirect from the root URL () to .
+    -   Removed hardcoded demo credentials and the Made with Emergent badge.
+    -   Fixed the login flow by rebuilding the frontend with the correct production API URL.
+    -   Fixed data display issues like  on college cards.
 
 **Earlier issues found/mentioned but not fixed**
--   **Note:** The previous handoff summary mentioned bugs regarding a missing Save Changes button and incorrect progress bars. Investigation revealed that the corresponding test reports (, ) actually showed a 100% pass rate, indicating these were not active issues.
+-   **Incorrect HTTP Status Codes:**  endpoints return  instead of . This was noted in the previous handoff and remains unresolved.
 
 **Known issue recurrence from previous fork**
 -   None.
@@ -96,94 +138,95 @@ A full-stack application (FastAPI, React, MongoDB) for OhCampus counselors and a
 
 
 **Key Technical Concepts**
--   **Backend:** FastAPI, Pydantic, Motor (async MongoDB), JWT for auth.
--   **Frontend:** React, React Router, Tailwind CSS, Shadcn/UI, Axios, Context API for auth.
--   **Architecture:** Decoupled monorepo with role-based access control (RBAC) driven by user  in the JWT.
+-   **Backend:** FastAPI, Pydantic, Motor (for MongoDB data), **MySQL Connector/Python**, JWT.
+-   **Frontend:** React, React Router, Tailwind CSS, Shadcn/UI, Axios, Context API.
+-   **Database:** Hybrid model using **MySQL** (for core OhCampus data like colleges/courses) and **MongoDB** (for platform-specific data like users/admissions).
+-   **Deployment:** Live server management via **SSH**, with **Nginx** as a reverse proxy and **Systemd** for service management.
 
 **key DB schema**
--   **users:** , , .
--   **admissions:**  added.
--   **targets:** .
--   **activities:** .
+-   **MySQL ( database):**
+    -   : Contains college details. Featured colleges are identified by  = 'feature_listing'.
+    -   : Links colleges and courses. Contains eligibility, scope, job profiles.
+    -   , : Additional college data.
+    -   , , , : Master data tables for filtering.
+-   **MongoDB ():**
+    -   : Stores counselor/admin accounts, roles, and hierarchy.
+    -   , , : Store platform-specific operational data.
 
 **changes in tech stack**
--   None.
+-   The application now uses a hybrid database approach, integrating **MySQL** as the primary source for college and course information, while retaining MongoDB for user and operational data.
+-   Added  and  to the backend dependencies.
 
 **All files of reference**
--   : Heavily modified with new endpoints for scholarships, target alerts, and filtering logic.
--   : New file for user profile management.
--   : New file for viewing admin logs.
--   : Major UI redesign of college cards and addition of fee/level filters.
--   : Added fee filter and a new Compare Courses feature.
--   : Updated to include scholarship field and edit permissions.
--   : Added new tabs for Scholarship Summary and Target Alerts.
--   : Added password reset button.
--   : Updated to export .
--   : Added functions for new endpoints.
--   : Updated with completed tasks.
+-   **/app/backend/mysql_db.py**: New file created to handle all MySQL database logic, including connection pooling and query functions.
+-   **/app/backend/server.py**: Heavily modified to replace MongoDB calls with calls to functions in  for all college and course endpoints. New endpoints for MySQL-driven filters and details were added.
+-   **/app/frontend/src/pages/Courses.jsx**: Significantly refactored to support server-side pagination, fetch filters from a dedicated API, and display total counts.
+-   **/app/frontend/src/pages/Dashboard.jsx**: Updated to render  correctly and populate the Select Course filter from the new API response.
+-   **/app/frontend/src/pages/Login.jsx**: Modified to remove hardcoded demo credentials.
+-   **/app/frontend/public/index.html**: Modified to remove the Made with Emergent badge and update page metadata.
+-   **/app/frontend/src/App.js**: Updated to redirect the root path  to .
 
 **Areas that need refactoring**:
--    is monolithic and should be broken down into separate files for models, routes, and services for better maintainability.
+-    is now even larger after integrating MySQL logic. It urgently needs to be broken down into separate files for routes, models, and services to improve maintainability.
 
 **key api endpoints**
--   : (New) GET scholarship statistics.
--   : (New) GET a list of counselors underperforming on their targets.
--   : (Updated) Now includes course counts and filters by fee range and course level.
--   : (Updated) Now includes fee information for each course.
--   , : (Updated) Now supports creating/updating .
--   , : (New) GET/PUT for user profile and password changes.
--   : (New) GET all activity logs.
+-   : (Rewritten) Fetches featured colleges from MySQL.
+-   : (Rewritten & Optimized) Fetches a paginated list of courses from MySQL.
+-   : (Rewritten) Fetches all filter options (states, cities, courses, etc.) from MySQL.
+-   : (New) Fetches detailed information for a single course from MySQL.
 
 **Critical Info for New Agent**
--   **Fee Filtering Logic:** The fee range filters on both the Dashboard and Courses pages have been specifically implemented to only consider **First Year fees** (1st annual fee or sum of 1st and 2nd semester fees).
--   **Database Seeding:** The database must be seeded after a fresh start or significant model changes using the  endpoint. Use the provided credentials to log in.
--   **Role-Based Access (RBAC):** Frontend rendering and API access are heavily dependent on the  property from the . Keep this in mind when modifying UI or API calls.
+-   **LIVE DEPLOYMENT:** You are working on a live, user-facing server. All changes to the backend or frontend require deployment to the server () via SSH to take effect. The agent has SSH access and has established a workflow for this.
+-   **DUAL DATABASE:** Be mindful of the two databases. All college/course data comes from **MySQL**. All user/admissions/activity data comes from **MongoDB**. Do not mix them up.
+-   **SERVER ENVIRONMENT:** The server runs Nginx, which proxies two sites:  (this app) and  (the main site's admin panel). Do not alter Nginx configurations without understanding the impact on both sites.
+-   **PERFORMANCE:** Query performance is critical. The user has reported slowness. Any new queries added to  must be efficient. Use s carefully and ensure indexes are leveraged.
+-   **HTML RENDERING:** The database contains fields with raw HTML. When displaying this on the frontend, it must be sanitized (e.g., using ) before rendering to prevent XSS vulnerabilities.
 
 **documents and test reports created in this job**
--    (updated)
--   
--   
--   
+-   : A complete deployment package was created but is now outdated as subsequent changes were made directly on the server.
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Don't display college images; make the list attractive. Add a scholarship summary report and target alerts.
-2.  **Agent:** Implemented all three features.
-3.  **User:** The course count is showing 0 on the college listing page.
-4.  **Agent:** Fixed the bug by updating the backend API to include course counts.
-5.  **User:** Add filters for college fees (by range) and course level (UG/PG).
-6.  **Agent:** Implemented the filters on the Dashboard page.
-7.  **User:** In the course page also, add the fee range filter.
-8.  **Agent:** Implemented the fee range filter on the Courses page.
-9.  **User:** The fee filter should only consider First Year fees.
-10. **Agent:** Updated the backend and frontend logic to filter based on first-year fees only.
-11. **User:** An error message appears when clicking a course after filtering.
-12. **Agent:** Fixed the bug in .
-13. **User:** Add a Compare Courses feature.
-14. **Agent:** Implemented the Compare Courses feature, which is the last completed action.
+1.  **User:** Test the full login flow on admin.ohcampus.com and fix the slow performance of the counselor platform.
+2.  **Agent:** Confirmed admin login works and identified slow API endpoints. Optimized MySQL queries and deployed the fix.
+3.  **User:** The counselor admin panel is still very slow.
+4.  **Agent:** Investigated further, found a slow course endpoint, added MySQL indexes, and optimized the query logic, which significantly improved performance.
+5.  **User:** Reported a new, long list of bugs: broken course filters, missing course details (job profiles, established year), HTML rendering issues, and broken admin panel features.
+6.  **Agent:** Acknowledged the issues and started investigating the MySQL database schema to find the required data.
+7.  **User:** (Provided admin credentials)
+8.  **Agent:** Used credentials to test the main admin login and continued investigating counselor platform performance.
+9.  **User:** My main admin panel () is not working and doesn't have SSL.
+10. **Agent:** Fixed the main admin panel by setting up Nginx to serve the Angular app and its PHP backend, enabled SSL, and fixed CORS/permission issues.
 
 **Project Health Check:**
--   **Broken:** None. The application is stable and the latest features have been implemented and tested by the agent.
+-   **Broken:**
+    -   Several key data display features on the College and Course pages are not working or showing incomplete data.
+    -   Filters on the Courses page are not working correctly.
+    -   The course details modal renders raw HTML and is missing information.
+    -   The admin panel dashboard and features within the counselor platform are reportedly not working.
 -   **Mocked:** None.
 
 **3rd Party Integrations**
--    / : For generating PDF documents on the frontend.
+-    / : For PDF generation.
+-    / : For connecting to the user's production MySQL database.
 
 **Testing status**
--   **Testing agent used after significant changes:** YES, three times in this session.
+-   **Testing agent used after significant changes:** NO
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:**
-    -   
-    -   
-    -   
--   **Known regressions:** None.
+-   **Test files created:** None.
+-   **Known regressions:** Several features broke after the migration to the MySQL database, as listed in the user's latest bug report.
 
 **Credentials to test flow:**
--   **Admin:**
-    -   Email: 
-    -   Password: 
--   **Counselor:**
-    -   Email: 
-    -   Password: 
+-   **Counselor Platform ():**
+    -   **Admin:**  / 
+    -   **Counselor:**  / 
+-   **Main Admin Panel ():**
+    -   **Username:** 
+    -   **Password:** 
+-   **Server SSH / cPanel:**
+    -   **Host:** 
+    -   **Port:**  (SSH),  (WHM/cPanel)
+    -   **Username:** 
+    -   **Password:** 
 
 **What agent forgot to execute**
--   The agent did not address the issue of incorrect HTTP status codes mentioned in the initial handoff summary.  endpoints are still returning  instead of the more appropriate .</analysis>
+-   The agent has consistently forgotten to address the issue of incorrect HTTP status codes for  requests, which has been carried over from the previous session.</analysis>
