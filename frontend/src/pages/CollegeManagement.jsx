@@ -240,11 +240,16 @@ export default function CollegeManagement() {
     setUpdatingCourse(courseId);
     try {
       await coursesAPI.updateSeatStatus(courseId, newStatus);
+      // Update both local course states
       setCourses(prev => prev.map(c =>
+        c.id === courseId ? { ...c, seat_status: newStatus } : c
+      ));
+      setSelectedCollegeCourses(prev => prev.map(c =>
         c.id === courseId ? { ...c, seat_status: newStatus } : c
       ));
       toast.success(`Seat status updated to "${newStatus}"`);
     } catch (error) {
+      console.error('Failed to update seat status:', error);
       toast.error('Failed to update seat status');
     } finally {
       setUpdatingCourse(null);
