@@ -596,6 +596,18 @@ class AdmissionAlertInput(BaseModel):
 @api_router.put("/colleges/{college_id}/admission-alerts")
 async def update_admission_alerts(college_id: str, alerts: List[AdmissionAlertInput], current_user: dict = Depends(require_admin)):
     """Update admission alerts for a college"""
+    # For MySQL colleges (c- prefix), store alerts in a separate collection
+    if college_id.startswith("c-") or college_id.startswith("mysql-"):
+        alerts_data = [alert.model_dump() for alert in alerts]
+        # Use upsert to create or update the alerts document
+        await db.college_admission_alerts.update_one(
+            {"college_id": college_id},
+            {"$set": {"college_id": college_id, "admission_alerts": alerts_data, "updated_at": datetime.now(timezone.utc).isoformat()}},
+            upsert=True
+        )
+        return {"message": "Admission alerts updated", "admission_alerts": alerts_data}
+    
+    # For MongoDB colleges
     existing = await db.colleges.find_one({"id": college_id})
     if not existing:
         raise HTTPException(status_code=404, detail="College not found")
