@@ -75,7 +75,7 @@ export default function FeeManagement() {
   const [submitting, setSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [bulkCourseSearch, setBulkCourseSearch] = useState('');
-  const [singleCourseSearch, setSingleCourseSearch] = useState('');
+  const [admissionCourseSearch, setAdmissionCourseSearch] = useState('');
   const [formData, setFormData] = useState({
     course_id: '',
     fee_type: 'annual',
@@ -83,8 +83,6 @@ export default function FeeManagement() {
     amount: '',
     hostel_fee: '',
     admission_fee: '',
-    additional_admission_fee: '',
-    additional_hostel_fee: '',
     description: '',
   });
   
