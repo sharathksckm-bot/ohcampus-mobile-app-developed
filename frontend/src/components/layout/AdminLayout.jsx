@@ -111,9 +111,10 @@ export const AdminLayout = ({ children }) => {
         <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200">
           <Link to="/admin" className="flex items-center gap-2">
             <img 
-              src="https://ohcampus.com/assets/images/logo/ohCampusLogo.png" 
+              src="https://ohcampus.com/assets/images/logo/logo.png" 
               alt="OhCampus" 
               className="h-8"
+              data-testid="admin-sidebar-logo"
             />
             <Badge className="bg-[#0066CC] text-white text-xs">Admin</Badge>
           </Link>
