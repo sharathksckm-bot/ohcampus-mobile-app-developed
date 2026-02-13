@@ -205,8 +205,6 @@ class FeeBase(BaseModel):
     amount: float
     hostel_fee: Optional[float] = None
     admission_fee: Optional[float] = None  # One-time admission charges
-    additional_admission_fee: Optional[float] = None  # Additional admission fees
-    additional_hostel_fee: Optional[float] = None  # Additional hostel fees
     description: Optional[str] = None
 
 class Fee(FeeBase):
