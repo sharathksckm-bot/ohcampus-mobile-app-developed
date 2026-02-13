@@ -616,7 +616,7 @@ export default function Admissions() {
                   />
                 </div>
                 <div>
-                  <Label className="font-body">Total Fees *</Label>
+                  <Label className="font-body">First Year Total Fees *</Label>
                   <Input
                     type="number"
                     value={formData.total_fees}
