@@ -1025,6 +1025,16 @@ export default function FeeManagement() {
                   <form onSubmit={handleAdmissionSubmit} className="space-y-4">
                     <div className="space-y-2">
                       <Label className="font-body">Course *</Label>
+                      <div className="relative mb-2">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
+                        <Input
+                          placeholder="Search course..."
+                          value={admissionCourseSearch}
+                          onChange={(e) => setAdmissionCourseSearch(e.target.value)}
+                          className="pl-10 h-10 font-body"
+                          data-testid="admission-course-search"
+                        />
+                      </div>
                       <Select
                         value={admissionFormData.course_id}
                         onValueChange={(value) => setAdmissionFormData({ ...admissionFormData, course_id: value })}
@@ -1033,11 +1043,22 @@ export default function FeeManagement() {
                           <SelectValue placeholder="Select course" />
                         </SelectTrigger>
                         <SelectContent>
-                          {courses.map((course) => (
-                            <SelectItem key={course.id} value={course.id}>
-                              {course.name}
-                            </SelectItem>
-                          ))}
+                          {courses
+                            .filter(course => 
+                              !admissionCourseSearch || 
+                              course.name.toLowerCase().includes(admissionCourseSearch.toLowerCase())
+                            )
+                            .map((course) => (
+                              <SelectItem key={course.id} value={course.id}>
+                                {course.name}
+                              </SelectItem>
+                            ))}
+                          {courses.filter(course => 
+                            !admissionCourseSearch || 
+                            course.name.toLowerCase().includes(admissionCourseSearch.toLowerCase())
+                          ).length === 0 && (
+                            <div className="p-2 text-sm text-[#94A3B8] text-center">No courses found</div>
+                          )}
                         </SelectContent>
                       </Select>
                     </div>
