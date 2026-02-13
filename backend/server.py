@@ -430,7 +430,7 @@ async def get_colleges_endpoint(
     course: Optional[str] = None,
     search: Optional[str] = None,
     level: Optional[str] = None,
-    fee_range: Optional[str] = None  # "below_100000", "100000_to_200000", "above_200000"
+    fee_range: Optional[str] = None  # "below_100000", "below_200000", "above_200000"
 ):
     """Fetch featured colleges from MySQL database - optimized for speed"""
     try:
@@ -454,31 +454,90 @@ async def get_colleges_endpoint(
         for college in colleges:
             college["admission_alerts"] = alerts_map.get(college["id"], [])
         
-        # Only fetch courses if filtering by course name or level
-        if course or level:
+        # Helper function to calculate first year fees
+        def get_first_year_fees(fees):
+            if not fees:
+                return 0
+            # Get first year annual fees
+            first_year_annual = sum(
+                f.get("amount", 0) for f in fees 
+                if f.get("fee_type") == "annual" and f.get("year_or_semester") == 1
+            )
+            # Get 1st and 2nd semester fees
+            first_two_semesters = sum(
+                f.get("amount", 0) for f in fees 
+                if f.get("fee_type") == "semester" and f.get("year_or_semester") in [1, 2]
+            )
+            # Return whichever is available (prefer annual if both exist)
+            return first_year_annual if first_year_annual > 0 else first_two_semesters
+        
+        # If fee_range is specified, we need to filter by fees
+        if fee_range or course or level:
             result = []
             for college in colleges:
-                courses = await get_courses_for_college(college["id"])
+                college_courses = await get_courses_for_college(college["id"])
                 
                 # Filter courses by level if specified
                 if level:
-                    courses = [c for c in courses if c.get("level") == level]
+                    college_courses = [c for c in college_courses if c.get("level") == level]
                 
                 # Filter by course name if specified
                 if course:
-                    courses = [c for c in courses if course.lower() in c.get("name", "").lower()]
+                    college_courses = [c for c in college_courses if course.lower() in c.get("name", "").lower()]
                 
                 # Skip college if no matching courses after filtering
-                if not courses:
+                if not college_courses:
                     continue
                 
-                college["courses"] = courses
-                college["course_count"] = len(courses)
+                # If fee_range is specified, check if any course has fees in range
+                if fee_range:
+                    # Fetch fees for all courses in this college
+                    course_ids = [c["id"] for c in college_courses]
+                    all_fees = await db.fees.find(
+                        {"course_id": {"$in": course_ids}}, 
+                        {"_id": 0}
+                    ).to_list(500)
+                    
+                    # Group fees by course_id
+                    fees_by_course = {}
+                    for fee in all_fees:
+                        cid = fee["course_id"]
+                        if cid not in fees_by_course:
+                            fees_by_course[cid] = []
+                        fees_by_course[cid].append(fee)
+                    
+                    # Filter courses based on fee range
+                    matching_courses = []
+                    for c in college_courses:
+                        course_fees = fees_by_course.get(c["id"], [])
+                        first_year = get_first_year_fees(course_fees)
+                        
+                        # Include course if it matches the fee range
+                        if fee_range == "below_100000" and 0 < first_year < 100000:
+                            c["first_year_fee"] = first_year
+                            matching_courses.append(c)
+                        elif fee_range == "below_200000" and 0 < first_year < 200000:
+                            c["first_year_fee"] = first_year
+                            matching_courses.append(c)
+                        elif fee_range == "above_200000" and first_year > 200000:
+                            c["first_year_fee"] = first_year
+                            matching_courses.append(c)
+                    
+                    # Skip college if no courses match fee range
+                    if not matching_courses:
+                        continue
+                    
+                    college["courses"] = matching_courses
+                    college["course_count"] = len(matching_courses)
+                else:
+                    college["courses"] = college_courses
+                    college["course_count"] = len(college_courses)
+                
                 result.append(college)
             
             return result
         
-        # No course filtering - return colleges directly (fast!)
+        # No course/fee filtering - return colleges directly (fast!)
         return colleges
         
     except Exception as e:
