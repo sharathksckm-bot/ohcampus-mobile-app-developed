@@ -1605,8 +1605,10 @@ async def create_admission(admission_data: AdmissionCreate, current_user: dict =
     # Validate course - handle MySQL IDs
     if admission_data.course_id.startswith("cc-") or admission_data.course_id.startswith("mysql-"):
         try:
-            course = await get_course_by_id(admission_data.course_id)
-            if course:
+            course_data = await get_course_by_id(admission_data.course_id)
+            if course_data:
+                # get_course_by_id returns nested structure {course: {...}, college: {...}}
+                course = course_data.get("course", course_data)
                 course_name = course.get("name")
             else:
                 raise HTTPException(status_code=400, detail="Course not found")
