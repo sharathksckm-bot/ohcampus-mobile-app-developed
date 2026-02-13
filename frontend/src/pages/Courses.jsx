@@ -230,7 +230,7 @@ export default function Courses() {
     }
 
     return result;
-  }, [courses, searchQuery, selectedCategory, selectedLevel, selectedState, selectedCity, selectedFeeRange]);
+  }, [courses, selectedCategory, selectedState, selectedCity, selectedFeeRange]);
 
   // Get filtered cities based on selected state
   const filteredCities = useMemo(() => {
