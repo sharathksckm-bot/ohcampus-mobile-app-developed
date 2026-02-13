@@ -442,6 +442,18 @@ async def get_colleges_endpoint(
             search=search
         )
         
+        # Fetch admission alerts for all MySQL colleges
+        college_ids = [c["id"] for c in colleges]
+        alerts_docs = await db.college_admission_alerts.find(
+            {"college_id": {"$in": college_ids}}, 
+            {"_id": 0}
+        ).to_list(500)
+        alerts_map = {doc["college_id"]: doc.get("admission_alerts", []) for doc in alerts_docs}
+        
+        # Add admission alerts to each college
+        for college in colleges:
+            college["admission_alerts"] = alerts_map.get(college["id"], [])
+        
         # Only fetch courses if filtering by course name or level
         if course or level:
             result = []
