@@ -192,11 +192,14 @@ export default function FeeManagement() {
         amount: fee.amount.toString(),
         hostel_fee: fee.hostel_fee?.toString() || '',
         admission_fee: fee.admission_fee?.toString() || '',
+        additional_admission_fee: fee.additional_admission_fee?.toString() || '',
+        additional_hostel_fee: fee.additional_hostel_fee?.toString() || '',
         description: fee.description || '',
       });
     } else {
       resetForm();
     }
+    setSingleCourseSearch('');
     setDialogOpen(true);
   };
 
