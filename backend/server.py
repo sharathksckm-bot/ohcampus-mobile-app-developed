@@ -1582,15 +1582,42 @@ class AdmissionUpdate(BaseModel):
 @api_router.post("/admissions", status_code=201)
 async def create_admission(admission_data: AdmissionCreate, current_user: dict = Depends(get_current_user)):
     """Create a new admission record"""
-    # Validate college
-    college = await db.colleges.find_one({"id": admission_data.college_id}, {"_id": 0})
-    if not college:
-        raise HTTPException(status_code=400, detail="College not found")
+    college_name = None
+    course_name = None
     
-    # Validate course
-    course = await db.courses.find_one({"id": admission_data.course_id}, {"_id": 0})
-    if not course:
-        raise HTTPException(status_code=400, detail="Course not found")
+    # Validate college - handle MySQL IDs
+    if admission_data.college_id.startswith("c-") or admission_data.college_id.startswith("mysql-"):
+        try:
+            college = await get_college_by_id(admission_data.college_id)
+            if college:
+                college_name = college.get("name")
+            else:
+                raise HTTPException(status_code=400, detail="College not found")
+        except Exception as e:
+            logging.error(f"Error fetching college from MySQL: {e}")
+            raise HTTPException(status_code=400, detail="College not found")
+    else:
+        college = await db.colleges.find_one({"id": admission_data.college_id}, {"_id": 0})
+        if not college:
+            raise HTTPException(status_code=400, detail="College not found")
+        college_name = college.get("name")
+    
+    # Validate course - handle MySQL IDs
+    if admission_data.course_id.startswith("cc-") or admission_data.course_id.startswith("mysql-"):
+        try:
+            course = await get_course_by_id(admission_data.course_id)
+            if course:
+                course_name = course.get("name")
+            else:
+                raise HTTPException(status_code=400, detail="Course not found")
+        except Exception as e:
+            logging.error(f"Error fetching course from MySQL: {e}")
+            raise HTTPException(status_code=400, detail="Course not found")
+    else:
+        course = await db.courses.find_one({"id": admission_data.course_id}, {"_id": 0})
+        if not course:
+            raise HTTPException(status_code=400, detail="Course not found")
+        course_name = course.get("name")
     
     # Get counselor info
     counselor = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0})
@@ -1605,9 +1632,9 @@ async def create_admission(admission_data: AdmissionCreate, current_user: dict =
         "candidate_name": admission_data.candidate_name,
         "place": admission_data.place,
         "college_id": admission_data.college_id,
-        "college_name": college.get("name"),
+        "college_name": college_name,
         "course_id": admission_data.course_id,
-        "course_name": course.get("name"),
+        "course_name": course_name,
         "admission_date": admission_data.admission_date,
         "fees_paid": total_paid,
         "total_fees": admission_data.total_fees,
