@@ -237,6 +237,34 @@ Create a web-based counseling platform for OhCampus counselors with:
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Latest Updates (Feb 2026)
+### Iteration 16 - UI Reverts & Filter Improvements (Feb 13, 2026)
+**User Request**: Revert certain UI changes and add specific filter improvements.
+
+**Changes Applied**:
+1. **Fee Management - Single Fee Dialog Reverted**:
+   - Removed search bar from single fee dialog
+   - Removed additional fees fields (additional_admission_fee, additional_hostel_fee)
+   - Dialog now has original fields: Course, Fee Type, Year/Semester, Tuition Fee, Hostel Fee, Description
+
+2. **Fee Management - Searchable Course Dropdowns Added**:
+   - "Add All Year/Semester Fees" (Bulk Fee Dialog): Added "Search course..." input above course dropdown
+   - "Add Admission Charges": Added "Search course..." input above course dropdown
+
+3. **Courses Page - Search Bar Reverted**:
+   - Reverted to single search bar with placeholder "Search courses by name, college, or location..."
+   - Removed the separate course name filter input
+
+4. **Courses Page - New Course Filter Dropdown**:
+   - Added "Course" filter dropdown in filter row alongside Category, Level, State, City, Fee Range
+   - Course filter has built-in search functionality ("Search courses..." input inside dropdown)
+   - Lists all unique course names from loaded courses
+
+5. **Fee Range Filter Clarified**:
+   - Options: "All Fee Ranges", "1st Year < ₹1L", "1st Year < ₹2L", "1st Year > ₹2L"
+   - Filters based on First Year fees only:
+     - For Annual fee type: Year 1 tuition fee
+     - For Semester fee type: Sum of Semester 1 + Semester 2 tuition fees
+
 ### Iteration 15 - Critical Production Bug Fix (Feb 12, 2026)
 **Root Cause Identified**: Frontend was built with preview environment URL (`college-counsel.preview.emergentagent.com`) and deployed to production, causing all API calls to hit the wrong server (preview with demo data).
 
