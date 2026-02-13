@@ -90,6 +90,9 @@ export default function FeeManagement() {
   const [singleCourseSearch, setSingleCourseSearch] = useState('');
   const [bulkCourseSearch, setBulkCourseSearch] = useState('');
   const [admissionCourseSearch, setAdmissionCourseSearch] = useState('');
+  const [singleCourseOpen, setSingleCourseOpen] = useState(false);
+  const [bulkCourseOpen, setBulkCourseOpen] = useState(false);
+  const [admissionCourseOpen, setAdmissionCourseOpen] = useState(false);
   const [formData, setFormData] = useState({
     course_id: '',
     fee_type: 'annual',
