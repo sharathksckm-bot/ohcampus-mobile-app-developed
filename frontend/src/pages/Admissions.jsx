@@ -733,7 +733,7 @@ export default function Admissions() {
               <div className="p-4 bg-[#0066CC] text-white rounded-lg">
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
-                    <p className="text-xs text-blue-200">Total Fees</p>
+                    <p className="text-xs text-blue-200">First Year Fees</p>
                     <p className="font-heading font-bold text-lg">
                       {formatCurrency(parseFloat(formData.total_fees) || 0)}
                     </p>
