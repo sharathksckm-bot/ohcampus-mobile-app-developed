@@ -1112,15 +1112,29 @@ async def delete_admission_charges(charge_id: str, current_user: dict = Depends(
 @api_router.get("/colleges/{college_id}/fee-summary")
 async def get_fee_summary(college_id: str):
     """Get complete fee summary with totals for a college"""
-    courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+    # Fetch courses - handle MySQL IDs
+    if college_id.startswith("c-") or college_id.startswith("mysql-"):
+        try:
+            courses = await get_courses_for_college(college_id)
+        except Exception as e:
+            logging.error(f"Error fetching courses from MySQL: {e}")
+            courses = []
+    else:
+        courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+    
     fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(500)
     admission_charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(100)
     
     # Build summary by course
     summary = []
     for course in courses:
-        course_fees = [f for f in fees if f["course_id"] == course["id"]]
-        course_admission = next((a for a in admission_charges if a["course_id"] == course["id"]), None)
+        course_id = course.get("id")
+        course_fees = [f for f in fees if f["course_id"] == course_id]
+        course_admission = next((a for a in admission_charges if a["course_id"] == course_id), None)
+        
+        # Skip courses without any fee records
+        if not course_fees and not course_admission:
+            continue
         
         # Calculate totals
         total_tuition = sum(f.get("amount", 0) for f in course_fees)
