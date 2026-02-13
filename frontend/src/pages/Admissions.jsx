@@ -398,7 +398,7 @@ export default function Admissions() {
                       <TableHead className="font-heading">Candidate</TableHead>
                       <TableHead className="font-heading">College / Course</TableHead>
                       <TableHead className="font-heading">Date</TableHead>
-                      <TableHead className="font-heading text-right">Total Fees</TableHead>
+                      <TableHead className="font-heading text-right">First Year Fees</TableHead>
                       <TableHead className="font-heading text-right">Scholarship</TableHead>
                       <TableHead className="font-heading text-right">Paid</TableHead>
                       <TableHead className="font-heading text-right">Balance</TableHead>
