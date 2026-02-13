@@ -1735,17 +1735,41 @@ async def update_admission(admission_id: str, admission_data: AdmissionUpdate, c
     if admission_data.place is not None:
         update_data["place"] = admission_data.place
     if admission_data.college_id is not None:
-        college = await db.colleges.find_one({"id": admission_data.college_id}, {"_id": 0})
-        if not college:
-            raise HTTPException(status_code=400, detail="College not found")
-        update_data["college_id"] = admission_data.college_id
-        update_data["college_name"] = college.get("name")
+        # Handle MySQL IDs
+        if admission_data.college_id.startswith("c-") or admission_data.college_id.startswith("mysql-"):
+            try:
+                college = await get_college_by_id(admission_data.college_id)
+                if not college:
+                    raise HTTPException(status_code=400, detail="College not found")
+                update_data["college_id"] = admission_data.college_id
+                update_data["college_name"] = college.get("name")
+            except Exception as e:
+                logging.error(f"Error fetching college from MySQL: {e}")
+                raise HTTPException(status_code=400, detail="College not found")
+        else:
+            college = await db.colleges.find_one({"id": admission_data.college_id}, {"_id": 0})
+            if not college:
+                raise HTTPException(status_code=400, detail="College not found")
+            update_data["college_id"] = admission_data.college_id
+            update_data["college_name"] = college.get("name")
     if admission_data.course_id is not None:
-        course = await db.courses.find_one({"id": admission_data.course_id}, {"_id": 0})
-        if not course:
-            raise HTTPException(status_code=400, detail="Course not found")
-        update_data["course_id"] = admission_data.course_id
-        update_data["course_name"] = course.get("name")
+        # Handle MySQL IDs
+        if admission_data.course_id.startswith("cc-") or admission_data.course_id.startswith("mysql-"):
+            try:
+                course = await get_course_by_id(admission_data.course_id)
+                if not course:
+                    raise HTTPException(status_code=400, detail="Course not found")
+                update_data["course_id"] = admission_data.course_id
+                update_data["course_name"] = course.get("name")
+            except Exception as e:
+                logging.error(f"Error fetching course from MySQL: {e}")
+                raise HTTPException(status_code=400, detail="Course not found")
+        else:
+            course = await db.courses.find_one({"id": admission_data.course_id}, {"_id": 0})
+            if not course:
+                raise HTTPException(status_code=400, detail="Course not found")
+            update_data["course_id"] = admission_data.course_id
+            update_data["course_name"] = course.get("name")
     if admission_data.admission_date is not None:
         update_data["admission_date"] = admission_data.admission_date
     if admission_data.total_fees is not None:
