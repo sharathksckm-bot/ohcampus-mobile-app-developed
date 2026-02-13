@@ -700,18 +700,45 @@ async def get_courses_with_college(
     category: Optional[str] = None, 
     search: Optional[str] = None, 
     level: Optional[str] = None,
+    course_name: Optional[str] = None,
     page: int = 1,
     limit: int = 50
 ):
     """Get all courses with their college information - MySQL with pagination"""
     try:
+        # Combine search and course_name filter
+        combined_search = search or course_name
+        
         result = await get_all_courses_with_colleges(
-            search=search,
+            search=combined_search,
             level=level,
             category=category,
             page=page,
             limit=limit
         )
+        
+        # Enrich courses with MongoDB fee data for fee range filtering
+        if result.get("courses"):
+            course_ids = [c["id"] for c in result["courses"]]
+            
+            # Batch fetch fees from MongoDB for all courses
+            all_fees = await db.fees.find(
+                {"course_id": {"$in": course_ids}}, 
+                {"_id": 0}
+            ).to_list(5000)
+            
+            # Create a fees lookup map by course_id
+            fees_map = {}
+            for fee in all_fees:
+                course_id = fee["course_id"]
+                if course_id not in fees_map:
+                    fees_map[course_id] = []
+                fees_map[course_id].append(fee)
+            
+            # Add fees to each course
+            for course in result["courses"]:
+                course["fees"] = fees_map.get(course["id"], [])
+        
         return result
     except Exception as e:
         logging.error(f"Error fetching courses from MySQL: {e}")
@@ -719,8 +746,8 @@ async def get_courses_with_college(
         query = {}
         if category:
             query["category"] = category
-        if search:
-            query["name"] = {"$regex": search, "$options": "i"}
+        if search or course_name:
+            query["name"] = {"$regex": search or course_name, "$options": "i"}
         
         courses = await db.courses.find(query, {"_id": 0}).to_list(500)
         
@@ -736,6 +763,8 @@ async def get_courses_with_college(
                     "state": college["state"],
                     "category": college["category"]
                 }
+                # Fetch fees from MongoDB
+                course["fees"] = await db.fees.find({"course_id": course["id"]}, {"_id": 0}).to_list(20)
                 result.append(course)
         
         return {"courses": result, "total": len(result), "page": 1, "limit": 500, "total_pages": 1}
