@@ -214,6 +214,11 @@ export default function Courses() {
       result = result.filter(c => c.college?.city === selectedCity);
     }
 
+    // Course name filter
+    if (selectedCourseName !== 'all') {
+      result = result.filter(c => c.name === selectedCourseName);
+    }
+
     // Fee range filter - considers only First Year fees
     if (selectedFeeRange !== 'all') {
       result = result.filter(c => {
