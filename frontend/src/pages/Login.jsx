@@ -40,11 +40,12 @@ export default function Login() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-3">
+          <Link to="/" className="inline-flex items-center justify-center">
             <img 
-              src="https://ohcampus.com/assets/images/logo/ohCampusLogo.png" 
+              src="https://ohcampus.com/assets/images/logo/logo.png" 
               alt="OhCampus" 
-              className="h-12"
+              className="h-14"
+              data-testid="login-logo"
             />
           </Link>
           <p className="text-[#475569] mt-2 font-body">Counselor Platform</p>
