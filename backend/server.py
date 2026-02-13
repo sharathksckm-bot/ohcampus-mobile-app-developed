@@ -857,15 +857,18 @@ class BulkFeeCreate(BaseModel):
 @api_router.post("/fees/bulk", status_code=status.HTTP_201_CREATED)
 async def create_bulk_fees(bulk_data: BulkFeeCreate, current_user: dict = Depends(require_admin)):
     """Create multiple fees at once for a course (all years or all semesters)"""
-    # Validate college exists
-    college = await db.colleges.find_one({"id": bulk_data.college_id})
-    if not college:
-        raise HTTPException(status_code=404, detail="College not found")
+    # Skip validation for MySQL IDs (c- and cc- prefixes) - they exist in external MySQL database
+    if not bulk_data.college_id.startswith("c-") and not bulk_data.college_id.startswith("mysql-"):
+        # Validate college exists in MongoDB
+        college = await db.colleges.find_one({"id": bulk_data.college_id})
+        if not college:
+            raise HTTPException(status_code=404, detail="College not found")
     
-    # Validate course exists
-    course = await db.courses.find_one({"id": bulk_data.course_id})
-    if not course:
-        raise HTTPException(status_code=404, detail="Course not found")
+    if not bulk_data.course_id.startswith("cc-") and not bulk_data.course_id.startswith("mysql-"):
+        # Validate course exists in MongoDB
+        course = await db.courses.find_one({"id": bulk_data.course_id})
+        if not course:
+            raise HTTPException(status_code=404, detail="Course not found")
     
     # Delete existing fees for this college-course-fee_type combination
     await db.fees.delete_many({
