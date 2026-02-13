@@ -240,6 +240,7 @@ export default function Courses() {
 
   const clearFilters = () => {
     setSearchQuery('');
+    setCourseNameFilter('');
     setSelectedCategory('all');
     setSelectedLevel('all');
     setSelectedState('all');
@@ -247,7 +248,7 @@ export default function Courses() {
     setSelectedFeeRange('all');
   };
 
-  const hasActiveFilters = searchQuery || selectedCategory !== 'all' || selectedLevel !== 'all' || selectedState !== 'all' || selectedCity !== 'all' || selectedFeeRange !== 'all';
+  const hasActiveFilters = searchQuery || courseNameFilter || selectedCategory !== 'all' || selectedLevel !== 'all' || selectedState !== 'all' || selectedCity !== 'all' || selectedFeeRange !== 'all';
 
   // Compare mode functions
   const toggleCompareSelection = (course) => {
