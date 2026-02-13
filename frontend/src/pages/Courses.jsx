@@ -867,39 +867,6 @@ export default function Courses() {
                       </span>
                     </div>
                   </div>
-
-                  {/* Additional Fees Section */}
-                  {courseDetail.fees.some(f => f.additional_admission_fee || f.additional_hostel_fee) && (
-                    <div className="mt-4 p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-200">
-                      <h4 className="font-heading font-semibold text-[#0F172A] mb-3 flex items-center gap-2">
-                        <Briefcase className="h-4 w-4 text-amber-600" />
-                        Additional Fees
-                      </h4>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {courseDetail.fees.map((fee, i) => (
-                          (fee.additional_admission_fee || fee.additional_hostel_fee) ? (
-                            <div key={i} className="bg-white rounded-lg p-3 border border-amber-100">
-                              <p className="text-xs text-[#94A3B8] font-body mb-2 font-semibold">
-                                {fee.fee_type === 'annual' ? `Year ${fee.year_or_semester}` : `Sem ${fee.year_or_semester}`}
-                              </p>
-                              {fee.additional_admission_fee > 0 && (
-                                <div className="flex justify-between items-center mb-1">
-                                  <span className="text-xs text-[#475569] font-body">Admission Fee</span>
-                                  <span className="font-semibold text-sm font-body text-amber-700">{formatCurrency(fee.additional_admission_fee)}</span>
-                                </div>
-                              )}
-                              {fee.additional_hostel_fee > 0 && (
-                                <div className="flex justify-between items-center">
-                                  <span className="text-xs text-[#475569] font-body">Hostel Fee</span>
-                                  <span className="font-semibold text-sm font-body text-amber-700">{formatCurrency(fee.additional_hostel_fee)}</span>
-                                </div>
-                              )}
-                            </div>
-                          ) : null
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
 
