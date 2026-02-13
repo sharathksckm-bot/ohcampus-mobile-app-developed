@@ -162,6 +162,7 @@ export default function FeeManagement() {
       description: '',
     });
     setEditingFee(null);
+    setSingleCourseSearch('');
   };
 
   const resetAdmissionForm = () => {
