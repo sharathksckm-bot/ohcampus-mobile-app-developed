@@ -1097,42 +1097,57 @@ export default function FeeManagement() {
                   <form onSubmit={handleAdmissionSubmit} className="space-y-4">
                     <div className="space-y-2">
                       <Label className="font-body">Course *</Label>
-                      <div className="relative mb-2">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
-                        <Input
-                          placeholder="Search course..."
-                          value={admissionCourseSearch}
-                          onChange={(e) => setAdmissionCourseSearch(e.target.value)}
-                          className="pl-10 h-10 font-body"
-                          data-testid="admission-course-search"
-                        />
-                      </div>
-                      <Select
-                        value={admissionFormData.course_id}
-                        onValueChange={(value) => setAdmissionFormData({ ...admissionFormData, course_id: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select course" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {courses
-                            .filter(course => 
-                              !admissionCourseSearch || 
-                              course.name.toLowerCase().includes(admissionCourseSearch.toLowerCase())
-                            )
-                            .map((course) => (
-                              <SelectItem key={course.id} value={course.id}>
-                                {course.name}
-                              </SelectItem>
-                            ))}
-                          {courses.filter(course => 
-                            !admissionCourseSearch || 
-                            course.name.toLowerCase().includes(admissionCourseSearch.toLowerCase())
-                          ).length === 0 && (
-                            <div className="p-2 text-sm text-[#94A3B8] text-center">No courses found</div>
-                          )}
-                        </SelectContent>
-                      </Select>
+                      <Popover open={admissionCourseOpen} onOpenChange={setAdmissionCourseOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={admissionCourseOpen}
+                            className="w-full justify-between font-body h-10"
+                            data-testid="admission-course-select"
+                          >
+                            {admissionFormData.course_id
+                              ? courses.find(c => c.id === admissionFormData.course_id)?.name || "Select course..."
+                              : "Select course..."}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[400px] p-0" align="start">
+                          <Command>
+                            <CommandInput 
+                              placeholder="Search course..." 
+                              value={admissionCourseSearch}
+                              onValueChange={setAdmissionCourseSearch}
+                            />
+                            <CommandList>
+                              <CommandEmpty>No course found.</CommandEmpty>
+                              <CommandGroup>
+                                {courses
+                                  .filter(course => 
+                                    !admissionCourseSearch || 
+                                    course.name.toLowerCase().includes(admissionCourseSearch.toLowerCase())
+                                  )
+                                  .map((course) => (
+                                    <CommandItem
+                                      key={course.id}
+                                      value={course.name}
+                                      onSelect={() => {
+                                        setAdmissionFormData({ ...admissionFormData, course_id: course.id });
+                                        setAdmissionCourseOpen(false);
+                                        setAdmissionCourseSearch('');
+                                      }}
+                                    >
+                                      <Check
+                                        className={`mr-2 h-4 w-4 ${admissionFormData.course_id === course.id ? "opacity-100" : "opacity-0"}`}
+                                      />
+                                      {course.name}
+                                    </CommandItem>
+                                  ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
