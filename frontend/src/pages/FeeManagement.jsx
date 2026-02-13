@@ -860,6 +860,16 @@ export default function FeeManagement() {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label className="font-body">Course *</Label>
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8] z-10" />
+                          <Input
+                            placeholder="Search course..."
+                            value={bulkCourseSearch}
+                            onChange={(e) => setBulkCourseSearch(e.target.value)}
+                            className="pl-10 h-10 font-body mb-2"
+                            data-testid="bulk-course-search"
+                          />
+                        </div>
                         <Select
                           value={bulkFormData.course_id}
                           onValueChange={handleBulkFeeCourseChange}
@@ -868,11 +878,22 @@ export default function FeeManagement() {
                             <SelectValue placeholder="Select course" />
                           </SelectTrigger>
                           <SelectContent>
-                            {courses.map((course) => (
-                              <SelectItem key={course.id} value={course.id}>
-                                {course.name} ({course.duration})
-                              </SelectItem>
-                            ))}
+                            {courses
+                              .filter(course => 
+                                !bulkCourseSearch || 
+                                course.name.toLowerCase().includes(bulkCourseSearch.toLowerCase())
+                              )
+                              .map((course) => (
+                                <SelectItem key={course.id} value={course.id}>
+                                  {course.name} ({course.duration})
+                                </SelectItem>
+                              ))}
+                            {courses.filter(course => 
+                              !bulkCourseSearch || 
+                              course.name.toLowerCase().includes(bulkCourseSearch.toLowerCase())
+                            ).length === 0 && (
+                              <div className="p-2 text-sm text-[#94A3B8] text-center">No courses found</div>
+                            )}
                           </SelectContent>
                         </Select>
                       </div>
