@@ -1756,9 +1756,11 @@ async def update_admission(admission_id: str, admission_data: AdmissionUpdate, c
         # Handle MySQL IDs
         if admission_data.course_id.startswith("cc-") or admission_data.course_id.startswith("mysql-"):
             try:
-                course = await get_course_by_id(admission_data.course_id)
-                if not course:
+                course_data = await get_course_by_id(admission_data.course_id)
+                if not course_data:
                     raise HTTPException(status_code=400, detail="Course not found")
+                # get_course_by_id returns nested structure {course: {...}, college: {...}}
+                course = course_data.get("course", course_data)
                 update_data["course_id"] = admission_data.course_id
                 update_data["course_name"] = course.get("name")
             except Exception as e:
