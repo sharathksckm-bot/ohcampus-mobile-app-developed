@@ -912,6 +912,8 @@ class BulkFeeItem(BaseModel):
     year_or_semester: int
     amount: float
     hostel_fee: Optional[float] = None
+    additional_admission_fee: Optional[float] = None  # Additional admission fees
+    additional_hostel_fee: Optional[float] = None  # Additional hostel fees
     description: Optional[str] = None
 
 class BulkFeeCreate(BaseModel):
