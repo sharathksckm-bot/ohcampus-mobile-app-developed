@@ -158,6 +158,7 @@ export default function Courses() {
         limit: pageSize,
       };
       if (searchQuery) params.search = searchQuery;
+      if (courseNameFilter) params.course_name = courseNameFilter;
       if (selectedLevel && selectedLevel !== 'all') params.level = selectedLevel;
       
       const response = await coursesAPI.getAllWithCollege(params);
@@ -178,7 +179,7 @@ export default function Courses() {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, selectedLevel, pageSize]);
+  }, [searchQuery, courseNameFilter, selectedLevel, pageSize]);
 
   useEffect(() => {
     fetchFilters();
