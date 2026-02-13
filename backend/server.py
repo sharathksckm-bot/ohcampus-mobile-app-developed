@@ -957,6 +957,8 @@ async def create_bulk_fees(bulk_data: BulkFeeCreate, current_user: dict = Depend
             "amount": fee_item.amount,
             "hostel_fee": fee_item.hostel_fee,
             "admission_fee": None,
+            "additional_admission_fee": fee_item.additional_admission_fee,
+            "additional_hostel_fee": fee_item.additional_hostel_fee,
             "description": fee_item.description,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
