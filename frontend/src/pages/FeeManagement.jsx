@@ -366,6 +366,8 @@ export default function FeeManagement() {
         amount: parseFloat(formData.amount),
         hostel_fee: formData.hostel_fee ? parseFloat(formData.hostel_fee) : null,
         admission_fee: formData.admission_fee ? parseFloat(formData.admission_fee) : null,
+        additional_admission_fee: formData.additional_admission_fee ? parseFloat(formData.additional_admission_fee) : null,
+        additional_hostel_fee: formData.additional_hostel_fee ? parseFloat(formData.additional_hostel_fee) : null,
         description: formData.description || null,
       };
 
