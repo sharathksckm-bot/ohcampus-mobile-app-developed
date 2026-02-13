@@ -724,6 +724,16 @@ export default function FeeManagement() {
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
                       <Label className="font-body">Course *</Label>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8] z-10" />
+                        <Input
+                          placeholder="Search course..."
+                          value={singleCourseSearch}
+                          onChange={(e) => setSingleCourseSearch(e.target.value)}
+                          className="pl-10 h-10 font-body mb-2"
+                          data-testid="single-fee-course-search"
+                        />
+                      </div>
                       <Select
                         value={formData.course_id}
                         onValueChange={(value) => setFormData({ ...formData, course_id: value })}
@@ -732,11 +742,22 @@ export default function FeeManagement() {
                           <SelectValue placeholder="Select course" />
                         </SelectTrigger>
                         <SelectContent>
-                          {courses.map((course) => (
-                            <SelectItem key={course.id} value={course.id}>
-                              {course.name} ({course.level} - {course.duration})
-                            </SelectItem>
-                          ))}
+                          {courses
+                            .filter(course => 
+                              !singleCourseSearch || 
+                              course.name.toLowerCase().includes(singleCourseSearch.toLowerCase())
+                            )
+                            .map((course) => (
+                              <SelectItem key={course.id} value={course.id}>
+                                {course.name} ({course.level} - {course.duration})
+                              </SelectItem>
+                            ))}
+                          {courses.filter(course => 
+                            !singleCourseSearch || 
+                            course.name.toLowerCase().includes(singleCourseSearch.toLowerCase())
+                          ).length === 0 && (
+                            <div className="p-2 text-sm text-[#94A3B8] text-center">No courses found</div>
+                          )}
                         </SelectContent>
                       </Select>
                     </div>
@@ -802,6 +823,35 @@ export default function FeeManagement() {
                           className="font-body"
                           data-testid="hostel-fee-input"
                         />
+                      </div>
+                    </div>
+
+                    {/* Additional Fees Section */}
+                    <div className="border-t pt-4 mt-2">
+                      <h4 className="font-heading font-semibold text-[#0F172A] mb-3 text-sm">Additional Fees</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="font-body">Additional Admission Fee (₹)</Label>
+                          <Input
+                            type="number"
+                            value={formData.additional_admission_fee}
+                            onChange={(e) => setFormData({ ...formData, additional_admission_fee: e.target.value })}
+                            placeholder="e.g., 25000"
+                            className="font-body"
+                            data-testid="additional-admission-fee-input"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="font-body">Additional Hostel Fee (₹)</Label>
+                          <Input
+                            type="number"
+                            value={formData.additional_hostel_fee}
+                            onChange={(e) => setFormData({ ...formData, additional_hostel_fee: e.target.value })}
+                            placeholder="e.g., 15000"
+                            className="font-body"
+                            data-testid="additional-hostel-fee-input"
+                          />
+                        </div>
                       </div>
                     </div>
 
