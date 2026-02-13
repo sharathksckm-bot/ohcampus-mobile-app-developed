@@ -74,6 +74,7 @@ export default function FeeManagement() {
   const fileInputRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
+  const [bulkCourseSearch, setBulkCourseSearch] = useState('');
   const [formData, setFormData] = useState({
     course_id: '',
     fee_type: 'annual',
