@@ -230,7 +230,13 @@ export default function Courses() {
     }
 
     return result;
-  }, [courses, selectedCategory, selectedState, selectedCity, selectedFeeRange]);
+  }, [courses, selectedCategory, selectedState, selectedCity, selectedFeeRange, selectedCourseName]);
+
+  // Get unique course names for the Course filter dropdown
+  const uniqueCourseNames = useMemo(() => {
+    const names = [...new Set(courses.map(c => c.name).filter(Boolean))];
+    return names.sort();
+  }, [courses]);
 
   // Get filtered cities based on selected state
   const filteredCities = useMemo(() => {
@@ -240,15 +246,16 @@ export default function Courses() {
 
   const clearFilters = () => {
     setSearchQuery('');
-    setCourseNameFilter('');
     setSelectedCategory('all');
     setSelectedLevel('all');
     setSelectedState('all');
     setSelectedCity('all');
     setSelectedFeeRange('all');
+    setSelectedCourseName('all');
+    setCourseNameSearch('');
   };
 
-  const hasActiveFilters = searchQuery || courseNameFilter || selectedCategory !== 'all' || selectedLevel !== 'all' || selectedState !== 'all' || selectedCity !== 'all' || selectedFeeRange !== 'all';
+  const hasActiveFilters = searchQuery || selectedCategory !== 'all' || selectedLevel !== 'all' || selectedState !== 'all' || selectedCity !== 'all' || selectedFeeRange !== 'all' || selectedCourseName !== 'all';
 
   // Compare mode functions
   const toggleCompareSelection = (course) => {
