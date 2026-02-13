@@ -74,6 +74,7 @@ export default function FeeManagement() {
   const fileInputRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
+  const [singleCourseSearch, setSingleCourseSearch] = useState('');
   const [bulkCourseSearch, setBulkCourseSearch] = useState('');
   const [admissionCourseSearch, setAdmissionCourseSearch] = useState('');
   const [formData, setFormData] = useState({
