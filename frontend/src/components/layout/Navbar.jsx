@@ -36,9 +36,10 @@ export const Navbar = () => {
           {/* Logo */}
           <Link to={isAdmin() ? '/admin' : '/dashboard'} className="flex items-center gap-2">
             <img 
-              src="https://ohcampus.com/assets/images/logo/ohCampusLogo.png" 
+              src="https://ohcampus.com/assets/images/logo/logo.png" 
               alt="OhCampus" 
               className="h-10"
+              data-testid="navbar-logo"
             />
             <span className="hidden sm:block text-sm font-body text-[#475569] border-l border-slate-300 pl-3 ml-1">
               Counselor Portal
