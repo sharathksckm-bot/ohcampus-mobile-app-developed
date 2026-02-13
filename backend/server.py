@@ -556,6 +556,12 @@ async def get_college(college_id: str):
         try:
             college = await get_college_by_id(college_id)
             if college:
+                # Fetch admission alerts from separate collection for MySQL colleges
+                alerts_doc = await db.college_admission_alerts.find_one({"college_id": college_id}, {"_id": 0})
+                if alerts_doc:
+                    college["admission_alerts"] = alerts_doc.get("admission_alerts", [])
+                else:
+                    college["admission_alerts"] = []
                 return college
         except Exception as e:
             logging.error(f"Error fetching college from MySQL: {e}")
