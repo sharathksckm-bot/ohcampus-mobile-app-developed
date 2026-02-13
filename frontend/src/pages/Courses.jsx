@@ -366,15 +366,25 @@ export default function Courses() {
         <Card className="shadow-lg border-0">
           <CardContent className="p-4 lg:p-6">
             {/* Row 1 - Search */}
-            <div className="mb-4">
-              <div className="relative w-full">
+            <div className="mb-4 flex gap-3">
+              <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
                 <Input
-                  placeholder="Search courses by name, college, or location..."
+                  placeholder="Search by college or location..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 h-11 font-body border-slate-300 w-full"
                   data-testid="course-search"
+                />
+              </div>
+              <div className="relative flex-1">
+                <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
+                <Input
+                  placeholder="Filter by course name..."
+                  value={courseNameFilter}
+                  onChange={(e) => setCourseNameFilter(e.target.value)}
+                  className="pl-10 h-11 font-body border-slate-300 w-full"
+                  data-testid="course-name-filter"
                 />
               </div>
             </div>
