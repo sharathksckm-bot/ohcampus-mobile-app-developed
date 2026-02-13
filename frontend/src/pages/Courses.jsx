@@ -78,6 +78,7 @@ export default function Courses() {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [courseNameFilter, setCourseNameFilter] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLevel, setSelectedLevel] = useState('all');
   const [selectedState, setSelectedState] = useState('all');
