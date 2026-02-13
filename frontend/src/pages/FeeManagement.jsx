@@ -158,12 +158,9 @@ export default function FeeManagement() {
       amount: '',
       hostel_fee: '',
       admission_fee: '',
-      additional_admission_fee: '',
-      additional_hostel_fee: '',
       description: '',
     });
     setEditingFee(null);
-    setSingleCourseSearch('');
   };
 
   const resetAdmissionForm = () => {
