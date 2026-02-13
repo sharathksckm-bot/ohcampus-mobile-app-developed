@@ -109,7 +109,9 @@ export default function Admissions() {
       ]);
       setAdmissions(admissionsRes.data);
       setColleges(collegesRes.data);
-      setCourses(coursesRes.data);
+      // Handle paginated response - courses might be in .courses property
+      const coursesData = coursesRes.data?.courses || coursesRes.data || [];
+      setCourses(Array.isArray(coursesData) ? coursesData : []);
     } catch (error) {
       toast.error('Failed to load data');
     } finally {
