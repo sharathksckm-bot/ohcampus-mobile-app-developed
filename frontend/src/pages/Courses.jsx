@@ -378,31 +378,57 @@ export default function Courses() {
         <Card className="shadow-lg border-0">
           <CardContent className="p-4 lg:p-6">
             {/* Row 1 - Search */}
-            <div className="mb-4 flex gap-3">
-              <div className="relative flex-1">
+            <div className="mb-4">
+              <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
                 <Input
-                  placeholder="Search by college or location..."
+                  placeholder="Search courses by name, college, or location..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 h-11 font-body border-slate-300 w-full"
                   data-testid="course-search"
                 />
               </div>
-              <div className="relative flex-1">
-                <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
-                <Input
-                  placeholder="Filter by course name..."
-                  value={courseNameFilter}
-                  onChange={(e) => setCourseNameFilter(e.target.value)}
-                  className="pl-10 h-11 font-body border-slate-300 w-full"
-                  data-testid="course-name-filter"
-                />
-              </div>
             </div>
 
             {/* Row 2 - Filters */}
             <div className="flex flex-wrap gap-3 items-center">
+                {/* Course Filter with Search */}
+                <div className="relative">
+                  <Select value={selectedCourseName} onValueChange={(value) => {
+                    setSelectedCourseName(value);
+                    setCourseNameSearch('');
+                  }}>
+                    <SelectTrigger className="w-[160px] h-10 text-sm" data-testid="course-name-filter">
+                      <BookOpen className="h-3.5 w-3.5 mr-1.5 text-[#94A3B8]" />
+                      <SelectValue placeholder="Course" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <div className="p-2 border-b">
+                        <div className="relative">
+                          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#94A3B8]" />
+                          <Input
+                            placeholder="Search courses..."
+                            value={courseNameSearch}
+                            onChange={(e) => setCourseNameSearch(e.target.value)}
+                            className="pl-8 h-8 text-sm"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </div>
+                      </div>
+                      <SelectItem value="all">All Courses</SelectItem>
+                      {uniqueCourseNames
+                        .filter(name => !courseNameSearch || name.toLowerCase().includes(courseNameSearch.toLowerCase()))
+                        .map(name => (
+                          <SelectItem key={name} value={name}>{name}</SelectItem>
+                        ))}
+                      {uniqueCourseNames.filter(name => !courseNameSearch || name.toLowerCase().includes(courseNameSearch.toLowerCase())).length === 0 && courseNameSearch && (
+                        <div className="p-2 text-sm text-[#94A3B8] text-center">No courses found</div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 {/* Category Filter */}
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                   <SelectTrigger className="w-[140px] h-10 text-sm" data-testid="category-filter">
