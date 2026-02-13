@@ -188,7 +188,7 @@ export default function Courses() {
   useEffect(() => {
     fetchCourses(1);
     setCurrentPage(1);
-  }, [searchQuery, courseNameFilter, selectedLevel]);
+  }, [searchQuery, selectedLevel]);
 
   // Handle page change
   const handlePageChange = (page) => {
