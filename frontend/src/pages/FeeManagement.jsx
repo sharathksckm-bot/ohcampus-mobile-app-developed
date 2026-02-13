@@ -175,6 +175,7 @@ export default function FeeManagement() {
       other_charges: '',
       other_charges_description: '',
     });
+    setAdmissionCourseSearch('');
   };
 
   const handleOpenDialog = (fee = null) => {
