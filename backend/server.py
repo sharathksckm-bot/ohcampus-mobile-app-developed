@@ -748,6 +748,11 @@ async def get_course_detail(course_id: str):
         try:
             result = await get_course_by_id(course_id)
             if result:
+                # Also fetch fees from MongoDB for MySQL courses
+                fees = await db.fees.find({"course_id": course_id}, {"_id": 0}).to_list(20)
+                admission_charges = await db.admission_charges.find_one({"course_id": course_id}, {"_id": 0})
+                result["fees"] = fees
+                result["admission_charges"] = admission_charges
                 return result
         except Exception as e:
             logging.error(f"Error fetching course from MySQL: {e}")
