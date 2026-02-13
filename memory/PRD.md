@@ -238,32 +238,29 @@ Create a web-based counseling platform for OhCampus counselors with:
 
 ## Latest Updates (Feb 2026)
 ### Iteration 16 - UI Reverts & Filter Improvements (Feb 13, 2026)
-**User Request**: Revert certain UI changes and add specific filter improvements.
+**User Request**: Add search bars to all course dropdowns and deploy to production.
 
 **Changes Applied**:
-1. **Fee Management - Single Fee Dialog Reverted**:
-   - Removed search bar from single fee dialog
-   - Removed additional fees fields (additional_admission_fee, additional_hostel_fee)
-   - Dialog now has original fields: Course, Fee Type, Year/Semester, Tuition Fee, Hostel Fee, Description
+1. **Fee Management - All Dialogs with Searchable Course Dropdowns**:
+   - Single Fee Dialog: Added "Search course..." input that filters dropdown as you type
+   - Bulk Fee Dialog (Add All Year/Semester Fees): Search input filters dropdown as you type
+   - Admission Charges Dialog: Search input filters dropdown as you type
 
-2. **Fee Management - Searchable Course Dropdowns Added**:
-   - "Add All Year/Semester Fees" (Bulk Fee Dialog): Added "Search course..." input above course dropdown
-   - "Add Admission Charges": Added "Search course..." input above course dropdown
+2. **Courses Page - Search and Filters**:
+   - Single search bar with placeholder "Search courses by name, college, or location..."
+   - Course filter dropdown with built-in search ("Search courses..." input inside dropdown)
+   - Typing in search filters the dropdown list in real-time
 
-3. **Courses Page - Search Bar Reverted**:
-   - Reverted to single search bar with placeholder "Search courses by name, college, or location..."
-   - Removed the separate course name filter input
-
-4. **Courses Page - New Course Filter Dropdown**:
-   - Added "Course" filter dropdown in filter row alongside Category, Level, State, City, Fee Range
-   - Course filter has built-in search functionality ("Search courses..." input inside dropdown)
-   - Lists all unique course names from loaded courses
-
-5. **Fee Range Filter Clarified**:
+3. **Fee Range Filter**:
    - Options: "All Fee Ranges", "1st Year < ₹1L", "1st Year < ₹2L", "1st Year > ₹2L"
    - Filters based on First Year fees only:
      - For Annual fee type: Year 1 tuition fee
      - For Semester fee type: Sum of Semester 1 + Semester 2 tuition fees
+
+4. **Production Deployment**:
+   - Frontend deployed to: /var/www/counselor.ohcampus.com/
+   - Backend deployed to: /var/www/counselor.ohcampus.com/backend/
+   - Backend service restarted: ohcampus-backend.service
 
 ### Iteration 15 - Critical Production Bug Fix (Feb 12, 2026)
 **Root Cause Identified**: Frontend was built with preview environment URL (`college-counsel.preview.emergentagent.com`) and deployed to production, causing all API calls to hit the wrong server (preview with demo data).
