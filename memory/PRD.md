@@ -392,6 +392,35 @@ Create a web-based counseling platform for OhCampus counselors with:
    - Changes are saved to the backend and reflected immediately
 
 ## Next Action Items
-1. **Deploy to Production**: Deploy the updated code to counselor.ohcampus.com server via SSH
-2. Add email notifications for admission deadlines
-3. Implement advanced analytics dashboard
+1. Add email notifications for admission deadlines
+2. Implement advanced analytics dashboard
+3. Fix `webmail.ohcampus.com` "not secure" browser warning
+
+## Recent Bug Fixes (Feb 14, 2026)
+
+### Admin Panel - Question Paper Upload Fix ✅
+**Issue**: Unable to upload Question Papers in the admin panel (admin.ohcampus.com) exam update page.
+
+**Root Cause Analysis**:
+1. PHP `upload_max_filesize` was only 2M
+2. PHP `post_max_size` was only 8M
+3. CodeIgniter code had hardcoded `$maxsize = 6 * 1024 * 1024` (6MB limit)
+4. PHP-FPM socket permissions (0660) caused 502 errors after restart
+
+**Fixes Applied on Production Server**:
+| Component | Before | After |
+|-----------|--------|-------|
+| PHP `upload_max_filesize` | 2M | **100M** |
+| PHP `post_max_size` | 8M | **128M** |
+| PHP `max_execution_time` | 30 | **300** |
+| PHP `max_input_time` | 60 | **300** |
+| PHP-FPM `listen.mode` | 0660 | **0666** |
+| CodeIgniter `$maxsize` | 6MB | **100MB** |
+| Nginx `client_max_body_size` | 100M (already set) | ✅ |
+
+**Files Modified**:
+- `/opt/cpanel/ea-php81/root/etc/php.ini`
+- `/opt/cpanel/ea-php81/root/etc/php-fpm.d/campusapi.ohcampus.com.conf`
+- `/home/ohcampus/public_html/campusapi.ohcampus.com/application/controllers/admin/Exam.php`
+
+**Testing**: Successfully tested uploads up to 50MB with HTTP 200 response.
