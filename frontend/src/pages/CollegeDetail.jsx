@@ -60,6 +60,64 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+// Helper function to parse PHP serialized eligibility data
+const parseEligibility = (eligibility) => {
+  if (!eligibility) return null;
+  
+  // Check if it's PHP serialized data (starts with 'a:')
+  if (eligibility.startsWith('a:')) {
+    try {
+      // Parse PHP serialized array format
+      const parts = [];
+      
+      // Extract qualification
+      const qualMatch = eligibility.match(/s:13:"qualification";a:\d+:\{([^}]*)\}/);
+      if (qualMatch) {
+        const quals = qualMatch[1].match(/s:\d+:"([^"]+)"/g);
+        if (quals && quals.length > 0) {
+          const qualValues = quals.map(q => q.match(/s:\d+:"([^"]+)"/)[1]);
+          parts.push(`<strong>Qualification:</strong> ${qualValues.join(', ')}`);
+        }
+      }
+      
+      // Extract cut_off
+      const cutoffMatch = eligibility.match(/s:7:"cut_off";a:\d+:\{([^}]*)\}/);
+      if (cutoffMatch) {
+        const cutoffs = cutoffMatch[1].match(/s:\d+:"([^"]+)"/g);
+        if (cutoffs && cutoffs.length > 0) {
+          const cutoffValues = cutoffs.map(c => c.match(/s:\d+:"([^"]+)"/)[1]);
+          parts.push(`<strong>Cut Off:</strong> ${cutoffValues.join(', ')}`);
+        }
+      }
+      
+      // Extract other_eligibility
+      const otherMatch = eligibility.match(/s:17:"other_eligibility";s:\d+:"(.*)";?\}$/);
+      if (otherMatch && otherMatch[1] && otherMatch[1].trim() !== '') {
+        // Decode escaped characters
+        let other = otherMatch[1]
+          .replace(/\\"/g, '"')
+          .replace(/\\n/g, '\n')
+          .replace(/&nbsp;/g, ' ')
+          .replace(/<br\s*\/?>/gi, '<br/>');
+        if (other.trim()) {
+          parts.push(`<strong>Other Requirements:</strong><br/>${other}`);
+        }
+      }
+      
+      if (parts.length > 0) {
+        return parts.join('<br/><br/>');
+      }
+      return null;
+    } catch (e) {
+      console.error('Error parsing eligibility:', e);
+      return null;
+    }
+  }
+  
+  // If it's regular HTML or text, return as is
+  return eligibility;
+};
+
 // Seat status configuration
 const SEAT_STATUS_CONFIG = {
   'Available': { color: 'bg-green-100 text-green-700 border-green-200', icon: Check },
