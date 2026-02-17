@@ -237,6 +237,24 @@ Create a web-based counseling platform for OhCampus counselors with:
 - **Counselor**: counselor@ohcampus.com / counselor123
 
 ## Latest Updates (Feb 2026)
+
+### Iteration 17 - Critical Production Fixes (Feb 17, 2026)
+**Issues Fixed:**
+
+1. **ohcampus.com Data Loading Issue - FIXED**
+   - **Root Cause:** 40+ Angular chunk JavaScript files had an expired JWT token (issued Feb 2024, expired March 2024) hardcoded in them. When users visited the site, API calls returned 402 Unauthorized.
+   - **Fix:** Updated all 40 JS files in `/home/ohcampus/public_html/` with the new long-lived token (expires 2036).
+   - **Additional Fix:** Added token initialization script to `index.html` head section.
+   - **Cache Fix:** Reduced Nginx cache for JS files from 1 year to 7 days to prevent future stale file issues.
+
+2. **Counselor Portal Eligibility Display - VERIFIED WORKING**
+   - Eligibility section on college course details now shows properly formatted data (e.g., "Qualification: 10+2/2nd PUC | Cut Off: 45%") instead of raw PHP serialized strings.
+
+**Server Files Modified:**
+- `/home/ohcampus/public_html/index.html` - Added token initialization script
+- `/home/ohcampus/public_html/*.js` (40 files) - Replaced expired JWT token
+- `/etc/nginx/conf.d/ohcampus.com.conf` - Changed cache duration from 1y to 7d
+
 ### Iteration 16 - UI Reverts & Filter Improvements (Feb 13, 2026)
 **User Request**: Add search bars to all course dropdowns and deploy to production.
 
