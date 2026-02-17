@@ -966,7 +966,7 @@ export default function CollegeDetail() {
               )}
 
               {/* Eligibility */}
-              {courseDetail.course.eligibility && (
+              {courseDetail.course.eligibility && parseEligibility(courseDetail.course.eligibility) && (
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
                   <h4 className="font-heading font-semibold text-[#0F172A] mb-2 text-sm flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-green-500 flex items-center justify-center">
@@ -977,7 +977,7 @@ export default function CollegeDetail() {
                   <div 
                     className="text-[#475569] font-body text-sm leading-relaxed prose prose-sm max-w-none"
                     dangerouslySetInnerHTML={{ 
-                      __html: courseDetail.course.eligibility.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                      __html: parseEligibility(courseDetail.course.eligibility).replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
                     }}
                   />
                 </div>
