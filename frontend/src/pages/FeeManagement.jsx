@@ -285,7 +285,16 @@ export default function FeeManagement() {
     const course = courses.find(c => c.id === courseId);
     const existingFees = fees.filter(f => f.course_id === courseId && f.fee_type === bulkFormData.fee_type);
     
-    let numPeriods = bulkFormData.fee_type === 'annual' ? (course?.duration_years || 4) : (course?.duration_semesters || 8);
+    // Extended to support longer courses
+    let numPeriods = bulkFormData.fee_type === 'annual' 
+      ? Math.max(course?.duration_years || 4, 6)
+      : Math.max(course?.duration_semesters || 8, 12);
+    
+    // Include any existing fees beyond the default periods
+    const maxExistingPeriod = existingFees.length > 0 
+      ? Math.max(...existingFees.map(f => f.year_or_semester))
+      : 0;
+    numPeriods = Math.max(numPeriods, maxExistingPeriod);
     
     const feeEntries = Array.from({ length: numPeriods }, (_, i) => {
       const existing = existingFees.find(f => f.year_or_semester === i + 1);
