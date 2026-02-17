@@ -419,6 +419,14 @@ Create a web-based counseling platform for OhCampus counselors with:
 
 **Deployed to**: `counselor.ohcampus.com`
 
+**Important: Production Database Credentials**:
+```
+MYSQL_HOST=localhost
+MYSQL_USER=ohcampus_ohcamhk
+MYSQL_PASSWORD=ohcampus123#
+MYSQL_DATABASE=ohcampus_beta
+```
+
 ## Recent Bug Fixes (Feb 14, 2026)
 
 ### Admin Panel - Question Paper Upload Fix ✅
