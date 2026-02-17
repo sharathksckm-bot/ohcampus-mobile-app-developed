@@ -395,6 +395,29 @@ Create a web-based counseling platform for OhCampus counselors with:
 1. Add email notifications for admission deadlines
 2. Implement advanced analytics dashboard
 3. Fix `webmail.ohcampus.com` "not secure" browser warning
+4. Add dynamic meta descriptions to ohcampus.com (SEO)
+
+## Recent Bug Fixes (Feb 17, 2026)
+
+### Fee Management - Extended Year/Semester Support ✅
+**Issue**: Unable to add fees for 5th and 6th year (for courses like Pharm.D which is 6 years) and additional semesters (9th, 10th, etc.)
+
+**Fixes Applied**:
+1. **Extended default periods**:
+   - Annual fees: Now shows 6 years by default (was 4)
+   - Semester fees: Now shows 12 semesters by default (was 8)
+
+2. **Single Fee Dialog**: Year/Semester dropdown now shows up to 10 years or 20 semesters
+
+3. **Bulk Fee Dialog**: 
+   - Added "Add 2 More Years/Semesters" button to add additional periods
+   - Added "Remove Empty Rows" button to clean up unused entries
+   - Automatically includes any existing fees beyond default periods
+
+**Files Modified**:
+- `/app/frontend/src/pages/FeeManagement.jsx` - Updated `getPeriodOptions()`, `openBulkFeeDialog()`, `handleBulkFeeCourseChange()`, `handleBulkFeeTypeChange()`, added `addMorePeriods()` and `removeEmptyTrailingPeriods()` functions
+
+**Deployed to**: `counselor.ohcampus.com`
 
 ## Recent Bug Fixes (Feb 14, 2026)
 
