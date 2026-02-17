@@ -185,6 +185,22 @@ export default function Courses() {
       };
       if (searchQuery) params.search = searchQuery;
       if (selectedLevel && selectedLevel !== 'all') params.level = selectedLevel;
+      if (selectedState && selectedState !== 'all') params.state = selectedState;
+      if (selectedCity && selectedCity !== 'all') params.city = selectedCity;
+      if (selectedCourseName && selectedCourseName !== 'all') params.course_name = selectedCourseName;
+      
+      // Fee range filter - server-side
+      if (selectedFeeRange && selectedFeeRange !== 'all') {
+        if (selectedFeeRange === 'below_100000') {
+          params.fee_min = 1;
+          params.fee_max = 100000;
+        } else if (selectedFeeRange === 'below_200000') {
+          params.fee_min = 1;
+          params.fee_max = 200000;
+        } else if (selectedFeeRange === 'above_200000') {
+          params.fee_min = 200001;
+        }
+      }
       
       const response = await coursesAPI.getAllWithCollege(params);
       const data = response.data;
@@ -204,7 +220,7 @@ export default function Courses() {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, selectedLevel, pageSize]);
+  }, [searchQuery, selectedLevel, selectedState, selectedCity, selectedCourseName, selectedFeeRange, pageSize]);
 
   useEffect(() => {
     fetchFilters();
