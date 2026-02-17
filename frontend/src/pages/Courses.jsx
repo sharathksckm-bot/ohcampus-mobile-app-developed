@@ -229,7 +229,7 @@ export default function Courses() {
   useEffect(() => {
     fetchCourses(1);
     setCurrentPage(1);
-  }, [searchQuery, selectedLevel]);
+  }, [searchQuery, selectedLevel, selectedState, selectedCity, selectedCourseName, selectedFeeRange]);
 
   // Handle page change
   const handlePageChange = (page) => {
@@ -238,45 +238,17 @@ export default function Courses() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Filter courses (client-side for additional filters not handled by server)
+  // Filter courses (client-side only for category which is not in MySQL)
   const filteredCourses = useMemo(() => {
     let result = courses;
 
-    // Client-side filtering for category/state/city (server handles search and level)
+    // Category filter - still client-side as it's not in MySQL schema
     if (selectedCategory !== 'all') {
       result = result.filter(c => c.category === selectedCategory);
     }
-    
-    if (selectedState !== 'all') {
-      result = result.filter(c => c.college?.state === selectedState);
-    }
-    
-    if (selectedCity !== 'all') {
-      result = result.filter(c => c.college?.city === selectedCity);
-    }
-
-    // Course name filter
-    if (selectedCourseName !== 'all') {
-      result = result.filter(c => c.name === selectedCourseName);
-    }
-
-    // Fee range filter - considers only First Year fees (or total_fees for MySQL courses)
-    if (selectedFeeRange !== 'all') {
-      result = result.filter(c => {
-        const firstYearFees = getFirstYearFees(c);
-        if (selectedFeeRange === 'below_100000') {
-          return firstYearFees > 0 && firstYearFees < 100000;
-        } else if (selectedFeeRange === 'below_200000') {
-          return firstYearFees > 0 && firstYearFees < 200000;
-        } else if (selectedFeeRange === 'above_200000') {
-          return firstYearFees > 200000;
-        }
-        return true;
-      });
-    }
 
     return result;
-  }, [courses, selectedCategory, selectedState, selectedCity, selectedFeeRange, selectedCourseName]);
+  }, [courses, selectedCategory]);
 
   // Get unique course names for the Course filter dropdown
   const uniqueCourseNames = useMemo(() => {
