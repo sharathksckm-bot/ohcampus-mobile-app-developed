@@ -563,14 +563,19 @@ export default function FeeManagement() {
   }, {});
 
   // Get period options based on selected course and fee type
+  // Extended to support up to 10 years and 20 semesters for longer courses like Pharm.D (6 years)
   const getPeriodOptions = () => {
     const course = getCourse(formData.course_id);
-    if (!course) return [1, 2, 3, 4, 5, 6, 7, 8];
+    if (!course) return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     
     if (formData.fee_type === 'annual') {
-      return Array.from({ length: course.duration_years || 4 }, (_, i) => i + 1);
+      // Use course duration or default to 10 years max for longer courses
+      const maxYears = Math.max(course.duration_years || 4, 10);
+      return Array.from({ length: maxYears }, (_, i) => i + 1);
     } else {
-      return Array.from({ length: course.duration_semesters || 8 }, (_, i) => i + 1);
+      // Use course duration or default to 20 semesters max for longer courses
+      const maxSemesters = Math.max(course.duration_semesters || 8, 20);
+      return Array.from({ length: maxSemesters }, (_, i) => i + 1);
     }
   };
 
