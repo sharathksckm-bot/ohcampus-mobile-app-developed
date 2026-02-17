@@ -632,12 +632,12 @@ export default function Courses() {
                   )}
 
                   {/* Show First Year Fee */}
-                  {course.fees && course.fees.length > 0 && (
+                  {(course.fees && course.fees.length > 0) || course.total_fees ? (
                     <div className="flex items-center gap-1.5 text-xs text-[#475569] font-body mb-2">
                       <IndianRupee className="h-3 w-3 flex-shrink-0" />
-                      <span className="font-medium">{formatCurrency(getFirstYearFees(course.fees))} (1st Year)</span>
+                      <span className="font-medium">{formatCurrency(getFirstYearFees(course))} (1st Year)</span>
                     </div>
-                  )}
+                  ) : null}
 
                   <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                     <div className="flex items-center gap-1 text-xs text-[#475569] font-body">
