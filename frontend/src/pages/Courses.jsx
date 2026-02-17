@@ -231,10 +231,10 @@ export default function Courses() {
       result = result.filter(c => c.name === selectedCourseName);
     }
 
-    // Fee range filter - considers only First Year fees
+    // Fee range filter - considers only First Year fees (or total_fees for MySQL courses)
     if (selectedFeeRange !== 'all') {
       result = result.filter(c => {
-        const firstYearFees = getFirstYearFees(c.fees);
+        const firstYearFees = getFirstYearFees(c);
         if (selectedFeeRange === 'below_100000') {
           return firstYearFees > 0 && firstYearFees < 100000;
         } else if (selectedFeeRange === 'below_200000') {
