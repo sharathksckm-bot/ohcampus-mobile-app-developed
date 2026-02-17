@@ -1104,6 +1104,34 @@ export default function FeeManagement() {
                       </div>
                     )}
 
+                    {/* Add More Years/Semesters Button */}
+                    {bulkFormData.course_id && bulkFormData.fees.length > 0 && (
+                      <div className="flex gap-2 mt-4 pt-3 border-t border-slate-200">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => addMorePeriods(2)}
+                          className="font-body text-[#0066CC] border-[#0066CC] hover:bg-blue-50"
+                          data-testid="add-more-periods-btn"
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          Add 2 More {bulkFormData.fee_type === 'annual' ? 'Years' : 'Semesters'}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={removeEmptyTrailingPeriods}
+                          className="font-body text-slate-500 hover:text-slate-700"
+                          data-testid="remove-empty-periods-btn"
+                        >
+                          <X className="h-4 w-4 mr-1" />
+                          Remove Empty Rows
+                        </Button>
+                      </div>
+                    )}
+
                     {!bulkFormData.course_id && (
                       <Alert className="bg-blue-50 border-blue-200">
                         <AlertCircle className="h-4 w-4 text-blue-600" />
