@@ -110,21 +110,33 @@ export default function Courses() {
   ];
 
   // Calculate first year fees only (1st year annual OR 1st+2nd semester)
-  const getFirstYearFees = (fees) => {
-    if (!fees || fees.length === 0) return 0;
+  // Also handles MySQL courses that have total_fees instead of detailed fees array
+  const getFirstYearFees = (course) => {
+    const fees = course?.fees;
     
-    // Get first year annual fees
-    const firstYearAnnual = fees
-      .filter(f => f.fee_type === 'annual' && f.year_or_semester === 1)
-      .reduce((sum, f) => sum + (f.amount || 0), 0);
+    // If fees array exists and has data, use structured fee calculation
+    if (fees && fees.length > 0) {
+      // Get first year annual fees
+      const firstYearAnnual = fees
+        .filter(f => f.fee_type === 'annual' && f.year_or_semester === 1)
+        .reduce((sum, f) => sum + (f.amount || 0), 0);
+      
+      // Get 1st and 2nd semester fees
+      const firstTwoSemesters = fees
+        .filter(f => f.fee_type === 'semester' && (f.year_or_semester === 1 || f.year_or_semester === 2))
+        .reduce((sum, f) => sum + (f.amount || 0), 0);
+      
+      // Return whichever is available (prefer annual if both exist)
+      return firstYearAnnual > 0 ? firstYearAnnual : firstTwoSemesters;
+    }
     
-    // Get 1st and 2nd semester fees
-    const firstTwoSemesters = fees
-      .filter(f => f.fee_type === 'semester' && (f.year_or_semester === 1 || f.year_or_semester === 2))
-      .reduce((sum, f) => sum + (f.amount || 0), 0);
+    // Fallback to total_fees for MySQL courses (represents 1st year / total fees)
+    if (course?.total_fees) {
+      const totalFees = parseFloat(course.total_fees);
+      return isNaN(totalFees) ? 0 : totalFees;
+    }
     
-    // Return whichever is available (prefer annual if both exist)
-    return firstYearAnnual > 0 ? firstYearAnnual : firstTwoSemesters;
+    return 0;
   };
 
   // Calculate total fees (all years/semesters combined)
