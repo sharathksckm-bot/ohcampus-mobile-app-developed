@@ -140,9 +140,22 @@ export default function Courses() {
   };
 
   // Calculate total fees (all years/semesters combined)
-  const getTotalFees = (fees) => {
-    if (!fees || fees.length === 0) return 0;
-    return fees.reduce((sum, f) => sum + (f.amount || 0), 0);
+  // Also handles MySQL courses that have total_fees instead of detailed fees array
+  const getTotalFees = (course) => {
+    const fees = course?.fees;
+    
+    // If fees array exists and has data, sum all amounts
+    if (fees && fees.length > 0) {
+      return fees.reduce((sum, f) => sum + (f.amount || 0), 0);
+    }
+    
+    // Fallback to total_fees for MySQL courses
+    if (course?.total_fees) {
+      const totalFees = parseFloat(course.total_fees);
+      return isNaN(totalFees) ? 0 : totalFees;
+    }
+    
+    return 0;
   };
 
   // Fetch filters separately
