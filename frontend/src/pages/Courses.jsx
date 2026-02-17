@@ -1063,7 +1063,7 @@ export default function Courses() {
                     </TableCell>
                     {selectedForCompare.map(course => (
                       <TableCell key={course.id} className="text-center font-body text-xs font-semibold p-2">
-                        {course.fees && course.fees.length > 0 ? formatCurrency(getTotalFees(course.fees)) : '—'}
+                        {(course.fees && course.fees.length > 0) || course.total_fees ? formatCurrency(getTotalFees(course)) : '—'}
                       </TableCell>
                     ))}
                   </TableRow>
