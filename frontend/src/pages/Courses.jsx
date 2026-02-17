@@ -888,7 +888,7 @@ export default function Courses() {
                     <div className="p-3 bg-[#0066CC] text-white flex justify-between items-center">
                       <span className="font-body">Total Tuition Fees</span>
                       <span className="font-heading font-bold text-lg">
-                        {formatCurrency(getTotalFees(courseDetail.fees))}
+                        {formatCurrency(getTotalFees(courseDetail))}
                       </span>
                     </div>
                   </div>
