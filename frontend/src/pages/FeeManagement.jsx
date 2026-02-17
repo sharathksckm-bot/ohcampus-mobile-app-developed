@@ -346,6 +346,44 @@ export default function FeeManagement() {
     }));
   };
 
+  // Add more year/semester entries to bulk fee form
+  const addMorePeriods = (count = 2) => {
+    setBulkFormData(prev => {
+      const currentLength = prev.fees.length;
+      const newEntries = Array.from({ length: count }, (_, i) => ({
+        year_or_semester: currentLength + i + 1,
+        amount: '',
+        hostel_fee: '',
+        description: ''
+      }));
+      return {
+        ...prev,
+        fees: [...prev.fees, ...newEntries]
+      };
+    });
+  };
+
+  // Remove empty trailing periods from bulk fee form
+  const removeEmptyTrailingPeriods = () => {
+    setBulkFormData(prev => {
+      // Find last non-empty entry
+      let lastFilledIndex = prev.fees.length - 1;
+      while (lastFilledIndex >= 0 && !prev.fees[lastFilledIndex].amount) {
+        lastFilledIndex--;
+      }
+      // Keep at least the course's default periods
+      const course = courses.find(c => c.id === prev.course_id);
+      const minPeriods = prev.fee_type === 'annual' 
+        ? Math.max(course?.duration_years || 4, 4)
+        : Math.max(course?.duration_semesters || 8, 8);
+      const newLength = Math.max(lastFilledIndex + 1, minPeriods);
+      return {
+        ...prev,
+        fees: prev.fees.slice(0, newLength)
+      };
+    });
+  };
+
   // Submit bulk fees
   const handleBulkFeeSubmit = async (e) => {
     e.preventDefault();
