@@ -761,19 +761,28 @@ async def get_courses_with_college(
     level: Optional[str] = None,
     course_name: Optional[str] = None,
     page: int = 1,
-    limit: int = 50
+    limit: int = 50,
+    fee_min: Optional[int] = None,
+    fee_max: Optional[int] = None,
+    state: Optional[str] = None,
+    city: Optional[str] = None
 ):
-    """Get all courses with their college information - MySQL with pagination"""
+    """Get all courses with their college information - MySQL with pagination and filters"""
     try:
         # Combine search and course_name filter
-        combined_search = search or course_name
+        combined_search = search
         
         result = await get_all_courses_with_colleges(
             search=combined_search,
             level=level,
             category=category,
             page=page,
-            limit=limit
+            limit=limit,
+            fee_min=fee_min,
+            fee_max=fee_max,
+            state=state,
+            city=city,
+            course_name=course_name
         )
         
         # Enrich courses with MongoDB fee data for fee range filtering
