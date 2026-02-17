@@ -468,9 +468,14 @@ async def get_all_courses_with_colleges(
     level: Optional[str] = None,
     category: Optional[str] = None,
     page: int = 1,
-    limit: int = 50
+    limit: int = 50,
+    fee_min: Optional[int] = None,
+    fee_max: Optional[int] = None,
+    state: Optional[str] = None,
+    city: Optional[str] = None,
+    course_name: Optional[str] = None
 ) -> Dict[str, Any]:
-    """Fetch courses from featured colleges with pagination"""
+    """Fetch courses from featured colleges with pagination and filters"""
     
     # Base query for counting
     count_query = """
@@ -478,6 +483,8 @@ async def get_all_courses_with_colleges(
         INNER JOIN courses c ON cc.courseid = c.id
         INNER JOIN college col ON cc.collegeid = col.id
         LEFT JOIN academic_categories ac ON c.academic_category = ac.category_id
+        LEFT JOIN state s ON col.stateid = s.id
+        LEFT JOIN city ct ON col.cityid = ct.id
         WHERE (col.package_type = 'feature_listing' OR col.package_type = 'featured_listing')
         AND col.status = 1 AND col.is_deleted = 0 AND cc.is_deleted = 0
     """
@@ -531,6 +538,45 @@ async def get_all_courses_with_colleges(
         count_query += level_condition
         params.extend([level, level])
         count_params.extend([level, level])
+    
+    # Fee range filter (based on total_fees which represents 1st year fees)
+    if fee_min is not None:
+        fee_min_condition = " AND cc.total_fees IS NOT NULL AND cc.total_fees != '' AND CAST(cc.total_fees AS UNSIGNED) >= %s"
+        query += fee_min_condition
+        count_query += fee_min_condition
+        params.append(fee_min)
+        count_params.append(fee_min)
+    
+    if fee_max is not None:
+        fee_max_condition = " AND cc.total_fees IS NOT NULL AND cc.total_fees != '' AND CAST(cc.total_fees AS UNSIGNED) < %s"
+        query += fee_max_condition
+        count_query += fee_max_condition
+        params.append(fee_max)
+        count_params.append(fee_max)
+    
+    # State filter
+    if state:
+        state_condition = " AND s.statename = %s"
+        query += state_condition
+        count_query += state_condition
+        params.append(state)
+        count_params.append(state)
+    
+    # City filter
+    if city:
+        city_condition = " AND ct.city = %s"
+        query += city_condition
+        count_query += city_condition
+        params.append(city)
+        count_params.append(city)
+    
+    # Course name filter (exact match)
+    if course_name:
+        course_name_condition = " AND c.name = %s"
+        query += course_name_condition
+        count_query += course_name_condition
+        params.append(course_name)
+        count_params.append(course_name)
     
     # Get total count
     count_result = await execute_query(count_query, tuple(count_params) if count_params else None)
