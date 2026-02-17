@@ -241,7 +241,16 @@ export default function FeeManagement() {
     const existingFees = courseId ? fees.filter(f => f.course_id === courseId && f.fee_type === feeType) : [];
     
     // Determine number of periods based on course duration
-    let numPeriods = feeType === 'annual' ? (course?.duration_years || 4) : (course?.duration_semesters || 8);
+    // Extended to support up to 10 years and 20 semesters for longer courses
+    let numPeriods = feeType === 'annual' 
+      ? Math.max(course?.duration_years || 4, 6)  // Default at least 6 years for Pharm.D etc
+      : Math.max(course?.duration_semesters || 8, 12);  // Default at least 12 semesters
+    
+    // If there are existing fees beyond the default periods, include those too
+    const maxExistingPeriod = existingFees.length > 0 
+      ? Math.max(...existingFees.map(f => f.year_or_semester))
+      : 0;
+    numPeriods = Math.max(numPeriods, maxExistingPeriod);
     
     // Pre-populate with existing fees or empty entries
     const feeEntries = Array.from({ length: numPeriods }, (_, i) => {
