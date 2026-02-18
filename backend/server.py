@@ -964,7 +964,7 @@ async def get_all_fees(college_id: Optional[str] = None, course_id: Optional[str
 
 @api_router.get("/colleges/{college_id}/fees", response_model=List[Fee])
 async def get_college_fees(college_id: str):
-    fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+    fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(300)
     return fees
 
 @api_router.post("/fees", response_model=Fee, status_code=status.HTTP_201_CREATED)
