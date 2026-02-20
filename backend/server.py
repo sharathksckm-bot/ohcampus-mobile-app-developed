@@ -1626,10 +1626,10 @@ async def get_target_alerts(current_user: dict = Depends(get_current_user)):
             team_ids.append(current_user["user_id"])
             query["counselor_id"] = {"$in": team_ids}
         
-        targets = await db.targets.find(query, {"_id": 0}).to_list(100)
+        targets = await db.targets.find(query, {"_id": 0}).to_list(None)
     else:
         # Regular counselor - get their own target
-        targets = await db.targets.find({"counselor_id": current_user["user_id"], "period": current_month}, {"_id": 0}).to_list(10)
+        targets = await db.targets.find({"counselor_id": current_user["user_id"], "period": current_month}, {"_id": 0}).to_list(None)
     
     for target in targets:
         # Calculate actual progress
