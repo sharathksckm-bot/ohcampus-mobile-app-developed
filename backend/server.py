@@ -1287,7 +1287,7 @@ async def get_faqs(college_id: Optional[str] = None, include_global: bool = True
     else:
         query = {}
     
-    faqs = await db.faqs.find(query, {"_id": 0}).sort("order", 1).to_list(100)
+    faqs = await db.faqs.find(query, {"_id": 0}).sort("order", 1).to_list(None)
     return faqs
 
 @api_router.post("/faqs", response_model=FAQ, status_code=status.HTTP_201_CREATED)
