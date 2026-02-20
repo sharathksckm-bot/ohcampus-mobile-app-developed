@@ -1156,12 +1156,12 @@ async def get_all_admission_charges(college_id: Optional[str] = None, course_id:
         query["college_id"] = college_id
     if course_id:
         query["course_id"] = course_id
-    charges = await db.admission_charges.find(query, {"_id": 0}).to_list(500)
+    charges = await db.admission_charges.find(query, {"_id": 0}).to_list(None)
     return charges
 
 @api_router.get("/colleges/{college_id}/admission-charges")
 async def get_college_admission_charges(college_id: str):
-    charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+    charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(None)
     return charges
 
 @api_router.post("/admission-charges", response_model=AdmissionCharges, status_code=status.HTTP_201_CREATED)
