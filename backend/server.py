@@ -553,9 +553,9 @@ async def get_colleges_endpoint(
         if search:
             query["name"] = {"$regex": search, "$options": "i"}
         
-        colleges = await db.colleges.find(query, {"_id": 0}).to_list(100)
+        colleges = await db.colleges.find(query, {"_id": 0}).to_list(None)
         for college in colleges:
-            courses = await db.courses.find({"college_id": college["id"]}, {"_id": 0}).to_list(100)
+            courses = await db.courses.find({"college_id": college["id"]}, {"_id": 0}).to_list(None)
             college["courses"] = courses
             college["course_count"] = len(courses)
         
