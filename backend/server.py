@@ -724,7 +724,7 @@ async def get_courses(college_id: str):
             logging.error(f"Error fetching courses from MySQL: {e}")
     
     # Fallback to MongoDB
-    courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+    courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(None)
     return courses
 
 @api_router.post("/courses", response_model=Course, status_code=status.HTTP_201_CREATED)
