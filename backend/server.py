@@ -1340,7 +1340,7 @@ class CounselorUpdate(BaseModel):
 @api_router.get("/admin/users")
 async def get_all_users(current_user: dict = Depends(require_admin)):
     """Get all counselor users (admin only)"""
-    users = await db.users.find({"role": "counselor"}, {"_id": 0, "password_hash": 0}).to_list(500)
+    users = await db.users.find({"role": "counselor"}, {"_id": 0, "password_hash": 0}).to_list(None)
     
     # Enrich with team lead names
     for user in users:
@@ -1356,7 +1356,7 @@ async def get_team_leads(current_user: dict = Depends(require_admin)):
     team_leads = await db.users.find(
         {"role": "counselor", "designation": {"$in": ["Team Lead", "Admission Manager"]}, "is_active": {"$ne": False}},
         {"_id": 0, "id": 1, "name": 1, "designation": 1}
-    ).to_list(100)
+    ).to_list(None)
     return team_leads
 
 @api_router.get("/admin/users/{user_id}")
