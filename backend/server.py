@@ -1796,7 +1796,7 @@ async def get_admissions(current_user: dict = Depends(get_current_user)):
         # Regular counselor sees only their own
         query["counselor_id"] = current_user["user_id"]
     
-    admissions = await db.admissions.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    admissions = await db.admissions.find(query, {"_id": 0}).sort("created_at", -1).to_list(None)
     return admissions
 
 @api_router.get("/admissions/{admission_id}")
