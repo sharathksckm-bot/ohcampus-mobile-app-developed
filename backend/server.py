@@ -592,9 +592,9 @@ async def compare_colleges(college_ids: str):
         # Fallback to MongoDB
         college = await db.colleges.find_one({"id": college_id}, {"_id": 0})
         if college:
-            courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(300)
-            fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(300)
-            admission_charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(300)
+            courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(None)
+            fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(None)
+            admission_charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(None)
             
             fees_by_course = {}
             for fee in fees:
