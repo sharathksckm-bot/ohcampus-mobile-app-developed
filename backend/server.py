@@ -1222,10 +1222,10 @@ async def get_fee_summary(college_id: str):
             logging.error(f"Error fetching courses from MySQL: {e}")
             courses = []
     else:
-        courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+        courses = await db.courses.find({"college_id": college_id}, {"_id": 0}).to_list(None)
     
-    fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(500)
-    admission_charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(100)
+    fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(None)
+    admission_charges = await db.admission_charges.find({"college_id": college_id}, {"_id": 0}).to_list(None)
     
     # Build summary by course
     summary = []
