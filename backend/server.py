@@ -832,7 +832,7 @@ async def get_courses_with_college(
                     "category": college["category"]
                 }
                 # Fetch fees from MongoDB
-                course["fees"] = await db.fees.find({"course_id": course["id"]}, {"_id": 0}).to_list(20)
+                course["fees"] = await db.fees.find({"course_id": course["id"]}, {"_id": 0}).to_list(None)
                 result.append(course)
         
         return {"courses": result, "total": len(result), "page": 1, "limit": 500, "total_pages": 1}
@@ -846,7 +846,7 @@ async def get_course_detail(course_id: str):
             result = await get_course_by_id(course_id)
             if result:
                 # Also fetch fees from MongoDB for MySQL courses
-                fees = await db.fees.find({"course_id": course_id}, {"_id": 0}).to_list(20)
+                fees = await db.fees.find({"course_id": course_id}, {"_id": 0}).to_list(None)
                 admission_charges = await db.admission_charges.find_one({"course_id": course_id}, {"_id": 0})
                 result["fees"] = fees
                 result["admission_charges"] = admission_charges
@@ -863,7 +863,7 @@ async def get_course_detail(course_id: str):
     college = await db.colleges.find_one({"id": course["college_id"]}, {"_id": 0})
     
     # Get fees for this course
-    fees = await db.fees.find({"course_id": course_id}, {"_id": 0}).to_list(20)
+    fees = await db.fees.find({"course_id": course_id}, {"_id": 0}).to_list(None)
     
     # Get admission charges
     admission_charges = await db.admission_charges.find_one({"course_id": course_id}, {"_id": 0})
