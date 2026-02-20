@@ -959,12 +959,12 @@ async def get_all_fees(college_id: Optional[str] = None, course_id: Optional[str
         query["college_id"] = college_id
     if course_id:
         query["course_id"] = course_id
-    fees = await db.fees.find(query, {"_id": 0}).to_list(500)
+    fees = await db.fees.find(query, {"_id": 0}).to_list(None)
     return fees
 
 @api_router.get("/colleges/{college_id}/fees", response_model=List[Fee])
 async def get_college_fees(college_id: str):
-    fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(300)
+    fees = await db.fees.find({"college_id": college_id}, {"_id": 0}).to_list(None)
     return fees
 
 @api_router.post("/fees", response_model=Fee, status_code=status.HTTP_201_CREATED)
