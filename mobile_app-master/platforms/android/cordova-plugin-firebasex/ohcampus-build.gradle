@@ -2,19 +2,16 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.1'
-        classpath 'com.google.gms:google-services:4.3.3'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
+        classpath 'com.android.tools.build:gradle:8.2.0'
+        classpath 'com.google.gms:google-services:4.4.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
     }
 }
 repositories {
     mavenCentral()
-    maven {
-        url "https://maven.google.com"
-    }
+    google()
 }
 
 apply plugin: com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsPlugin
