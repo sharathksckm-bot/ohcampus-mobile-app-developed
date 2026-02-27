@@ -45,6 +45,8 @@ android {
     compileSdkVersion cordovaConfig.SDK_VERSION
     buildToolsVersion cordovaConfig.BUILD_TOOLS_VERSION
 
+    namespace "org.apache.cordova"
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
